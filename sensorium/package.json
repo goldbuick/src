@@ -1,0 +1,8 @@
+{
+  "name": "sensorium",
+  "version": "0.0.1",
+  "description": "let it all wash over me",
+  "devDependencies": {
+    "mimosa-less": "*"
+  }
+}

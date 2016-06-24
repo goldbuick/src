@@ -1,0 +1,7 @@
+{
+  "name": "sensorium",
+  "version": "0.1.0",
+  "dependencies": {
+    "_lib": "../_lib"
+  }
+}
