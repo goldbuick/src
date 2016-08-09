@@ -1,14 +1,8 @@
+import ThreeScreen from 'lib/ThreeScreen';
 
-class ThreeRender extends React.Component {
+export default {
 
-    // when defining a ThreeRender component
-    // define render3D & animate3D if needed
-
-    // utils
-
-    applyProps3D() {
-        if (this._object3D === undefined) return;
-
+    applyProps3D: function () {
         let args = Array.prototype.slice.call(arguments);
         args.forEach(prop => {
             if (this.props[prop] === undefined) return;
@@ -28,75 +22,71 @@ class ThreeRender extends React.Component {
             
             prev[lastArg] = this.props[prop];
         });
-    }
+    },
 
-    // three js generation
-
-    render3D() {
-        // no-op
-    }
-
-    clear3D() {
+    clear3D: function () {
         if (!this._object3D || !this._object3D.parent) return;
         this.props.parent.stopAnimate(this);
         this._object3D.parent.remove(this._object3D);
         this._object3D = undefined;
-    }
+    },
 
-    children3D() {
-        let parent = this;
-        parent._animate3D = [ ];
-        return React.Children.map(this.props.children, item => {
-            return React.cloneElement(item, { parent: parent });
-        });
-    }
-
-    // three js animation
-
-    animate3D(delta, anim, obj) {
-        // no-op
-    }
-
-    startAnimate3D(item) {
-        if (this._animate3D) {
-            this._animate3D.push(item);
+    animate: function (delta) {
+        if (this.props.screenLeft !== undefined) {
+            this._object3D.position.x = ThreeScreen.left(parseFloat(this.props.screenLeft));            
         }
-        if (!item._animateState) {
-            item._animateState = { };
+        if (this.props.screenRight !== undefined) {
+            this._object3D.position.x = ThreeScreen.right(parseFloat(this.props.screenRight));            
         }
-    }
-
-    stopAnimate3D(item) {
-        if (this._animate3D) {
-            this._animate3D = this._animate3D.filter(child => child !== item);
+        if (this.props.screenMiddle !== undefined) {
+            this._object3D.position.x = ThreeScreen.middle(parseFloat(this.props.screenMiddle));            
         }
-    }
-
-    updateAnimate3D(delta) {
         if (this.animate3D) {
             this.animate3D(delta, this._animateState, this._object3D);
         }
         if (this._animate3D) {
-            this._animate3D.forEach(item => item.animate(delta));
+            this._animate3D.forEach(item => {
+                item.animate(delta);
+            });
         }
-    }
+    },
 
-    // react integration
+    stopAnimate: function (item) {
+        this._animate3D = this._animate3D.filter(child => child !== item);
+    },
 
-    render() {
+    shouldAnimate: function (item) {
+        if (item._animateState === undefined) {
+            item._animateState = { };
+        }
+        this._animate3D.push(item);
+    },
+
+    children3D: function () {
+        var parent = this;
+        parent._animate3D = [ ];
+        return React.Children.map(this.props.children, item => {
+            return React.cloneElement(item, { parent: parent });
+        });
+    },
+
+    render: function () {
+        let out = null;
         this.clear3D();
-
-        let out = this.render3D(this.children3D());
-        if (out === undefined) {
-            this._object3D = new THREE.Object3D();
-            out = null;
-        } else if (out instanceof THREE.Object3D) {
-            this._object3D = out;
-            out = null;
-        } else if (this._object3D === undefined) {
-            this._object3D = new THREE.Object3D();
-            this._object3D.name = out.displayName;
-            out = React.cloneElement(out, { parent: this });
+        
+        if (this.render3D) {
+            out = this.render3D(this.children3D());
+            if (out === undefined) {
+                this._object3D = new THREE.Object3D();
+                out = null;
+            } else if (out instanceof THREE.Object3D) {
+                this._object3D = out;
+                out = null;
+            } else if (this._object3D === undefined) {
+                this._object3D = new THREE.Object3D();
+                this._object3D.name = out.displayName;
+                out = React.cloneElement(out, { parent: this });
+            }
         }
         
         if (this._object3D) {
@@ -124,9 +114,10 @@ class ThreeRender extends React.Component {
         }
 
         return out;
-    }
+    },
 
-    componentWillUnmount() {
+    componentWillUnmount: function () {
         this.clear3D();
     }
-}
+
+};

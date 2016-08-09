@@ -1,12 +1,13 @@
 
 
-1. trigger - creates trigger data
-
-2. mod - modifies trigger data
-
-3. device - creates audio data
-
-4. fx - modifies audio data
+I want to take midi input and process it into something interesting
 
 
+I want to capture human input and process it
+
+
+I want to rebuild my mixins into higher order components
+
+
+animation vs generation ?
 
