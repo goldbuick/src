@@ -6,6 +6,10 @@
   "scripts": {},
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/goldbuick/src"
+  },
   "devDependencies": {
     "babel-core": "^6.14.0",
     "babel-loader": "^6.2.5",
@@ -21,5 +25,23 @@
     "style-loader": "^0.13.1",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.15.0"
+  },
+  "dependencies": {
+    "@fdaciuk/ajax": "^2.1.2",
+    "alea": "0.0.9",
+    "crossfilter": "^1.3.12",
+    "load-bmfont": "^1.2.3",
+    "midimessage": "^1.0.5",
+    "moment": "^2.14.1",
+    "node-uuid": "^1.4.7",
+    "pathfinding": "^0.4.18",
+    "react": "^15.3.1",
+    "redux": "^3.5.2",
+    "simplex-noise": "^2.2.0",
+    "springy": "^2.7.1",
+    "three": "^0.80.1",
+    "three-bmfont-text": "^2.1.0",
+    "tone": "^0.7.1",
+    "tween.js": "^16.3.5"
   }
 }
