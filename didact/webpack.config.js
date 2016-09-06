@@ -9,7 +9,7 @@ module.exports = {
         contentBase: contentBase
     },
     entry: [
-        'babel-polyfill',
+        // 'babel-polyfill',
         './src/app.jsx'
     ],
     output: {
@@ -24,8 +24,9 @@ module.exports = {
                 path.resolve(__dirname, 'src'),
             ],
             query: {
-                'presets': [ 'react', 'es2015' ],
-                'plugins': [ 'transform-runtime', 'transform-class-properties' ]    
+                cacheDirectory: true,
+                presets: [ 'react', 'es2015' ],
+                plugins: [ 'transform-runtime', 'transform-class-properties' ]    
             }
         },{
             test: /\.less$/,
@@ -36,10 +37,9 @@ module.exports = {
         }]
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        // new webpack.optimize.UglifyJsPlugin({
-        //     compress: { warnings: false },
-        //     output: { comments: false }
-        // })
-    ]
+        new webpack.HotModuleReplacementPlugin()
+    ],
+    resolve: {
+        extensions: ['', '.js', '.jsx']
+    }
 }
