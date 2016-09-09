@@ -6,12 +6,23 @@ export default class RendererObject extends React.Component {
 
     static defaultProps = {
         onRender3D: () => { },
-        onAnimate3D: () => { },
+        // onAnimate3D: () => { },
     }
 
     findRoot(parent) {
-        if (!parent.props.parent) return parent;
-        return this.findRoot(parent.props.parent);
+        // this is the root
+        if (parent && parent.startAnimate3D) {
+            return parent;
+        }
+        
+        // this is not the root, but there are still
+        // parent components
+        if (parent.props && parent.props.parent) {
+            return this.findRoot(parent.props.parent);
+        }
+
+        // did not find root
+        return undefined;
     }
 
     applyProps3D() {
@@ -44,14 +55,14 @@ export default class RendererObject extends React.Component {
         this.object3D = undefined;
     }
 
-    children3D() {
-        return React.Children.map(this.props.children, 
-            out => React.cloneElement(out, { parent: this }));
+    componentDidMount() {
+        let root = this.findRoot(this);
+        if (root) root.startAnimate3D(this);
     }
 
-    animate3D(delta) {
-        this.animateState = this.animateState || { };
-        this.props.onAnimate3D(this.object3D, this.animateState, delta);
+    componentDidUpdate() {
+        let root = this.findRoot(this);
+        if (root) root.startAnimate3D(this);
     }
 
     componentWillUnmount() {
@@ -60,14 +71,16 @@ export default class RendererObject extends React.Component {
         if (root.stopAnimate3D) root.stopAnimate3D(this);
     }
 
-    render() {
-        let children = React.Children.map(this.props.children, 
-            child => React.cloneElement(child, { parent: this })),
-            parent = this.props.parent && this.props.parent.object3D;
+    animate3D(delta) {
+        this.animateState = this.animateState || { };
+        this.props.onAnimate3D(this.object3D, this.animateState, delta);
+    }
 
+    render3D() {
         this.clear3D();
-        this.object3D = this.props.onRender3D(children) || new THREE.Object3D();
+        this.object3D = this.props.onRender3D() || new THREE.Object3D();
 
+        let parent = this.props.parent && this.props.parent.object3D;
         if (parent && this.object3D) {
             parent.add(this.object3D);
             this.object3D.name = this.props.name;
@@ -76,11 +89,14 @@ export default class RendererObject extends React.Component {
                 'rotation-x', 'rotation-y', 'rotation-z',
                 'position-x', 'position-y', 'position-z'
             );
-
-            let root = this.findRoot(this);
-            if (root.startAnimate3D) root.startAnimate3D(this);
         }
+    }
 
+    render() {
+        let children = React.Children.map(this.props.children, 
+            child => React.cloneElement(child, { parent: this }));
+
+        this.render3D();
         return <div>{children}</div>;
     }
 

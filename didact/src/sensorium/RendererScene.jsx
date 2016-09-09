@@ -14,8 +14,11 @@ export default class RendererScene extends React.Component {
 
     animate3D = [ ]
 
+    get scene() {
+        return (this._scene = this._scene || new THREE.Scene());
+    }
+
     handleCreate = (renderer, composer, width, height) => {
-        this.scene = this.scene || new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(60, 4 / 3, 0.1, 20000);
 
         return this.props.onCreate(renderer, composer, 
@@ -23,7 +26,7 @@ export default class RendererScene extends React.Component {
     }
 
     handleUpdate = (renderer, composer, delta) => {
-        this.animate3D.forEach(item => item.animate3D && item.animate3D(delta));
+        this.animate3D.forEach(item => item.animate3D(delta));
         this.props.onUpdate(renderer, composer, 
             this.scene, this.camera, delta);
     }
@@ -36,13 +39,14 @@ export default class RendererScene extends React.Component {
     }
 
     handleRender3D = () => {
-        this.scene = this.scene || new THREE.Scene();
         return this.scene;
     }
 
     startAnimate3D(obj) {
-        this.stopAnimate3D(obj);
-        this.animate3D.push(obj);
+        if (obj.animate3D && obj.props && obj.props.onAnimate3D) {
+            this.stopAnimate3D(obj);
+            this.animate3D.push(obj);
+        }
     }
 
     stopAnimate3D(obj) {
