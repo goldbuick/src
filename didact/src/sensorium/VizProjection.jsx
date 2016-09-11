@@ -4,8 +4,8 @@ class VizProjection {
     plane(scale) {
         return (x, y, z) => {
             let _x = x * scale,
-                _y = z * scale,
-                _z = y * scale;
+                _y = y * scale,
+                _z = z * scale;
             return [ _x, _y, _z ];
         };
     }

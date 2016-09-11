@@ -39,7 +39,7 @@ export default class Scene extends React.Component {
 
         return [
             new THREE.RenderPass(scene, camera),
-            new THREE.BloomPass(1.5, 25, 4, 256),
+            new THREE.BloomPass(2.5, 25, 4, 256),
             new THREE.ShaderPass(THREE.CopyShader),
             new THREE.FilmPass(0.25, 0.5, height * 2, false),
             // new THREE.GlitchPass(64),

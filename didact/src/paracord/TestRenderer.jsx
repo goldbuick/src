@@ -1,5 +1,7 @@
 import React from 'react';
 import VizGen from '../sensorium/VizGen';
+import VizEtch from '../sensorium/VizEtch';
+import VizProjection from '../sensorium/VizProjection';
 import RendererObject from '../sensorium/RendererObject';
 
 const THREE = require('three');
@@ -9,19 +11,26 @@ const TestRenderer = (props) => {
         name="TestRenderer"
 
         onRender3D={() => {
-            return VizGen.text({ 
-                scale: 3,
-                text: 'testing'
-            });
+            let drift = 6,
+                step = 64,
+                gap = drift * 2,
+                offset = step * gap * 0.5,
+                etch = new VizEtch(),
+                color = new THREE.Color();
+                
+            for (let i=0; i < step; ++i) {
+                color.r = i / step;
+                color.g = (step - i) / step;
+                let radius = 128 + (Math.cos(i * 0.273) * 48) + (i * drift);
+                etch.drawLoop({ color, steps: 12, radius, z: (i * gap) - offset});
+            }
 
-            // let geo = new THREE.SphereBufferGeometry(256, 16, 8),
-            //     mat = new THREE.MeshNormalMaterial(),
-            //     mesh = new THREE.Mesh(geo, mat);
-            // return mesh;
+            return etch.build(VizProjection.plane(1));
         }}
 
         onAnimate3D={(obj, anim, delta) => {
-            // obj.rotation.y += delta * props.spin;
+            obj.rotation.x += delta * props.spin * 0.12;
+            obj.rotation.y += delta * props.spin * 0.2;
         }} 
     />;
 };

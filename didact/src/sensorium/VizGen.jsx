@@ -5,16 +5,33 @@ import createGeometry from 'three-bmfont-text';
 class VizGen {
 
     arc({ x=0, y=0, z=0, steps=8, radius=8, front=0, back=0, drift=0, bump=0 } = {}) {
+        let points = [ ],
+            step = (Math.PI * 2) / steps;
+
+        steps -= front + back;
+
+        let angle = (front * step) + bump;
+        for (let i=0; i <= steps; ++i) {
+            points.push({
+                x: x + Math.cos(angle) * radius,
+                y: y + Math.sin(angle) * radius,
+                z: z
+            });
+            angle += step;
+            radius += drift;
+        }
+
+        return points;    
     }
 
     textRetry({ placeholder, 
-        font, text, position, 
+        font, text, position, color,
         scale, flip, ax, ay, nudge, 
         mode, width, callback } = {}) {
 
         console.log('textRetry', { 
             placeholder, 
-            font, text, position, 
+            font, text, position, color, 
             scale, flip, ax, ay, nudge,
             mode, width, callback
         });
@@ -22,7 +39,7 @@ class VizGen {
         return () => {
             let mesh = Gen.text({ 
                 placeholder,
-                font, text, position, 
+                font, text, position, color, 
                 scale, flip, ax, ay, nudge, 
                 mode, width, callback, noPlaceholder: true });
 
@@ -32,19 +49,13 @@ class VizGen {
     }
 
     text ({ font='OCRA', text='', position=[0, 0, 0], 
-        scale=1, flip=-1, ax=0.5, ay=0.5, nudge=0,
+        scale=1, flip=-1, ax=0.5, ay=0.5, nudge=0, color=new THREE.Color(1, 1, 1),
         mode, width, callback, noPlaceholder } = {}) {
-
-        console.log('text', { 
-            font, text, position, 
-            scale, flip, ax, ay, nudge,
-            mode, width, callback, noPlaceholder
-        });
 
         let placeholder = new THREE.Object3D(),
             _font = VizFont(font, () => {
                 return Gen.textRetry({ 
-                    placeholder, font, text, position, 
+                    placeholder, font, text, position, color,
                     scale, flip, ax, ay, nudge,
                     mode, width, callback
                 });
@@ -61,7 +72,7 @@ class VizGen {
                 transparent: true,
                 texture: _font.texture,
                 side: THREE.DoubleSide,
-                color: new THREE.Color(1, 1, 1),
+                color: color,
             }),
             material = new THREE.RawShaderMaterial(shader),
             mesh = new THREE.Mesh(geometry, material);

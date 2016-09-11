@@ -228,12 +228,12 @@ class VizGlyph {
         while (this.tessellateAlphaFills(step));
     }
 
-    build(opts) {
+    build(transform) {
         let group = new THREE.Group();
 
         let positions = [ ];
         for (let i=0; i<this.positions.length; i+=3) {
-            let result = opts.transform(
+            let result = transform(
                 this.positions[i], this.positions[i+1], this.positions[i+2]);
             positions.push(result[0], result[1], result[2]);
         }
