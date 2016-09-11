@@ -69,10 +69,10 @@ class VizGen {
 
         let geometry = createGeometry(fopts),
             shader = Gen.textShader({
+                color: color,
                 transparent: true,
                 texture: _font.texture,
                 side: THREE.DoubleSide,
-                color: color,
             }),
             material = new THREE.RawShaderMaterial(shader),
             mesh = new THREE.Mesh(geometry, material);

@@ -33,7 +33,20 @@ class VizEtch {
         }
     }
 
-    drawLoop({ x, y, z, steps, radius, front, back, drift, bump, color} = {}) {
+    drawLoop({ x, y, z, steps, radius, front, back, drift, bump, color, 
+        skip, r, threshold } = {}) {
+
+        if (skip) {
+            let fn = (i => i % skip === 0);
+            this.drawLoopFn({ x, y, z, steps, radius, front, back, drift, bump, color, fn });
+            return;
+        }
+
+        if (threshold) {
+            let fn = (r() < threshold);
+            this.drawLoopFn({ x, y, z, steps, radius, front, back, drift, bump, color, fn });            
+        }
+
         this.drawLine(VizGen.arc({ x, y, z, steps, radius, front, back, drift, bump}), color);
     }
 
@@ -41,27 +54,18 @@ class VizEtch {
         let points = [ ],
             source = VizGen.arc({ x, y, z, steps, radius, front, back, drift, bump});
 
+        let i = 0;
         while (source.length) {
             points.push(source.shift());
             if (points.length > 1) {
                 this.drawLine(points, color);
-                if (fn(i)) {
+                if (fn(i++)) {
                     points = [ ];
                 } else {
                     points.shift();
                 }
             }
         }
-    }
-
-    drawLoopR({ x, y, z, steps, radius, front, back, drift, bump, color, r, threshold } = {}) {
-        let fn = (r() < threshold);
-        this.drawLoopFn({ x, y, z, steps, radius, front, back, drift, bump, color, fn });
-    }
-
-    drawLoopDash({ x, y, z, steps, radius, front, back, drift, bump, color, skip } = {}) {
-        let fn = (i => i % skip === 0);
-        this.drawLoopFn({ x, y, z, steps, radius, front, back, drift, bump, color, fn });
     }
 
     drawRect({ x, y, w, h, z=0, color, alpha=1 } = {}) {
