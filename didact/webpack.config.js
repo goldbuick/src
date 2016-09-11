@@ -9,7 +9,7 @@ module.exports = {
         contentBase: contentBase
     },
     entry: [
-        // 'babel-polyfill',
+        'babel-polyfill',
         './src/app.jsx'
     ],
     output: {
