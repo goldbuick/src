@@ -1,6 +1,8 @@
 import React from 'react';
 import debounce from '../util/debounce';
 const THREE = require('three');
+// hack for bmfont
+global.THREE = THREE;
 
 export default class Renderer extends React.Component {
 
