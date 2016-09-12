@@ -15,7 +15,7 @@ let fontData = { },
         return undefined;
     };
 
-[ 'OCRA', 'LOGO', 'FIRACODE' ].forEach(name => {
+[ 'LOGO', 'TECH', 'TECHMONO' ].forEach(name => {
     let url = `media/${name}.fnt`;
     loadFont(url, (err, config) => {
         if (err) throw err;
