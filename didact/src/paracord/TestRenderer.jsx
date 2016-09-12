@@ -13,7 +13,7 @@ const TestRenderer = (props) => {
         onRender3D={() => {
             let steps = 32,
                 drift = 8,
-                count = 8,
+                count = 16,
                 gap = drift * 2,
                 offset = count * gap * 0.5,
                 etch = new VizEtch(),
@@ -23,14 +23,15 @@ const TestRenderer = (props) => {
                 color.r = i / count;
                 color.g = (count - i) / count;
                 let radius = 512 + (Math.cos(i * 0.373) * 48) + (i * drift),
-                    args = { color, steps, radius, width: 8, z: (i * gap) - offset };
+                    args = { color, steps, radius, width: 16, z: (i * gap) - offset };
                 etch.drawSwipe(args);
                 etch.drawSwipeLine(args);
             }
 
             let bazz = etch.build(VizProjection.plane(1));
             bazz.add(VizGen.text({
-                text: '<--== Gear Soul ==-->',
+                scale: 3.5,
+                text: '--<== Gear Soul ==>--',
                 color: new THREE.Color(0.9, 0.6, 1)
             }));
 
@@ -38,8 +39,9 @@ const TestRenderer = (props) => {
         }}
 
         onAnimate3D={(obj, anim, delta) => {
-            // obj.rotation.x += delta * props.spin * 0.12;
-            obj.rotation.y += delta * props.spin * 0.2;
+            obj.rotation.x += delta * props.spin * 0.1;
+            // obj.rotation.y += delta * props.spin * 0.2;
+            obj.rotation.z += delta * props.spin * 0.3;
         }} 
     />;
 };

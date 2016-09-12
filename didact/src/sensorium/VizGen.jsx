@@ -48,7 +48,7 @@ class VizGen {
         };
     }
 
-    text ({ font='OCRA', text='', position=[0, 0, 0], 
+    text ({ font='TECH', text='', position=[0, 0, 0], 
         scale=1, flip=-1, ax=0.5, ay=0.5, nudge=0, color=new THREE.Color(1, 1, 1),
         mode, width, callback, noPlaceholder } = {}) {
 
