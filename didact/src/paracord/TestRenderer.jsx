@@ -23,14 +23,14 @@ const TestRenderer = (props) => {
                 color.r = i / count;
                 color.g = (count - i) / count;
                 let radius = 512 + (Math.cos(i * 0.373) * 48) + (i * drift),
-                    args = { color, steps, radius, width: 16, z: (i * gap) - offset };
-                etch.drawSwipe(args);
-                etch.drawSwipeLine(args);
+                    args = { color, steps, radius, width: 32, z: (i * gap) - offset };
+                etch.drawSwipeAlt(args);
+                etch.drawSwipeLineAlt(args);
             }
 
             let bazz = etch.build(VizProjection.plane(1));
             bazz.add(VizGen.text({
-                scale: 3.5,
+                scale: 3,
                 text: '--<== Gear Soul ==>--',
                 color: new THREE.Color(0.9, 0.6, 1)
             }));

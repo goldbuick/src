@@ -125,7 +125,7 @@ class VizEtch {
 
     drawSwipeAlt({ x, y, z, steps, radius, width, front, back, drift, bump, color, alpha=1 } = {}) {
         let ipoints = VizGen.arc({ x, y, z, steps, radius, front, back, drift, bump }),
-            opoints = VizGen.arc({ x, y: y + width, z, steps, radius, front, back, drift, bump });
+            opoints = VizGen.arc({ x, y, z: (z + width), steps, radius, front, back, drift, bump });
         this.drawSwipeWith({ ipoints, opoints, color, alpha });
     }
 
@@ -137,9 +137,9 @@ class VizEtch {
         this.drawSwipeLineWith({ ipoints, opoints, color });
     }
 
-    drawSwipeLineAlt({ x, y, z, steps, radius, width, front, back, drift, bump }) {
+    drawSwipeLineAlt({ x, y, z, steps, radius, width, front, back, drift, bump, color }) {
         let ipoints = VizGen.arc({ x, y, z, steps, radius, front, back, drift, bump }),
-            opoints = VizGen.arc({ x, y: y + width, z, steps, radius, front, back, drift, bump });
+            opoints = VizGen.arc({ x, y, z: (z + width), steps, radius, front, back, drift, bump });
         this.drawSwipeLineWith({ ipoints, opoints, color });
     }
 
