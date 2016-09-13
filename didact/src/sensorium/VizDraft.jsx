@@ -7,7 +7,7 @@ class VizDraft extends VizEtch {
 
     drawHexPod({ x, y, z, radius, count, step, color } = {}) {
         for (let i=0; i < count; ++i) {
-            this.drawLoop({x, y, z, steps: 6, radius, color});
+            this.drawLoop({ x, y, z, steps: 6, radius, color });
             radius += step;
         }
     }
@@ -25,16 +25,34 @@ class VizDraft extends VizEtch {
         }
     }
 
-    drawChevron({ x, y, z, radius, angle, spread } = {}) {
-        this.drawLine(VizGen.chevron({ x, y, z, radius, angle, spread }));
+    drawChevron({ x, y, z, radius, angle, spread, color } = {}) {
+        this.drawLine(VizGen.chevron({ x, y, z, radius, angle, spread, color }));
     }
 
-    drawLinesWith({ ipoints, opoints }) {
+    drawLinesWith({ ipoints, opoints, color }) {
         for (let i=0; i < ipoints.length; ++i) {
-            this.drawLine([ipoints[i], opoints[i]]);
+            this.drawLine([ipoints[i], opoints[i]], color);
         }
     }
 
 }
 
 export default VizDraft;
+
+/* more complex structures 
+
+diamond gridded backgrounds
+gridded backgrounds
+cross hatching fields 
+dot fields ( each dot can be scalable )
+hex fields ( each hex can be scalable )
+
+linear auto-rigging for skeleton animation
+
+map contours ??
+
+sphere shells - wtf do I mean here ?
+
+identi glyphs !!!
+
+*/
