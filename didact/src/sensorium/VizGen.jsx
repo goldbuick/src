@@ -411,7 +411,7 @@ class _VizGen {
                     points.push({
                         x: px,
                         y: py + (ix % 2 === 0 ? 0 : hstep),
-                        z: pz
+                        z: pz + (cz < 2 || ix % 2 === 0 ? 0 : hstep),
                     });
                     px += step; 
                 }

@@ -35,6 +35,49 @@ class VizDraft extends VizEtch {
         }
     }
 
+    drawGridLines({ cx, cy, cz, points, color } = {}) {
+        let offset, segment;
+        for (let iz=0; iz < cz; ++iz) {
+            // draw x lines
+            if (cx > 1) {
+                for (let iy=0; iy < cy; ++iy) {
+                    segment = [ ];   
+                    for (let ix=0; ix < cx; ++ix) {
+                        offset = ix + (iy * cx) + (iz * cx * cy);
+                        segment.push(points[offset]);
+                    }
+                    this.drawLine(segment, color);
+                }
+            }
+    
+            // draw y lines
+            if (cy > 1) {
+                for (let ix=0; ix < cx; ++ix) {
+                    segment = [ ];   
+                    for (let iy=0; iy < cy; ++iy) {
+                        offset = ix + (iy * cx) + (iz * cx * cy);
+                        segment.push(points[offset]);
+                    }
+                    this.drawLine(segment, color);
+                }
+            }
+        }
+
+        // draw z lines
+        if (cz > 1) {
+            for (let iy=0; iy < cy; ++iy) {
+                for (let ix=0; ix < cx; ++ix) {
+                    segment = [ ];   
+                    for (let iz=0; iz < cz; ++iz) {
+                        offset = ix + (iy * cx) + (iz * cx * cy);
+                        segment.push(points[offset]);
+                    }
+                    this.drawLine(segment, color);
+                }
+            }
+        }
+    }
+
 }
 
 export default VizDraft;
