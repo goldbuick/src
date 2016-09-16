@@ -18,40 +18,32 @@ const TestRenderer = (props) => {
                 gap = drift * 2,
                 offset = count * gap * 0.5,
                 display = new VizDraft();
-                
-            // for (let i=0; i < count; ++i) {
-            //     color.r = i / count;
-            //     color.g = (count - i) / count;
-            //     let radius = 512 + (Math.cos(i * 0.373) * 48) + (i * drift),
-            //         args = { color, steps, radius, width: 32, z: (i * gap) - offset };
-            //     etch.drawSwipeAlt(args);
-            //     etch.drawSwipeLineAlt(args);
-            // }
 
-            let params = { cx: 6, cy: 6, cz: 1, step: 128, color };
-            params.points = VizGen.grid(params);
-            display.drawGridLines(params);
+            let params = { cx: 8, cy: 8, cz: 1, step: 128, length: 64, color };
+            params.points = VizGen.sphere({ radius: 512, widthSegments: 64, heightSegments: 32 });
 
-            params.points.forEach(pt => {
-                display.drawDiamond({ x: pt.x, y: pt.y, z: pt.z,
-                    w: 16, h: 32, color });
-                display.drawHexPod({ x: pt.x, y: pt.y, z: pt.z, 
-                    radius: 32, count: 2, step: 8, color });
+            let groups = VizGen.splitPointsByY(params);
+            groups.forEach(segment => {
+                let ipoints = VizGen.mapPoints({ points: segment, fn: VizGen.translate({ y: 4 }) });
+                let opoints = VizGen.mapPoints({ points: segment, fn: VizGen.translate({ y: -4 }) });
+                display.drawLine(ipoints, color);
+                display.drawLine(opoints, color);
+                display.drawSwipeWith({ ipoints, opoints, color });
             });
 
             let bazz = display.build(VizProjection.plane(1));
-            // bazz.add(VizGen.text({
-            //     scale: 3,
-            //     text: '--<=={ nexus }==>--',
-            //     color
-            // }));
+            bazz.add(VizGen.text({
+                color,
+                scale: 3,
+                text: '--<=={ nexus }==>--'
+            }));
 
             return bazz;
         }}
 
         onAnimate3D={(obj, anim, delta) => {
-            obj.rotation.x += delta * props.spin * 0.1;
-            // obj.rotation.y += delta * props.spin * 0.2;
+            // obj.rotation.x += delta * props.spin * 0.1;
+            obj.rotation.y += delta * props.spin * 0.2;
             obj.rotation.z += delta * props.spin * 0.3;
         }} 
     />;

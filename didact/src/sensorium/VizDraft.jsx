@@ -78,6 +78,22 @@ class VizDraft extends VizEtch {
         }
     }
 
+    drawHatchLines({ cx=2, points, length=32, color } = {}) {
+        for (let i=0; i < points.length; ++i) {
+            let pt = points[i];
+            this.drawLine([{
+                x: pt.x - length, y: pt.y, z: pt.z
+            },{
+                x: pt.x, y: pt.y + length, z: pt.z
+            }], color);
+            this.drawLine([{
+                x: pt.x, y: pt.y, z: pt.z
+            },{
+                x: pt.x + length, y: pt.y - length, z: pt.z
+            }], color);
+        }
+    }
+
 }
 
 export default VizDraft;

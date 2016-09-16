@@ -139,6 +139,20 @@ class _VizGen {
         }, opts);
     }
 
+    value(v) {
+        return () => v;
+    }
+
+    translate({ x=0, y=0, z=0 } = {}) {
+        return pt => {
+            return {
+                x: pt.x + x,
+                y: pt.y + y,
+                z: pt.z + z
+            };
+        };
+    }
+
     arc({ x=0, y=0, z=0, steps=8, radius=8, front=0, back=0, drift=0, bump=0 } = {}) {
         let points = [ ],
             step = (Math.PI * 2) / steps;
@@ -164,7 +178,7 @@ class _VizGen {
         return new SimplexNoise(r);
     }
 
-    filterByNoise({ points, seed, scale, fn } = {}) {
+    filterPoints({ points, seed, scale, fn } = {}) {
         let r = VizGen.noise({ seed });
         return points.filter(pt => {
             let v = r.noise3D(
@@ -175,9 +189,7 @@ class _VizGen {
         });
     }
 
-    // generators
-
-    map({ points, fn } = {}) {
+    mapPoints({ points, fn } = {}) {
         let result = [ ],
             count = points.length-1;
         for (let i=0; i < points.length; ++i) {
@@ -186,18 +198,16 @@ class _VizGen {
         return result;
     }
 
-    value(v) {
-        return () => v;
-    }
-
-    translate({ x=0, y=0, z=0 } = {}) {
-        return pt => {
-            return {
-                x: pt.x + x,
-                y: pt.y + y,
-                z: pt.z + z
-            };
-        };
+    splitPointsByY({ points } = {}) {
+        let groups = { };
+        for (let i=0; i < points.length; ++i) {
+            let pt = points[i];
+            if (groups[pt.y] === undefined) groups[pt.y] = [];
+            groups[pt.y].push(pt);
+        }
+        return Object.keys(groups)
+            .map(key => groups[key])
+            .filter(group => group.length > 1);
     }
 
     points({ x=0, y=0, z=0, count=1, looped, fn } = {}) {
@@ -305,6 +315,19 @@ class _VizGen {
                 z: z
             };
         }});
+    }
+
+    sphere({ x=0, y=0, z=0, radius, widthSegments, heightSegments } = {}) {
+        let used = { },
+            geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
+        return geometry.vertices.map(pt => {
+            return { x: pt.x + x, y: pt.y + y, z: pt.z + z };
+        }).filter(pt => {
+            let key = `${pt.x}|${pt.y}|${pt.z}`,
+                skip = used[key];
+            used[key] = true;
+            return !skip;
+        });
     }
 
     angles({ points } = {}) {
