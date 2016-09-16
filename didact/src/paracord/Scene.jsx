@@ -5,10 +5,12 @@ import RendererScene from '../sensorium/RendererScene';
 const THREE = require('three');
 import '../sensorium/threejs/shaders/FilmShader';
 import '../sensorium/threejs/shaders/CopyShader';
+import '../sensorium/threejs/shaders/BokehShader';
 import '../sensorium/threejs/shaders/DigitalGlitch';
 import '../sensorium/threejs/shaders/ConvolutionShader';
 import '../sensorium/threejs/postprocessing/EffectComposer';
 import '../sensorium/threejs/postprocessing/MaskPass';
+import '../sensorium/threejs/postprocessing/BokehPass';
 import '../sensorium/threejs/postprocessing/FilmPass';
 import '../sensorium/threejs/postprocessing/BloomPass';
 import '../sensorium/threejs/postprocessing/ShaderPass';
@@ -39,7 +41,7 @@ export default class Scene extends React.Component {
 
         return [
             new THREE.RenderPass(scene, camera),
-            new THREE.BloomPass(2.5, 25, 4, 256),
+            new THREE.BloomPass(1.75, 25, 4, 256),
             new THREE.ShaderPass(THREE.CopyShader),
             new THREE.FilmPass(0.25, 0.5, height * 2, false),
             // new THREE.GlitchPass(64),

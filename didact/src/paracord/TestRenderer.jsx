@@ -11,40 +11,30 @@ const TestRenderer = (props) => {
         name="TestRenderer"
 
         onRender3D={() => {
-            let color = new THREE.Color(1, 0.5, 0.1),
-                steps = 32,
-                drift = 8,
-                count = 16,
-                gap = drift * 2,
-                offset = count * gap * 0.5,
-                display = new VizDraft();
+            let display = new VizDraft(),
+                color = new THREE.Color(1, 0.5, 0.1);
 
-            let params = { cx: 8, cy: 8, cz: 1, step: 128, length: 64, color };
-            params.points = VizGen.sphere({ radius: 512, widthSegments: 64, heightSegments: 32 });
-
-            let groups = VizGen.splitPointsByY(params);
-            groups.forEach(segment => {
-                let ipoints = VizGen.mapPoints({ points: segment, fn: VizGen.translate({ y: 4 }) });
-                let opoints = VizGen.mapPoints({ points: segment, fn: VizGen.translate({ y: -4 }) });
-                display.drawLine(ipoints, color);
-                display.drawLine(opoints, color);
-                display.drawSwipeWith({ ipoints, opoints, color });
+            let params = { z: -64, cx: 4, cy: 4, cz: 2, step: 128, gap: 12, color };
+            params.points = VizGen.grid(params);
+            display.drawGridDashes(params);
+            params.points.forEach(pt => {
+                display.drawDiamond({ x: pt.x, y: pt.y, z: pt.z, w: 16, h: 16, color });
             });
 
             let bazz = display.build(VizProjection.plane(1));
             bazz.add(VizGen.text({
                 color,
                 scale: 3,
-                text: '--<=={ nexus }==>--'
-            }));
-
+                text: '--<=={ nexus }==>--',
+                nudge: { x: 0, y: 11, z: 128 }
+            }));            
             return bazz;
         }}
 
         onAnimate3D={(obj, anim, delta) => {
             // obj.rotation.x += delta * props.spin * 0.1;
             obj.rotation.y += delta * props.spin * 0.2;
-            obj.rotation.z += delta * props.spin * 0.3;
+            // obj.rotation.z += delta * props.spin * 0.3;
         }} 
     />;
 };

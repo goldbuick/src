@@ -26,8 +26,8 @@ class _VizGen {
         };
     }
 
-    text ({ font='TECH', text='', position=[0, 0, 0], 
-        scale=1, flip=-1, ax=0.5, ay=0.5, nudge=0, color=new THREE.Color(1, 1, 1),
+    text ({ font='TECH', text='', position=new THREE.Vector3(0, 0, 0), 
+        scale=1, flip=-1, ax=0.5, ay=0.5, nudge, color=new THREE.Color(1, 1, 1),
         mode, width, callback, noPlaceholder } = {}) {
 
         let placeholder = new THREE.Object3D(),
@@ -60,14 +60,16 @@ class _VizGen {
 
         mesh.scale.multiplyScalar(scale);
         mesh.scale.x *= flip;
-        position[0] -= _width * ax * -flip;
-        position[1] -= _height * ay;
+        position.x -= _width * ax * -flip;
+        position.y -= _height * ay;
 
         if (nudge) {
-            for (let i=0; i < 3; ++i) position[i] += nudge[i];
+            position.x += nudge.x;
+            position.y += nudge.y;
+            position.z += nudge.z;
         }
 
-        mesh.position.set(position[0], position[1], position[2]);
+        mesh.position.copy(position);
         mesh.rotation.z = Math.PI;
 
         if (noPlaceholder) return mesh;
@@ -151,6 +153,38 @@ class _VizGen {
                 z: pt.z + z
             };
         };
+    }
+
+    rect({ x=0, y=0, z=0, w=32, h=32 } = {}) {
+        let hw = w * 0.5,
+            hh = h * 0.5;
+        return [{
+            x: x - hw, y: y - hh, z
+        },{
+            x: x + hw, y: y - hh, z
+        },{
+            x: x + hw, y: y + hh, z
+        },{
+            x: x - hw, y: y + hh, z
+        },{
+            x: x - hw, y: y - hh, z
+        }];
+    }
+
+    diamond({ x=0, y=0, z=0, w=32, h=32 } = {}) {
+        let hw = w * 0.5,
+            hh = h * 0.5;
+        return [{
+            x: x, y: y - hh, z
+        },{
+            x: x + hw, y: y, z
+        },{
+            x: x, y: y + hh, z
+        },{
+            x: x - hw, y: y, z
+        },{
+            x: x, y: y - hh, z
+        }];
     }
 
     arc({ x=0, y=0, z=0, steps=8, radius=8, front=0, back=0, drift=0, bump=0 } = {}) {

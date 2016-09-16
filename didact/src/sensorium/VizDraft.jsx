@@ -29,7 +29,25 @@ class VizDraft extends VizEtch {
         this.drawLine(VizGen.chevron({ x, y, z, radius, angle, spread, color }));
     }
 
-    drawLinesWith({ ipoints, opoints, color }) {
+    drawDashesWith({ points, gap, color } = {}) {
+        let pt, a, b, len, c = new THREE.Vector3();
+        for (let i=0; i < points.length - 1; ++i) {
+            pt = points[i];
+            a = new THREE.Vector3(pt.x, pt.y, pt.z);
+            pt = points[i + 1];
+            b = new THREE.Vector3(pt.x, pt.y, pt.z);
+
+            c.subVectors(b, a);
+            c.normalize();
+
+            a.addScaledVector(c, gap);
+            b.addScaledVector(c, -gap);
+
+            this.drawLine([ a, b ], color);
+        }
+    }
+
+    drawLinesWith({ ipoints, opoints, color } = {}) {
         for (let i=0; i < ipoints.length; ++i) {
             this.drawLine([ipoints[i], opoints[i]], color);
         }
@@ -41,7 +59,7 @@ class VizDraft extends VizEtch {
             // draw x lines
             if (cx > 1) {
                 for (let iy=0; iy < cy; ++iy) {
-                    segment = [ ];   
+                    segment = [ ];
                     for (let ix=0; ix < cx; ++ix) {
                         offset = ix + (iy * cx) + (iz * cx * cy);
                         segment.push(points[offset]);
@@ -49,11 +67,10 @@ class VizDraft extends VizEtch {
                     this.drawLine(segment, color);
                 }
             }
-    
             // draw y lines
             if (cy > 1) {
                 for (let ix=0; ix < cx; ++ix) {
-                    segment = [ ];   
+                    segment = [ ];
                     for (let iy=0; iy < cy; ++iy) {
                         offset = ix + (iy * cx) + (iz * cx * cy);
                         segment.push(points[offset]);
@@ -62,12 +79,11 @@ class VizDraft extends VizEtch {
                 }
             }
         }
-
         // draw z lines
         if (cz > 1) {
             for (let iy=0; iy < cy; ++iy) {
                 for (let ix=0; ix < cx; ++ix) {
-                    segment = [ ];   
+                    segment = [ ];
                     for (let iz=0; iz < cz; ++iz) {
                         offset = ix + (iy * cx) + (iz * cx * cy);
                         segment.push(points[offset]);
@@ -78,7 +94,48 @@ class VizDraft extends VizEtch {
         }
     }
 
-    drawHatchLines({ cx=2, points, length=32, color } = {}) {
+    drawGridDashes({ cx, cy, cz, gap, points, color } = {}) {
+        let offset, segment;
+        for (let iz=0; iz < cz; ++iz) {
+            // draw x lines
+            if (cx > 1) {
+                for (let iy=0; iy < cy; ++iy) {
+                    segment = [ ];
+                    for (let ix=0; ix < cx; ++ix) {
+                        offset = ix + (iy * cx) + (iz * cx * cy);
+                        segment.push(points[offset]);
+                    }
+                    this.drawDashesWith({ points: segment, gap, color });
+                }
+            }
+            // draw y lines
+            if (cy > 1) {
+                for (let ix=0; ix < cx; ++ix) {
+                    segment = [ ];
+                    for (let iy=0; iy < cy; ++iy) {
+                        offset = ix + (iy * cx) + (iz * cx * cy);
+                        segment.push(points[offset]);
+                    }
+                    this.drawDashesWith({ points: segment, gap, color });
+                }
+            }
+        }
+        // draw z lines
+        if (cz > 1) {
+            for (let iy=0; iy < cy; ++iy) {
+                for (let ix=0; ix < cx; ++ix) {
+                    segment = [ ];
+                    for (let iz=0; iz < cz; ++iz) {
+                        offset = ix + (iy * cx) + (iz * cx * cy);
+                        segment.push(points[offset]);
+                    }
+                    this.drawDashesWith({ points: segment, gap, color });
+                }
+            }
+        }
+    }
+
+    drawHatchLines({ points, length=32, color } = {}) {
         for (let i=0; i < points.length; ++i) {
             let pt = points[i];
             this.drawLine([{
