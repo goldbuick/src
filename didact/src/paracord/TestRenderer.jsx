@@ -14,19 +14,20 @@ const TestRenderer = (props) => {
             let display = new VizDraft(),
                 color = new THREE.Color(1, 0.5, 0.1);
 
-            let params = { z: -64, cx: 4, cy: 4, cz: 2, step: 128, gap: 12, color };
+            let params = { cx: 50, cy: 8, cz: 2, step: 128, gap: 12, color };
             params.points = VizGen.grid(params);
             display.drawGridDashes(params);
             params.points.forEach(pt => {
                 display.drawDiamond({ x: pt.x, y: pt.y, z: pt.z, w: 16, h: 16, color });
             });
 
-            let bazz = display.build(VizProjection.plane(1));
+            // let bazz = display.build(VizProjection.plane(1));
+            let bazz = display.build(VizProjection.sphere(512, 1));
             bazz.add(VizGen.text({
                 color,
                 scale: 3,
                 text: '--<=={ nexus }==>--',
-                nudge: { x: 0, y: 11, z: 128 }
+                // nudge: { x: 0, y: 11, z: 128 }
             }));            
             return bazz;
         }}
