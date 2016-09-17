@@ -14,17 +14,17 @@ const TestRenderer = (props) => {
             let display = new VizDraft(),
                 color = new THREE.Color(1, 0.5, 0.1);
 
-            for (let i=1; i < 16; ++i) {
-                display.drawBracket({ y: 320, x: i * -192, h: 512 + i * 16, facing: 1, color });
-                display.drawBracket({ y: 320, x: i * 192, h: 512 + i * 16, facing: -1, color });
-                display.drawBracket({ y: -320, x: i * -192, h: 512 - i * 8, facing: 1, color, z: 128 });
-                display.drawBracket({ y: -320, x: i * 192, h: 512 - i * 8, facing: -1, color, z: 128 });
+            for (let i=1; i < 8; ++i) {
+                display.drawBracket({ w: 64, y: 320, x: i * -128, h: 512 + i * 16, facing: 1, color });
+                display.drawBracket({ w: 64, y: 320, x: i * 128, h: 512 + i * 16, facing: -1, color });
+                display.drawBracket({ w: 64, y: -320, x: i * -128, h: 512 - i * 8, facing: 1, color, z: 128 });
+                display.drawBracket({ w: 64, y: -320, x: i * 128, h: 512 - i * 8, facing: -1, color, z: 128 });
             }
 
             /*/
             let bazz = display.build(VizProjection.plane(1));
             /*/
-            let bazz = display.build(VizProjection.sphere(256, 1));
+            let bazz = display.build(VizProjection.column(320, 1));
             //*/
 
             bazz.add(VizGen.text({
@@ -37,9 +37,9 @@ const TestRenderer = (props) => {
         }}
 
         onAnimate3D={(obj, anim, delta) => {
-            obj.rotation.x += delta * props.spin * 0.1;
+            // obj.rotation.x += delta * props.spin * 0.1;
             obj.rotation.y += delta * props.spin * 0.2;
-            obj.rotation.z += delta * props.spin * 0.3;
+            // obj.rotation.z += delta * props.spin * 0.3;
         }} 
     />;
 };

@@ -11,12 +11,13 @@ class VizProjection {
     }
 
     column(radius, scale) {
+        scale *= 0.001;
         return (x, y, z) => {
-            y = y * scale;
+            x = x * scale;
             let _radius = radius + z,
-                _x = Math.sin(y) * _radius,
-                _y = x,
-                _z = Math.cos(y) * _radius;
+                _x = Math.sin(x) * _radius,
+                _y = y,
+                _z = Math.cos(x) * _radius;
             return [ _x, _y, _z ];
         };
     }
