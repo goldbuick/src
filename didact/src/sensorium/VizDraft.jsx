@@ -12,7 +12,7 @@ class VizDraft extends VizEtch {
         }
     }
 
-    drawFeatherArc({ x, y, z, radius, count, r, width, depth, drift, color, alpha } = {}) {
+    drawFeatherArc({ x, y, z=0, radius, count, r, width, depth, drift, color, alpha } = {}) {
         for (let i=0; i < count; ++i) {
             let _z = z + (i * -depth),
                 twist = Math.floor((r() - 0.5) * 32),
@@ -149,6 +149,38 @@ class VizDraft extends VizEtch {
                 x: pt.x + length, y: pt.y - length, z: pt.z
             }], color);
         }
+    }
+
+    drawBracket({ x=0, y=0, z=0, w=32, h=256, facing=1, color } = {}) {
+        let hw = w * 0.5,
+            hh = h * 0.5,
+            ipoints = [ ],
+            opoints = [ ],
+            hww = hw * 0.5,
+            segments = Math.ceil(h / hw),
+            last = segments - 1,
+            ystep = h / segments;
+
+        for (let i=0; i < segments; ++i) {
+            let _y = y + hh + i * -ystep;
+            ipoints.push({ x: x - hw, y: _y, z });
+            opoints.push({ x: x + hw, y: _y, z });
+        }
+
+        let mapping = (points1, points2) => {
+            points1[0].x = x;
+            points1[last].x = x;
+            let fhw = hw * facing,
+                mid = VizGen.range(4, segments - 4);
+
+            for (let i=1; i < segments-1; ++i) {
+                let bevel = Math.abs(i - mid) < 2 ? 1.5 : 1;
+                points2[i].x = x + fhw + bevel * -fhw;
+            }
+        };
+
+        (facing > 0) ? mapping(ipoints, opoints) : mapping(opoints, ipoints);
+        this.drawSwipeWith({ ipoints, opoints, color });
     }
 
 }

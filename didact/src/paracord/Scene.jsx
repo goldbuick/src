@@ -41,6 +41,13 @@ export default class Scene extends React.Component {
 
         return [
             new THREE.RenderPass(scene, camera),
+            // new THREE.BokehPass(scene, camera, {
+            //     focus: 0.25,
+            //     aperture: 0.025,
+            //     maxblur: 1,
+            //     width,
+            //     height,
+            // }),
             new THREE.BloomPass(2.5, 25, 4, 256),
             new THREE.ShaderPass(THREE.CopyShader),
             new THREE.FilmPass(0.25, 0.5, height * 2, false),

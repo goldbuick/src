@@ -23,13 +23,14 @@ class VizProjection {
 
     sphere(radius, scale) {
         scale *= 0.001;
+        let start = Math.PI * 0.5;
         return (x, y, z) => {
             x = x * scale;
             y = y * scale;
             let xcos = Math.cos(y),
                 xsin = Math.sin(y),
-                ycos = Math.cos(x),
-                ysin = Math.sin(x),
+                ycos = Math.cos(x + start),
+                ysin = Math.sin(x + start),
                 height = z + radius,
                 _x = -height * xcos * ycos,
                 _y = height * xsin,

@@ -14,28 +14,32 @@ const TestRenderer = (props) => {
             let display = new VizDraft(),
                 color = new THREE.Color(1, 0.5, 0.1);
 
-            let params = { cx: 50, cy: 8, cz: 2, step: 128, gap: 12, color };
-            params.points = VizGen.grid(params);
-            display.drawGridDashes(params);
-            params.points.forEach(pt => {
-                display.drawDiamond({ x: pt.x, y: pt.y, z: pt.z, w: 16, h: 16, color });
-            });
+            for (let i=1; i < 16; ++i) {
+                display.drawBracket({ y: 320, x: i * -192, h: 512 + i * 16, facing: 1, color });
+                display.drawBracket({ y: 320, x: i * 192, h: 512 + i * 16, facing: -1, color });
+                display.drawBracket({ y: -320, x: i * -192, h: 512 - i * 8, facing: 1, color, z: 128 });
+                display.drawBracket({ y: -320, x: i * 192, h: 512 - i * 8, facing: -1, color, z: 128 });
+            }
 
-            // let bazz = display.build(VizProjection.plane(1));
-            let bazz = display.build(VizProjection.sphere(512, 1));
+            /*/
+            let bazz = display.build(VizProjection.plane(1));
+            /*/
+            let bazz = display.build(VizProjection.sphere(256, 1));
+            //*/
+
             bazz.add(VizGen.text({
                 color,
                 scale: 3,
-                text: '--<=={ nexus }==>--',
+                text: '--<=={ haxkz }==>--',
                 // nudge: { x: 0, y: 11, z: 128 }
             }));            
             return bazz;
         }}
 
         onAnimate3D={(obj, anim, delta) => {
-            // obj.rotation.x += delta * props.spin * 0.1;
+            obj.rotation.x += delta * props.spin * 0.1;
             obj.rotation.y += delta * props.spin * 0.2;
-            // obj.rotation.z += delta * props.spin * 0.3;
+            obj.rotation.z += delta * props.spin * 0.3;
         }} 
     />;
 };
