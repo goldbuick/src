@@ -1,6 +1,5 @@
 
 import seneca from 'seneca';
-import senecaMesh from 'seneca-mesh';
 
 const opts = {
     seneca: {
@@ -14,4 +13,6 @@ const opts = {
     }
 };
 
-seneca(opts.seneca).use(senecaMesh, opts.mesh);
+seneca(opts.seneca)
+    .use('mesh', opts.mesh)
+    .ready(function() { console.log(this.id) })
