@@ -141,8 +141,8 @@ class _VizGen {
         }, opts);
     }
 
-    range(min, max) {
-        return Math.floor(Math.random() * (max - min +1)) + min;
+    range(rng, min, max) {
+        return Math.floor(rng() * (max - min +1)) + min;
     }
 
     value(v) {
@@ -211,9 +211,12 @@ class _VizGen {
         return points;    
     }
 
+    rng({ seed } = {}) {
+        return new Alea(seed);
+    }
+
     noise({ seed } = {}) {
-        let r = new Alea(seed);
-        return new SimplexNoise(r);
+        return new SimplexNoise(VizGen.rng({seed}));
     }
 
     filterPoints({ points, seed, scale, fn } = {}) {

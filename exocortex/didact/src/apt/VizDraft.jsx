@@ -151,7 +151,7 @@ class VizDraft extends VizEtch {
         }
     }
 
-    drawBracket({ x=0, y=0, z=0, w=32, h=256, facing=1, color } = {}) {
+    drawBracket({ x=0, y=0, z=0, w=32, h=256, facing=1, color, rng } = {}) {
         let hw = w * 0.5,
             hh = h * 0.5,
             ipoints = [ ],
@@ -171,7 +171,7 @@ class VizDraft extends VizEtch {
             points1[0].x = x;
             points1[last].x = x;
             let fhw = hw * facing,
-                mid = VizGen.range(4, segments - 4);
+                mid = VizGen.range(rng, 4, segments - 4);
 
             for (let i=1; i < segments-1; ++i) {
                 let bevel = Math.abs(i - mid) < 2 ? 1.5 : 1;

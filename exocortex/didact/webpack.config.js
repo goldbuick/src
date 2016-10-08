@@ -10,11 +10,11 @@ module.exports = {
     },
     entry: [
         'babel-polyfill',
-        './src/app.jsx'
+        './src/Entry.jsx'
     ],
     output: {
         path: contentBase,
-        filename: 'app.bundle.js'
+        filename: 'Entry.bundle.js'
     },
     module: {
         loaders: [{
@@ -25,8 +25,8 @@ module.exports = {
             ],
             query: {
                 cacheDirectory: true,
-                presets: [ 'react', 'es2015' ],
-                plugins: [ 'transform-runtime', 'transform-class-properties' ]    
+                presets: [ 'react', 'es2015', 'stage-0' ],
+                plugins: [ 'transform-runtime' ]    
             }
         },{
             test: /\.less$/,

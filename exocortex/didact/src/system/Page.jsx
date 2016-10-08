@@ -1,6 +1,6 @@
 import React from 'react';
 import Scene from './Scene';
-import TestRenderer from './TestRenderer';
+import TestRenderer from '../paracord/TestRenderer';
 
 const THREE = require('three');
 

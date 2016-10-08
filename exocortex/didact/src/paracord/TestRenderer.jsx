@@ -1,8 +1,8 @@
 import React from 'react';
-import VizGen from '../sensorium/VizGen';
-import VizDraft from '../sensorium/VizDraft';
-import VizProjection from '../sensorium/VizProjection';
-import RendererObject from '../sensorium/RendererObject';
+import VizGen from '../apt/VizGen';
+import VizDraft from '../apt/VizDraft';
+import VizProjection from '../apt/VizProjection';
+import RendererObject from '../apt/RendererObject';
 
 const THREE = require('three');
 
@@ -11,14 +11,16 @@ const TestRenderer = (props) => {
         name="TestRenderer"
 
         onRender3D={() => {
-            let display = new VizDraft(),
+            let seed = 'asd89fhaj9wnef',
+                display = new VizDraft(),
+                rng = VizGen.rng({ seed }),
                 color = new THREE.Color(1, 0.5, 0.1);
 
             for (let i=1; i < 8; ++i) {
-                display.drawBracket({ w: 64, y: 320, x: i * -128, h: 512 + i * 16, facing: 1, color });
-                display.drawBracket({ w: 64, y: 320, x: i * 128, h: 512 + i * 16, facing: -1, color });
-                display.drawBracket({ w: 64, y: -320, x: i * -128, h: 512 - i * 8, facing: 1, color, z: 128 });
-                display.drawBracket({ w: 64, y: -320, x: i * 128, h: 512 - i * 8, facing: -1, color, z: 128 });
+                display.drawBracket({ rng, w: 64, y: 320, x: i * -128, h: 512 + i * 16, facing: 1, color });
+                display.drawBracket({ rng, w: 64, y: 320, x: i * 128, h: 512 + i * 16, facing: -1, color });
+                display.drawBracket({ rng, w: 64, y: -320, x: i * -128, h: 512 - i * 8, facing: 1, color, z: 128 });
+                display.drawBracket({ rng, w: 64, y: -320, x: i * 128, h: 512 - i * 8, facing: -1, color, z: 128 });
             }
 
             /*/

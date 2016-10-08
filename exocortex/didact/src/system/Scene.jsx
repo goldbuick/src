@@ -1,21 +1,21 @@
 import React from 'react';
 import TWEEN from 'tween.js';
-import RendererScene from '../sensorium/RendererScene';
+import RendererScene from '../apt/RendererScene';
 
 const THREE = require('three');
-import '../sensorium/threejs/shaders/FilmShader';
-import '../sensorium/threejs/shaders/CopyShader';
-import '../sensorium/threejs/shaders/BokehShader';
-import '../sensorium/threejs/shaders/DigitalGlitch';
-import '../sensorium/threejs/shaders/ConvolutionShader';
-import '../sensorium/threejs/postprocessing/EffectComposer';
-import '../sensorium/threejs/postprocessing/MaskPass';
-import '../sensorium/threejs/postprocessing/BokehPass';
-import '../sensorium/threejs/postprocessing/FilmPass';
-import '../sensorium/threejs/postprocessing/BloomPass';
-import '../sensorium/threejs/postprocessing/ShaderPass';
-import '../sensorium/threejs/postprocessing/GlitchPass';
-import '../sensorium/threejs/postprocessing/RenderPass';
+import '../apt/threejs/shaders/FilmShader';
+import '../apt/threejs/shaders/CopyShader';
+import '../apt/threejs/shaders/BokehShader';
+import '../apt/threejs/shaders/DigitalGlitch';
+import '../apt/threejs/shaders/ConvolutionShader';
+import '../apt/threejs/postprocessing/EffectComposer';
+import '../apt/threejs/postprocessing/MaskPass';
+import '../apt/threejs/postprocessing/BokehPass';
+import '../apt/threejs/postprocessing/FilmPass';
+import '../apt/threejs/postprocessing/BloomPass';
+import '../apt/threejs/postprocessing/ShaderPass';
+import '../apt/threejs/postprocessing/GlitchPass';
+import '../apt/threejs/postprocessing/RenderPass';
 
 export default class Scene extends React.Component {
 

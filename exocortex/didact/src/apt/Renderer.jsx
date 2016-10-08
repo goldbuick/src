@@ -1,5 +1,5 @@
 import React from 'react';
-import debounce from '../util/debounce';
+import UtilDebounce from './UtilDebounce';
 const THREE = require('three');
 // hack for bmfont
 global.THREE = THREE;
@@ -44,7 +44,7 @@ export default class Renderer extends React.Component {
         window.removeEventListener('resize', this.handleResize);
     }
 
-    handleResize = debounce(() => this.updateSize(), 250)
+    handleResize = UtilDebounce(() => this.updateSize(), 250)
 
     handleUpdate = (now) => {
         let diff = this.last ? now - this.last : (1.0 / 60.0),
