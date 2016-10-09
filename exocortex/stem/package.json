@@ -2,9 +2,10 @@
   "name": "stem",
   "version": "1.0.0",
   "scripts": {
-    "build": "babel src/ -d build -s",
-    "stem-mesh": "npm run build && node build/stem-mesh.js",
-    "stem-config": "npm run build && node build/stem-config.js"
+    "stem-facade": "npm run build && node build/stem-facade.js",
+    "stem-codex": "npm run build && node build/stem-codex.js",
+    "stem-irc": "npm run build && node build/stem-irc.js",
+    "build": "babel src/ -d build -s"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.14.0",
