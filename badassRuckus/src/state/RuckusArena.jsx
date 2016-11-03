@@ -27,14 +27,6 @@ export default class extends Phaser.State {
 
         this.tilemap.putTile(0, 0, 0);
         this.tilemap.putTile(1, 1, 0);
-
-        // // simple tileset
-        // let tileset = new Phaser.Bitmap(this.game, 64, 64);
-
-        // this.layers = [
-        //     this.tilemap.createBlankLayer('test', 
-        //         this.columsn, this.rows, this.tileWidth, this.tileHeight)
-        // ];
     }
 
 }
