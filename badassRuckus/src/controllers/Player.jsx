@@ -1,4 +1,4 @@
-import { Controller } from './Controller';
+import { Controller } from '../Controller';
 
 export default class Player extends Controller {
 
@@ -7,6 +7,7 @@ export default class Player extends Controller {
         y: 100,
         w: 8,
         h: 16,
+        gamePad: undefined,
         collideLayer: undefined
     }
 
@@ -29,12 +30,29 @@ export default class Player extends Controller {
     update(game, config) {
         config.collideLayer && game.physics.arcade.collide(this.player, config.collideLayer);
 
+        let { player } = this;
         const walkSpeed = 150;
-        this.player.body.velocity.x = 0;
-        if (this.cursors.left.isDown) this.player.body.velocity.x = -walkSpeed;
-        if (this.cursors.right.isDown) this.player.body.velocity.x = walkSpeed;
-        if (this.cursors.up.isDown && this.player.body.onFloor() && game.time.now > this.jumpTimer) {
-            this.player.body.velocity.y = -350;
+        const stickThreshold = 0.1;
+        const { gamePad } = config;
+
+        const leftIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) ||
+            gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -stickThreshold);
+        const rightIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) ||
+            gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > stickThreshold);
+
+        const upIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) ||
+            gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -stickThreshold);
+        const downIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) ||
+            gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > stickThreshold);
+
+        const jumpIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_A));
+
+        player.body.velocity.x = 0;
+        if (leftIsPressed) player.body.velocity.x = -walkSpeed;
+        if (rightIsPressed) player.body.velocity.x = walkSpeed;
+
+        if (jumpIsPressed && player.body.onFloor() && game.time.now > this.jumpTimer) {
+            player.body.velocity.y = -350;
             this.jumpTimer = game.time.now + 750; // prevent double jump??
         }
     }

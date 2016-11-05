@@ -6,7 +6,12 @@ export default class extends Phaser.State {
     }
 
     create() {
-        this.game.state.start('RuckusArena');
+        const { game } = this;
+
+        game.input.gamepad.start();
+        game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+
+        game.state.start('RuckusArena');
     }
 
 }
