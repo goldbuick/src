@@ -19,7 +19,7 @@ export default class Player extends Controller {
         this.player = game.add.sprite(config.x, config.y, image);
         game.physics.arcade.enable(this.player);
 
-        this.player.body.bounce.y = 0;
+        // this.player.body.bounce.y = 0;
         this.player.body.collideWorldBounds = true;
         this.player.body.setSize(config.w, config.h);
 
