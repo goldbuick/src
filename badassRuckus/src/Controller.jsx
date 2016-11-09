@@ -33,7 +33,38 @@ export class ManagedState extends Phaser.State {
 
 }
 
+export function hash(obj) {
+    for (let i=1; i < arguments.length; ++i) {
+        let key = arguments[i];
+        if (obj[key] === undefined) {
+            obj[key] = {};
+        }
+        obj = obj[key];
+    }
+    return obj;
+}
+
+export function array(obj, key) {
+    if (obj[key] === undefined) {
+        obj[key] = [];
+    }
+    return obj[key];
+}
+
 export class Controller {
+
+    static tag(obj, tag) {
+        hash(obj, 'data', 'tags')[tag] = true;
+    }
+
+    static selectByTag(game, tag) {
+        return game.world.filter(child => hash(child, 'data', 'tags')[tag] === true);
+    }
+
+    static result(list) {
+        return new Phaser.ArraySet(Array.isArray(list) ? list : [list]);
+    }
+
     constructor(game, configDefaults, config) {
         this.game = game;
         this.config = {

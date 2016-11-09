@@ -1,12 +1,12 @@
 import { Controller } from '../Controller';
 
-const collideLayerName = 'collideLayer';
+const collideLayerTag = 'collideLayer';
 
 export default class Arena extends Controller {
 
-    // finders
-    static findCollideLayer(game) {
-        return game.world.getByName(collideLayerName);
+    // selectors
+    static selectCollideLayer(game) {
+        return Controller.selectByTag(game, collideLayerTag)[0];
     }
 
     static config = {
@@ -27,19 +27,25 @@ export default class Arena extends Controller {
         tilesetImage.rect(0, 0, image.w, image.h, '#666');
         tilesetImage.rect(tile.w, 0, tile.w, tile.h, '#fff');
 
-        this.tilemap = game.add.tilemap(null, tile.w, tile.h, this.cols, this.rows);
+        this.tilemap = game.add.tilemap(null, tile.w, tile.h, cols, rows);
         this.tilemap.addTilesetImage('test', tilesetImage, tile.w, tile.h);
         this.tilemap.setCollisionByExclusion([]);
 
-        this.collideLayer = this.tilemap.createBlankLayer(collideLayerName,
-            this.cols, this.rows, tile.w, tile.h);
+        Controller.tag(this.tilemap.createBlankLayer('collide-layer',
+            cols, rows, tile.w, tile.h), collideLayerTag);
 
-        const split = 10;
-        for (let i=0; i < split; ++i)
-            this.tilemap.putTile(0, i, this.rows-2);
+        for (let y=10; y < rows; ++y) {
+            for (let x=0; x < cols; ++x) {
+                this.tilemap.putTile(0, x, y);
+            }
+        }
 
-        for (let i=split; i < this.cols; ++i)
-            this.tilemap.putTile(0, i, this.rows-1);
+        // const split = 10;
+        // for (let i=0; i < split; ++i)
+        //     this.tilemap.putTile(0, i, this.rows-2);
+
+        // for (let i=split; i < this.cols; ++i)
+        //     this.tilemap.putTile(0, i, this.rows-1);
     }
 
     update(game, config) {
