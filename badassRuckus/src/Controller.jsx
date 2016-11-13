@@ -58,7 +58,19 @@ export class Controller {
     }
 
     static selectByTag(game, tag) {
-        return game.world.filter(child => hash(child, 'data', 'tags')[tag] === true);
+        let list = [];
+
+        const check = (child) => {
+            if (hash(child, 'data', 'tags')[tag] === true) {
+                list.push(child);
+            }
+            if (child.type === Phaser.GROUP) {
+                child.forEachExists(check);
+            }
+        };
+
+        game.world.forEachExists(check);
+        return Controller.result(list);
     }
 
     static result(list) {

@@ -1,25 +1,22 @@
+import Alea from 'alea';
+import TAGS from '../Tags';
 import { Controller } from '../Controller';
-
-const collideLayerTag = 'collideLayer';
 
 export default class Arena extends Controller {
 
-    // selectors
     static selectCollideLayer(game) {
-        return Controller.selectByTag(game, collideLayerTag)[0];
+        return Controller.selectByTag(game, TAGS.COLLIDER_LAYER).first;
     }
 
     static config = {
-        cols: 100,
-        rows: 50,
-        tile: {
-            w: 32,
-            h: 32
-        },
+        cols: 70,
+        rows: 40,
+        tile: { w: 32, h: 32 },
     }
 
     create(game, config) {
         const { cols, rows, tile } = config;
+
         game.world.setBounds(0, 0, cols * tile.w, rows * tile.h);
 
         let image = { w: config.tile.w * 2, h: config.tile.h };
@@ -29,23 +26,51 @@ export default class Arena extends Controller {
 
         this.tilemap = game.add.tilemap(null, tile.w, tile.h, cols, rows);
         this.tilemap.addTilesetImage('test', tilesetImage, tile.w, tile.h);
-        this.tilemap.setCollisionByExclusion([]);
+        this.tilemap.setCollisionByExclusion([1]);
 
         Controller.tag(this.tilemap.createBlankLayer('collide-layer',
-            cols, rows, tile.w, tile.h), collideLayerTag);
+            cols, rows, tile.w, tile.h), TAGS.COLLIDER_LAYER);
 
-        for (let y=10; y < rows; ++y) {
-            for (let x=0; x < cols; ++x) {
-                this.tilemap.putTile(0, x, y);
+        let r = new Alea('rng-jesus');
+
+        const layerStep = 6;
+        const bottom = rows - 1;
+
+        let left = 0,
+            layer = bottom,
+            right = cols - 1;
+
+        for (let i=0; i < 5; ++i) {
+            for (let x=left; x <= right; ++x) {
+                this.tilemap.putTile(0, x, layer);
             }
+
+            const nudge = 8;
+            left += nudge;
+            right -= nudge;
+
+            layer -= layerStep;
         }
 
-        // const split = 10;
-        // for (let i=0; i < split; ++i)
-        //     this.tilemap.putTile(0, i, this.rows-2);
+        const edge = 4;
+        layer = bottom - 4;
+        left = edge;
+        right = cols - edge;
 
-        // for (let i=split; i < this.cols; ++i)
-        //     this.tilemap.putTile(0, i, this.rows-1);
+        for (let i=0; i < 5; ++i) {
+            for (let x=0; x < left; ++x) {
+                this.tilemap.putTile(0, x, layer);
+            }
+            for (let x=right; x < cols; ++x) {
+                this.tilemap.putTile(0, x, layer);
+            }
+
+            // const nudge = 8;
+            // left += nudge;
+            // right -= nudge;
+
+            layer -= layerStep;
+        }
     }
 
     update(game, config) {

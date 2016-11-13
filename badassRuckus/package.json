@@ -31,6 +31,7 @@
     "webpack-dev-server": "^1.15.0"
   },
   "dependencies": {
+    "alea": "0.0.9",
     "phaser": "^2.6.2"
   }
 }
