@@ -1,5 +1,6 @@
 import Alea from 'alea';
 import TAGS from '../Tags';
+import Ladders from './Ladders';
 import { Controller } from '../Controller';
 
 export default class Arena extends Controller {
@@ -33,7 +34,8 @@ export default class Arena extends Controller {
 
         let r = new Alea('rng-jesus');
 
-        const layerStep = 6;
+        // layer cake
+        const layerStep = 8;
         const bottom = rows - 1;
 
         let left = 0,
@@ -52,6 +54,7 @@ export default class Arena extends Controller {
             layer -= layerStep;
         }
 
+        // mob entries
         const edge = 4;
         layer = bottom - 4;
         left = edge;
@@ -64,13 +67,14 @@ export default class Arena extends Controller {
             for (let x=right; x < cols; ++x) {
                 this.tilemap.putTile(0, x, layer);
             }
-
-            // const nudge = 8;
-            // left += nudge;
-            // right -= nudge;
-
             layer -= layerStep;
         }
+
+        // create ladders
+        Ladders.add(game, { x: 1100, y: 224, h: 256 });
+        Ladders.add(game, { x: 800, y: 480, h: 256 });
+        Ladders.add(game, { x: 1600, y: 736, h: 256 });
+        Ladders.add(game, { x: 1100, y: 992, h: 256 });
     }
 
     update(game, config) {
