@@ -105,7 +105,7 @@ export default class Players extends Controller {
                 player.x = ladder.x;
 
                 // jump from ladder
-                if (jumpIsPressed && 
+                if (jumpIsPressed && !upIsPressed && !downIsPressed &&
                     (leftIsPressed || rightIsPressed)) {
                     this.leaveLadder(player, ladderTop)
                     player.body.velocity.y = jumpForce;
