@@ -1,5 +1,6 @@
 
 export default {
+    WEAPON: 'WEAPON',
     LADDER: 'LADDER',
     PLAYER: 'PLAYER',
     SCALE_LAYER: 'SCALE',

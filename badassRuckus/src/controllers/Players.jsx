@@ -1,6 +1,7 @@
 import TAGS from '../Tags';
 import Arena from './Arena';
 import Ladders from './Ladders';
+import Weapons from './Weapons';
 import { Controller } from '../Controller';
 
 export default class Players extends Controller {
@@ -14,6 +15,10 @@ export default class Players extends Controller {
         y: 100,
         w: 8,
         h: 16,
+        gravity: 1600,
+        walkSpeed: 250,
+        jumpForce: -450,
+        ladderSpeed: 125,
     }
 
     create(game, config) {
@@ -38,6 +43,7 @@ export default class Players extends Controller {
 
             player.data.jumpTimer = 0;
             player.data.gamePad = pads[i];
+            player.data.weapon = Weapons.add(game, { count: 30 });
 
             Controller.tag(player, TAGS.PLAYER);
         }
@@ -60,10 +66,8 @@ export default class Players extends Controller {
     }
 
     update(game, config) {
-        const walkSpeed = 150;
-        const jumpForce = -350;
-        const ladderSpeed = 150;
         const stickThreshold = 0.5;
+        const { walkSpeed, jumpForce, ladderSpeed } = config;
 
         const players = Players.selectPlayers(game);
         const selectLadders = Ladders.selectLadders(game);
@@ -84,13 +88,40 @@ export default class Players extends Controller {
             const downIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) ||
                 gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > stickThreshold);
 
-            const jumpIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_A));
+            const jumpIsPressed = (
+                gamePad.isDown(Phaser.Gamepad.XBOX360_A) ||
+                gamePad.isDown(Phaser.Gamepad.XBOX360_B) ||
+                gamePad.isDown(Phaser.Gamepad.XBOX360_X) ||
+                gamePad.isDown(Phaser.Gamepad.XBOX360_Y));
+
+            const primaryDodgePressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_LEFT_TRIGGER));
+            const primaryWeaponPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_RIGHT_TRIGGER));
+            const secondaryDodgePressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_LEFT_BUMPER));
+            const secondaryWeaponPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_RIGHT_BUMPER));
 
             // cache this for collider callbacks
             player.data.input = {
                 leftIsPressed, rightIsPressed,
                 upIsPressed, downIsPressed,
+                primaryDodgePressed, primaryWeaponPressed, 
+                secondaryDodgePressed, secondaryWeaponPressed, 
             };
+
+            // cache current facing direction
+            if (leftIsPressed &&  !rightIsPressed) {
+                player.data.facing = -1;
+            }
+            if (!leftIsPressed && rightIsPressed) {
+                player.data.facing = 2;
+            }
+
+            // shoootan
+            if (primaryWeaponPressed) {
+                const facing = player.data.facing || 1;
+                let from = player.position.clone();
+                from.x += player.width * facing;
+                player.data.weapon.fire(from, from.x + facing * 32, from.y);
+            }
 
             if (player.data.ladder) {
                 const { ladder, ladderTop, ladderBottom } = player.data;
