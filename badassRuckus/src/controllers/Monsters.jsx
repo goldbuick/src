@@ -32,7 +32,6 @@ export default class Monsters extends Controller {
     }
 
     handleWeaponHit = (monster, bullet) => {
-        // console.log(monster, bullet);
         monster.kill();
         bullet.kill();
     }
@@ -50,6 +49,29 @@ export default class Monsters extends Controller {
             // check for bullets
             game.physics.arcade.overlap(monster, weapons.list, this.handleWeaponHit);
 
+            // walk switch timer
+            if (!monster.data.turn || game.time.now > monster.data.turn) {
+                monster.data.walk = Math.random() < 0.5 ? -1 : 1;
+                monster.data.turn = game.time.now + Math.floor(Math.random() * 8000);
+            }
+
+            monster.body.velocity.x = 0;
+            if (monster.body.onFloor()) {
+                // walk movement 
+                monster.body.velocity.x = monster.data.walk * 100;
+
+                // edge detection
+                let facing = monster.x + (monster.data.walk < 0 ? -1 : 0.25) * monster.width;
+                const map = collideLayer.map;
+                const tile = map.getTileBelow(
+                    collideLayer.index,
+                    Math.round(facing / map.tileWidth),
+                    Math.round(monster.y / map.tileHeight));
+
+                if (!tile.collideUp) monster.data.walk *= -1;
+            }
+    
+            // update next monster
             monster = monsters.next;
         }
     }

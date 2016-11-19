@@ -15,8 +15,12 @@ export default class Weapons extends Controller {
         h: 3
     }
 
+    static handleFire = (bullet, weapon) => {
+        bullet.data.weapon = weapon;
+        bullet.body.allowGravity = false;
+    }
+
     static handleKilled = (bullet) => {
-        console.log('boom!!');
         const { weapon } = bullet.data;
         const { fx } = weapon;
         Fx.spark(fx, bullet.x, bullet.y);
@@ -34,12 +38,10 @@ export default class Weapons extends Controller {
         weapon.fireRate = 256;
         weapon.bulletSpeed = 1024;
         weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-        weapon.onFire.add((bullet, weapon) => {
-            bullet.data.weapon = weapon;
-            bullet.body.allowGravity = false;
-            bullet.events.onKilled.add(Weapons.handleKilled);
-        });
+
         weapon.fx = Fx.add(game, {});
+        weapon.onFire.add(Weapons.handleFire);
+        weapon.onKill.add(Weapons.handleKilled);
 
         // tag it
         Controller.tag(weapon.bullets, TAGS.WEAPON);

@@ -20,8 +20,7 @@ export default class extends ManagedState {
         manager.create(Weapons);
 
         this.spawnTimer = game.time.events.loop(5000, () => {
-            Monsters.add(game, { x: 1000 + Math.random() * 300, y: 100 });
-            console.log('boop!');
+            Monsters.add(game, { x: 800 + Math.random() * 600, y: 140 });
         });
     }
 
