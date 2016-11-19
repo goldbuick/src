@@ -11,9 +11,9 @@ export default class extends ManagedState {
     onCreate(game, manager) {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.physics.arcade.gravity.y = Players.config.gravity;
+        manager.create(Camera);
         manager.create(Fx);
         manager.create(Arena);
-        manager.create(Camera);
         manager.create(Players);
         manager.create(Weapons);
     }

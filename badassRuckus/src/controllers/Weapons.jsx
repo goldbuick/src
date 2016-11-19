@@ -1,3 +1,4 @@
+import Fx from './Fx';
 import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
@@ -26,7 +27,11 @@ export default class Weapons extends Controller {
         weapon.fireRate = 256;
         weapon.bulletSpeed = 1024;
         weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-        weapon.onFire.add((bullet, weapon) => bullet.body.allowGravity = false, this);
+        weapon.onFire.add((bullet, weapon) => {
+            bullet.data.weapon = weapon;
+            bullet.body.allowGravity = false;
+        });
+        weapon.fx = Fx.add(game, {});
 
         // tag it
         Controller.tag(weapon.bullets, TAGS.WEAPON);
@@ -36,9 +41,10 @@ export default class Weapons extends Controller {
     }
 
     handleCollideLayer = (bullet, other) => {
+        const { weapon } = bullet.data;
+        const { fx } = weapon;
         bullet.kill();
-        // console.log(arguments);
-        // return true;
+        Fx.spark(fx, bullet.x, bullet.y);
     }
 
     update(game, config) {

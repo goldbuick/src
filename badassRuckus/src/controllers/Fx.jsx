@@ -22,10 +22,28 @@ export default class Fx extends Controller {
         image.rect(0, 0, config.w, config.h, '#FFF');
 
         // create emitter
-        let emitter = game.add.emitter(0, 0);
-        emitter.makeParticles(image, 0, 250, true, true);
+        let fx = game.add.emitter(0, 0);
+        fx.makeParticles(image, 0, 250, true, true);
 
-        return emitter;
+        const blurst = 256;
+        fx.setXSpeed(-blurst, blurst);
+        fx.setYSpeed(blurst * -2, 0);
+        fx.bounce.x = fx.bounce.y = 0.5;
+        const sMin = 0.25, sMax = 2;
+        fx.setScale(sMin, sMax, sMin, sMax);
+        fx.setAlpha(1, 0, fx.lifespan);
+
+        // tag it
+        Controller.tag(fx, TAGS.FX);
+
+        // return it
+        return fx;
+    }
+
+    static spark(fx, x, y) {
+        for (let i=0; i < 10; ++i) {
+            fx.emitParticle(x, y);
+        }
     }
 
     update(game, config) {
