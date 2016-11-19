@@ -4,6 +4,7 @@ import Arena from '../controllers/Arena';
 import Camera from '../controllers/Camera';
 import Players from '../controllers/Players';
 import Weapons from '../controllers/Weapons';
+import Monsters from '../controllers/Monsters';
 import { ManagedState } from '../Controller';
 
 export default class extends ManagedState {
@@ -15,10 +16,20 @@ export default class extends ManagedState {
         manager.create(Fx);
         manager.create(Arena);
         manager.create(Players);
+        manager.create(Monsters);
         manager.create(Weapons);
+
+        this.spawnTimer = game.time.events.loop(5000, () => {
+            Monsters.add(game, { x: 1000 + Math.random() * 300, y: 100 });
+            console.log('boop!');
+        });
     }
 
     onUpdate(game, manager) {
+    }
+
+    shutdown() {
+        this.game.time.events.remove(this.spawnTimer);
     }
 
 }

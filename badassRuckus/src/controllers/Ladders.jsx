@@ -17,7 +17,7 @@ export default class Ladders extends Controller {
 
         // temp image
         let image = game.make.bitmapData(config.w, h);
-        image.rect(0, 0, config.w, h, '#D36');
+        image.rect(0, 0, config.w, h, '#AA7243');
 
         let ladder = game.add.sprite(x, y, image);
         game.physics.arcade.enable(ladder);
