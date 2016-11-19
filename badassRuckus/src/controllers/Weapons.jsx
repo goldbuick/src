@@ -1,8 +1,13 @@
 import Alea from 'alea';
 import TAGS from '../Tags';
+import Arena from './Arena';
 import { Controller } from '../Controller';
 
 export default class Weapons extends Controller {
+
+    static selectWeapons(game) {
+        return Controller.selectByTag(game, TAGS.WEAPON);
+    }
 
     static config = {
         w: 8,
@@ -14,7 +19,7 @@ export default class Weapons extends Controller {
 
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
-        image.rect(0, 0, config.w, config.h, '#FFF');
+        image.rect(0, 0, config.w, config.h, '#FF0');
 
         // weapon factory
         let weapon = game.add.weapon(count, image);
@@ -24,10 +29,29 @@ export default class Weapons extends Controller {
         weapon.onFire.add((bullet, weapon) => bullet.body.allowGravity = false, this);
 
         // tag it
-        Controller.tag(weapon, TAGS.WEAPON);
+        Controller.tag(weapon.bullets, TAGS.WEAPON);
 
         // return it
         return weapon;
+    }
+
+    handleCollideLayer = (bullet, other) => {
+        bullet.kill();
+        // console.log(arguments);
+        // return true;
+    }
+
+    update(game, config) {
+        const weapons = Weapons.selectWeapons(game);
+        const collideLayer = Arena.selectCollideLayer(game);
+
+        let weapon = weapons.first;
+        while (weapon) { 
+            // check for tiles 
+            game.physics.arcade.collide(weapon, collideLayer, this.handleCollideLayer);
+
+            weapon = weapons.next;
+        }
     }
 
 }

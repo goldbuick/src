@@ -1,5 +1,6 @@
 
 export default {
+    FX: 'FX',
     WEAPON: 'WEAPON',
     LADDER: 'LADDER',
     PLAYER: 'PLAYER',

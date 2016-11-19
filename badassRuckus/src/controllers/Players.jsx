@@ -57,7 +57,6 @@ export default class Players extends Controller {
             player.body.allowGravity = false;
             player.data.ladder = ladder;
         }
-        return false;
     }
 
     leaveLadder(player) {
@@ -108,7 +107,7 @@ export default class Players extends Controller {
             };
 
             // cache current facing direction
-            if (leftIsPressed &&  !rightIsPressed) {
+            if (leftIsPressed && !rightIsPressed) {
                 player.data.facing = -1;
             }
             if (!leftIsPressed && rightIsPressed) {
@@ -119,6 +118,7 @@ export default class Players extends Controller {
             if (primaryWeaponPressed) {
                 const facing = player.data.facing || 1;
                 let from = player.position.clone();
+                from.y += 5;
                 from.x += player.width * facing;
                 player.data.weapon.fire(from, from.x + facing * 32, from.y);
             }
@@ -151,10 +151,10 @@ export default class Players extends Controller {
 
             } else {
                 // check for ladders first
-                game.physics.arcade.collide(player, selectLadders.list, null, this.handleLadder);
+                game.physics.arcade.overlap(player, selectLadders.list, this.handleLadder);
 
                 // check for tiles second
-                collideLayer && game.physics.arcade.collide(player, collideLayer);
+                game.physics.arcade.collide(player, collideLayer);
 
                 // update movement
                 player.body.velocity.x = 0;
