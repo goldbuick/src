@@ -77,15 +77,19 @@ export default class Players extends Controller {
             const { gamePad, jumpTimer } = player.data;
 
             // update input
-            const leftIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) ||
-                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -stickThreshold);
-            const rightIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) ||
-                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > stickThreshold);
+            const leftIsPressed = gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) ||
+                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_RIGHT_X) < -stickThreshold ||
+                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -stickThreshold;
+            const rightIsPressed = gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) ||
+                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_RIGHT_X) > stickThreshold ||
+                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > stickThreshold;
 
-            const upIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) ||
-                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -stickThreshold);
-            const downIsPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) ||
-                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > stickThreshold);
+            const upIsPressed = gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) ||
+                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_RIGHT_Y) < -stickThreshold ||
+                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -stickThreshold;
+            const downIsPressed = gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) ||
+                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_RIGHT_Y) > stickThreshold ||
+                gamePad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > stickThreshold;
 
             const jumpIsPressed = (
                 gamePad.isDown(Phaser.Gamepad.XBOX360_A) ||

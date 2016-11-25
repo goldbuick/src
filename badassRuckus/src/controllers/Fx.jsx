@@ -14,12 +14,12 @@ export default class Fx extends Controller {
         h: 2
     }
 
-    static add(game, {}) {
-        const { config } = Fx;
+    static add(game, { isRed = false }) {
+        let { config } = Fx;
 
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
-        image.rect(0, 0, config.w, config.h, '#FFF');
+        image.rect(0, 0, config.w, config.h, isRed ? '#F00' : '#FFF');
 
         // create emitter
         let fx = game.add.emitter(0, 0);
@@ -41,6 +41,7 @@ export default class Fx extends Controller {
     }
 
     static spark(fx, x, y) {
+        const { config } = Fx;
         for (let i=0; i < 10; ++i) {
             fx.emitParticle(x, y);
         }

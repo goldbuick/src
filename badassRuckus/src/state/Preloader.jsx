@@ -8,12 +8,10 @@ export default class extends Phaser.State {
     create() {
         const { game } = this;
 
-        game.input.gamepad.start();
-        game.input.gamepad.addCallbacks(this, {
-            onConnect: this.onConnect
-        });
-
         game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+
+        game.input.gamepad.start();
+        game.input.gamepad.addCallbacks(this, { onConnect: this.onConnect });
     }
 
     onConnect() {

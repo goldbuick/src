@@ -7,8 +7,12 @@ class ControllerManager {
         this.game = game;
     }
 
+    control(Klass) {
+        return this.controllers.filter(k => k instanceof Klass)[0];
+    }
+
     create(Klass, config = {}) {
-        let control = new Klass(this.game, Klass.config, config);
+        let control = new Klass(this.game, this, Klass.config, config);
         this.controllers.push(control);
         control.create(this.game, control.config);
         return control;  
@@ -77,13 +81,43 @@ export class Controller {
         return new Phaser.ArraySet(Array.isArray(list) ? list : [list]);
     }
 
-    constructor(game, configDefaults, config) {
+    constructor(game, manager, configDefaults, config) {
         this.game = game;
-        this.config = {
-            ...configDefaults,
-            ...config
-        };
+        this.manager = manager;
+        this.config = { ...configDefaults, ...config };
     }
-    create() { }
-    update() { }
+
+    create(game, config) { }
+
+    update(game, config) { }
+
+    control(Klass) {
+        return this.manager.control(Klass);
+    }
+
+    noop() { }
+
+    behaviors(STATES) {
+        Object.keys(STATES).forEach(STATE => {
+            this[STATE.toUpperCase()] = (object, args = {}) => {
+                object.data.STATE = STATE.toUpperCase();
+                const fn = STATES[object.data.STATE];
+                if (fn) fn(object, args);
+            };
+        });
+    }
+
+    run(object, args) {
+        const fn = this[object.data.STATE];
+        if (fn) fn(object, args);
+    }
+
+    ready(game, object, fn, args) {
+        if (game.time.now > object.data.TIMER) fn(object, args);
+    }
+
+    wait(game, object, delay = 0) {
+        object.data.TIMER = game.time.now + delay;
+    }
+
 }
