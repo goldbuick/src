@@ -1,5 +1,5 @@
 import Fx from './Fx';
-import Alea from 'alea';
+import UI from './UI';
 import TAGS from '../Tags';
 import Arena from './Arena';
 import Weapons from './Weapons';
@@ -56,11 +56,6 @@ export default class Monsters extends Controller {
                 this.ready(game, monster, this.IDLE_START);
             },
 
-            WEAPON_HIT: (monster, bullet) => {
-                monster.kill();
-                bullet.kill();
-            },
-
             KILL: (monster) => {
                 const { fx } = monster.data;
                 Fx.spark(fx, monster.x, monster.y);
@@ -74,18 +69,25 @@ export default class Monsters extends Controller {
 
     add(game, { x, y }) {
         const { config } = this;
+        const ui = this.manager.control(UI);
 
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
         image.rect(0, 0, config.w, config.h, '#BA55D3');
 
         // create sprite
-        let monster = game.add.sprite(x, y, image);        
+        let monster = game.add.sprite(x, y, image);
+        monster.anchor.set(0.5, 1);
 
         // config physics
         game.physics.arcade.enable(monster);
         monster.body.collideWorldBounds = true;
         monster.body.setSize(config.w, config.h);
+
+        // config health
+        monster.health = monster.maxHealth = 128;
+        let meter = ui.healthMeter(game, monster, 0, -32);
+        monster.addChild(meter);
 
         // add fx
         monster.data.fx = Fx.add(game, { isRed: true });
@@ -105,13 +107,18 @@ export default class Monsters extends Controller {
         const monsters = Monsters.selectMonsters(game);
         const collideLayer = Arena.selectCollideLayer(game);
 
+        const handleHit = (monster, bullet) => {
+            monster.damage(1);
+            bullet.kill();
+        };
+
         let monster = monsters.first;
         while (monster) {
             // check for tiles 
             game.physics.arcade.collide(monster, collideLayer);  
 
             // check for bullets
-            game.physics.arcade.overlap(monster, weapons.list, this.WEAPON_HIT);
+            game.physics.arcade.overlap(monster, weapons.list, handleHit);
 
             // execute current behavior
             this.run(monster, { collideLayer });

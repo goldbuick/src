@@ -75,8 +75,6 @@ export default class Arena extends Controller {
                 }
             }
 
-            console.log(layer, bottom, left, right);
-
             left -= nudge;
             right += nudge;
 

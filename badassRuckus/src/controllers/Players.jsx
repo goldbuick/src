@@ -36,6 +36,7 @@ export default class Players extends Controller {
         const step = 16;
         for (let i=0; i < game.input.gamepad.padsConnected; ++i) {
             let player = game.add.sprite(config.x + i * step, config.y, image);
+            player.anchor.set(0.5, 1);
             game.physics.arcade.enable(player);
 
             player.body.collideWorldBounds = true;
@@ -115,14 +116,14 @@ export default class Players extends Controller {
                 player.data.facing = -1;
             }
             if (!leftIsPressed && rightIsPressed) {
-                player.data.facing = 2;
+                player.data.facing = 1;
             }
 
             // shoootan
             if (primaryWeaponPressed) {
                 const facing = player.data.facing || 1;
                 let from = player.position.clone();
-                from.y += 5;
+                from.y -= player.height - 5;
                 from.x += player.width * facing;
                 player.data.weapon.fire(from, from.x + facing * 32, from.y);
             }
