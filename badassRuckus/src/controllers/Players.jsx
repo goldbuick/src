@@ -51,8 +51,8 @@ export default class Players extends Controller {
     }
 
     handleLadder = (player, ladder) => {
-        player.data.ladderTop = ladder.y - player.height;
-        player.data.ladderBottom = ladder.y + ladder.height - player.height - 2;
+        player.data.ladderTop = ladder.y;// - player.height;
+        player.data.ladderBottom = ladder.y + ladder.height - 2;
         if ((player.data.input.upIsPressed && player.y > player.data.ladderTop) ||
             (player.data.input.downIsPressed && player.y < player.data.ladderBottom)) {
             player.body.allowGravity = false;

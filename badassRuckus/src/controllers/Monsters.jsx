@@ -41,14 +41,14 @@ export default class Monsters extends Controller {
                     monster.body.velocity.x = monster.data.walk * 100;
 
                     // edge detection
-                    let facing = monster.x + (monster.data.walk < 0 ? -1 : 0.25) * monster.width;
                     const map = collideLayer.map;
-                    const tile = map.getTileBelow(
-                        collideLayer.index,
-                        Math.round(facing / map.tileWidth),
-                        Math.round(monster.y / map.tileHeight));
+                    let xTest = monster.x + monster.data.walk * monster.width;
+                    let yTest = monster.y - monster.height;
+                    xTest = Math.round(xTest / map.tileWidth);
+                    yTest = Math.round(yTest / map.tileHeight);
 
                     // turn around!
+                    const tile = map.getTileBelow(collideLayer.index, xTest, yTest);
                     if (!tile.collideUp) monster.data.walk *= -1;
                 }
 
@@ -85,9 +85,8 @@ export default class Monsters extends Controller {
         monster.body.setSize(config.w, config.h);
 
         // config health
-        monster.health = monster.maxHealth = 128;
-        let meter = ui.healthMeter(game, monster, 0, -32);
-        monster.addChild(meter);
+        monster.health = monster.maxHealth = 32;
+        ui.healthMeter(game, monster);
 
         // add fx
         monster.data.fx = Fx.add(game, { isRed: true });
@@ -103,6 +102,7 @@ export default class Monsters extends Controller {
     }
 
     update(game, config) {
+        const ui = this.manager.control(UI);
         const weapons = Weapons.selectWeapons(game);
         const monsters = Monsters.selectMonsters(game);
         const collideLayer = Arena.selectCollideLayer(game);
@@ -110,6 +110,7 @@ export default class Monsters extends Controller {
         const handleHit = (monster, bullet) => {
             monster.damage(1);
             bullet.kill();
+            ui.healthMeter(game, monster);
         };
 
         let monster = monsters.first;

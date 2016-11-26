@@ -20,6 +20,7 @@ export default class Ladders extends Controller {
         image.rect(0, 0, config.w, h, '#AA7243');
 
         let ladder = game.add.sprite(x, y, image);
+        ladder.anchor.set(0.5, 0);
         game.physics.arcade.enable(ladder);
 
         ladder.body.setSize(config.w, h);
