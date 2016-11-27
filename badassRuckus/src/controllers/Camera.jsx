@@ -15,7 +15,7 @@ export default class Camera extends Controller {
             worldPosition: { x: 0, y: 0 },
         };
         this.bounds = Phaser.Rectangle.clone(game.world.bounds);
-        const lerp = 0.5;
+        const lerp = 0.1;
         game.camera.follow(this.target, Phaser.Camera.FOLLOW_LOCKON, lerp, lerp);
         Controller.tag(game.add.group(), TAGS.SCALE_LAYER);
     }

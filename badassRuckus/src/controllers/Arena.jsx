@@ -174,7 +174,7 @@ export default class Arena extends Controller {
                 let { x, y } = whileEmpty(pickX(), plat.y + 1, 'collideUp');
                 let h = y - plat.y;
                 // too short
-                if (h <= 32) return;
+                if (h <= 1) return;
                 // just right!
                 Ladders.add(game, { 
                     x: x * tile.w, 

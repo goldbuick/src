@@ -68,7 +68,7 @@ export default class Monsters extends Controller {
 
     spawn(game) {
         // not too many
-        if (Weapons.selectWeapons(game).total >= 20) return;
+        if (Monsters.selectMonsters(game).total >= 20) return;
 
         const collideLayer = Arena.selectCollideLayer(game);
         const padding = 100;
