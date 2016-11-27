@@ -66,6 +66,18 @@ export default class Monsters extends Controller {
         });
     }
 
+    spawn(game) {
+        // not too many
+        if (Weapons.selectWeapons(game).total >= 20) return;
+
+        const collideLayer = Arena.selectCollideLayer(game);
+        const padding = 100;
+        const width = collideLayer.width - padding * 2;
+        this.add(game, {
+            x: padding + Math.random() * width,
+            y: padding
+        });
+    }
 
     add(game, { x, y }) {
         const { config } = this;

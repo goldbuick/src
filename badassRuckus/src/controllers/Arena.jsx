@@ -47,13 +47,13 @@ export default class Arena extends Controller {
 
         this.tilemap = game.add.tilemap(null, tile.w, tile.h, cols, rows);
         this.tilemap.addTilesetImage(tilesetImage);
-        this.tilemap.setCollisionByExclusion([8, 9, 10]);
 
         // bkg layer
         this.tilemap.createBlankLayer('bkg-layer', cols, rows, tile.w, tile.h);
 
         // collider layer
         let collideLayer = this.tilemap.createBlankLayer('collide-layer', cols, rows, tile.w, tile.h);
+        this.tilemap.setCollisionByExclusion([8, 9, 10]);
 
         // tag collider layer for recall
         Controller.tag(collideLayer, TAGS.COLLIDER_LAYER);
@@ -88,17 +88,20 @@ export default class Arena extends Controller {
             }
         }
 
-        // make sure we have no matching y
-        let ycount = { '32': 2 };
-        while (Object.values(ycount).filter(v => v !== 1).length) {
+        // make sure we have no matching 
+        const calcOverlaps = () => {
+            let ycount = { };
+            for (let i=0; i < platforms.length; ++i) {
+                let y2 = Math.floor(platforms[i].y * 0.5);
+                ycount[y2] = (ycount[y2] || 0) + 1;
+            }
+            return Object.values(ycount).filter(v => v !== 1).length;
+        };
+
+        // keep looping while there are overlaps
+        while (calcOverlaps() > 0) {
             for (let i=0; i < platforms.length; ++i) {
                 platforms[i].y += coin() ? 1 : -1;
-            }
-
-            ycount = {};
-            for (let i=0; i < platforms.length; ++i) {
-                let y2 = Math.round(platforms[i].y * 0.5);
-                ycount[y2] = (ycount[y2] || 0) + 1;
             }
         }
 
@@ -124,7 +127,6 @@ export default class Arena extends Controller {
         // sort by height
         platforms.sort((a, b) => a.y - b.y);
 
-        const bottom = rows - 1;
         platforms.forEach(plat => {
             if (coin()) {
                 plotTiles(plat.left, plat.right, plat.y, [0, 1, 2, 3]);
@@ -138,7 +140,7 @@ export default class Arena extends Controller {
         });
 
         // floor
-        plotTiles(0, cols - 1, bottom, [4, 5, 6, 7]);
+        plotTiles(0, cols - 1, rows - 1, [4, 5, 6, 7]);
 
         // detect open column
         const map = collideLayer.map;
@@ -166,71 +168,24 @@ export default class Arena extends Controller {
 
             const pickX = () => {
                 return plat.left + 1 + Math.round(r() * (w-2));
-            }
+            };
 
-            x = pickX();
-            ({ x, y } = whileEmpty(x, plat.y + 1, 'collideUp'));
-            Ladders.add(game, { x: x * tile.w, y: plat.y * tile.h, h: (y - plat.y) * tile.h });
+            const addLadder = () => {
+                let { x, y } = whileEmpty(pickX(), plat.y + 1, 'collideUp');
+                let h = y - plat.y;
+                // too short
+                if (h <= 32) return;
+                // just right!
+                Ladders.add(game, { 
+                    x: x * tile.w, 
+                    y: plat.y * tile.h, 
+                    h: h * tile.h - 16
+                });
+            };
 
-            if (w > 12 && coin()) {
-                x = pickX();
-                ({ x, y } = whileEmpty(x, plat.y + 1, 'collideUp'));
-                Ladders.add(game, { x: x * tile.w, y: plat.y * tile.h, h: (y - plat.y) * tile.h });
-            }
+            addLadder();
+            if (w > 12 && coin()) addLadder();
         });
-
-        /*/ layer cake
-        const count = 4;
-        const nudge = 8;
-        const layerStep = 8;
-        const bottom = rows - 1;
-
-        let left = count * nudge,
-            layer = bottom - (count * layerStep),
-            right = (cols - 1) - count * nudge;
-
-        for (let i=0; i <= count; ++i) {
-
-            this.tilemap.putTile(5, left, layer);
-            for (let x=left+1; x < right; ++x) {
-                this.tilemap.putTile(6, x, layer);
-            }
-            this.tilemap.putTile(7, right, layer);
-
-            for (let y=layer+1; y < rows; ++y) {
-                for (let x=left; x <= right; ++x) {
-                    this.tilemap.putTile(8, x, y);
-                }
-            }
-
-            left -= nudge;
-            right += nudge;
-
-            layer += layerStep;
-        }
-
-        // mob entries
-        // const edge = 4;
-        // layer = bottom - 4;
-        // left = edge;
-        // right = cols - edge;
-
-        // for (let i=0; i < 5; ++i) {
-        //     for (let x=0; x < left; ++x) {
-        //         this.tilemap.putTile(0, x, layer);
-        //     }
-        //     for (let x=right; x < cols; ++x) {
-        //         this.tilemap.putTile(0, x, layer);
-        //     }
-        //     layer -= layerStep;
-        // }
-
-        // create ladders
-        Ladders.add(game, { x: 1100, y: 224, h: 256 });
-        Ladders.add(game, { x: 800, y: 480, h: 256 });
-        Ladders.add(game, { x: 1600, y: 736, h: 256 });
-        Ladders.add(game, { x: 1100, y: 992, h: 256 });
-        */
     }
 
     update(game, config) {
