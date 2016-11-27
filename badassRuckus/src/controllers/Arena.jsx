@@ -12,7 +12,7 @@ export default class Arena extends Controller {
 
     static config = {
         tile: { w: 32, h: 32 },
-        chunks: { w: 3, h: 4 },
+        chunks: { w: 4, h: 4 },
         chunkSize: { w: 20, h: 10 },
     }
 
@@ -67,36 +67,38 @@ export default class Arena extends Controller {
             let plat = {
                 x: x + Math.round(r() * chunkSize.w),
                 y: y + Math.round(r() * chunkSize.h),
-                w: Math.round(r() * chunkSize.w * 1.5),
+                w: Math.max(3, Math.round(r() * chunkSize.w * 1.5)),
             };
 
             plat.left = plat.x - Math.round(plat.w * 0.5);
-            plat.left = Math.max(0, plat.left);
+            plat.left = Math.max(1, plat.left);
 
             plat.right = plat.x + Math.round(plat.w * 0.5);
-            plat.right = Math.min(cols - 1, plat.right);
+            plat.right = Math.min(cols - 2, plat.right);
 
             return plat;
         };
 
         // platform gen
-        let ycount = {};
         let platforms = [];
         for (let y=1; y < chunks.h; ++y) {
             for (let x=0; x < chunks.w; ++x) {
                 let plat = genPlatform(x * chunkSize.w, y * chunkSize.h);
-                ycount[plat.y] = (ycount[plat.y] || 0) + 1;
                 platforms.push(plat);
             }
         }
 
         // make sure we have no matching y
+        let ycount = { '32': 2 };
         while (Object.values(ycount).filter(v => v !== 1).length) {
+            for (let i=0; i < platforms.length; ++i) {
+                platforms[i].y += coin() ? 1 : -1;
+            }
+
             ycount = {};
             for (let i=0; i < platforms.length; ++i) {
-                let plat = platforms[i];
-                plat.y += coin() ? 1 : -1;
-                ycount[plat.y] = (ycount[plat.y] || 0) + 1;
+                let y2 = Math.round(platforms[i].y * 0.5);
+                ycount[y2] = (ycount[y2] || 0) + 1;
             }
         }
 

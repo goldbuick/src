@@ -15,6 +15,9 @@ export default class Ladders extends Controller {
     static add(game, {x, y, h} = {}) {
         const { config } = Ladders;
 
+        // too short
+        if (h <= 64) return;
+
         // temp image
         let image = game.make.bitmapData(config.w, h);
         image.rect(0, 0, config.w, h, '#AA7243');
