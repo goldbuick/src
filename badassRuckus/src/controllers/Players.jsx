@@ -41,6 +41,7 @@ export default class Players extends Controller {
 
             player.body.collideWorldBounds = true;
             player.body.setSize(config.w, config.h);
+            player.body.deltaMax.y = config.h - 2;
 
             player.data.jumpTimer = 0;
             player.data.gamePad = pads[i];

@@ -23,11 +23,11 @@ export default class extends ManagedState {
 
         const spawn = () => {
             manager.control(Monsters).add(game, { 
-                x: 800 + Math.random() * 600, 
+                x: 30 + Math.random() * (game.width - 60), 
                 y: 140
             });
         };
-        this.spawnTimer = game.time.events.loop(60000, spawn);
+        this.spawnTimer = game.time.events.loop(10000, spawn);
         spawn();
     }
 

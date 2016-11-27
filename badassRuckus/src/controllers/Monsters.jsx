@@ -49,7 +49,7 @@ export default class Monsters extends Controller {
 
                     // turn around!
                     const tile = map.getTileBelow(collideLayer.index, xTest, yTest);
-                    if (!tile.collideUp) monster.data.walk *= -1;
+                    if (tile && !tile.collideUp) monster.data.walk *= -1;
                 }
 
                 // randomly turn around
@@ -83,9 +83,10 @@ export default class Monsters extends Controller {
         game.physics.arcade.enable(monster);
         monster.body.collideWorldBounds = true;
         monster.body.setSize(config.w, config.h);
+        monster.body.deltaMax.y = config.h - 2;
 
         // config health
-        monster.health = monster.maxHealth = 32;
+        monster.health = monster.maxHealth = 8;
         ui.healthMeter(game, monster);
 
         // add fx

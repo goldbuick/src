@@ -39,8 +39,8 @@ export default class Camera extends Controller {
         const margin = 100;
         const left = Math.min.apply(Math, x) - margin;
         const right = Math.max.apply(Math, x) + margin;
-        const top = Math.min.apply(Math, y);
-        const bottom = Math.max.apply(Math, y);
+        const top = Math.min.apply(Math, y) - margin;
+        const bottom = Math.max.apply(Math, y) + margin;
         const width = Math.min(right - left, collideLayer.width);
         const height = Math.min(bottom - top, collideLayer.height);
         const scale = Math.max(1, width / game.scale.width, height / game.scale.height);
