@@ -20,8 +20,21 @@ export default class Arena extends Controller {
         const { tile, chunks, chunkSize } = config;
         const cols = chunks.w * chunkSize.w;
         const rows = chunks.h * chunkSize.h;
+        const width = cols * tile.w;
+        const height = rows * tile.h;
 
-        game.world.setBounds(0, 0, cols * tile.w, rows * tile.h);
+        game.world.setBounds(0, 0, width, height);
+
+        // parallax bkg
+        const bkgSet = 'set1';
+        game.add.tileSprite(0, 0, width, height, `${bkgSet}_background`);
+        this.bkg = game.add.tileSprite(0, 0, width, height, `${bkgSet}_tiles`);
+        const bkgScale = 2;
+        const bkgHeight = 480 * bkgScale;
+        this.bkgTop = game.add.tileSprite(0, 0, width, bkgHeight, `${bkgSet}_hills`);
+        this.bkgTop.tileScale.set(-bkgScale, -bkgScale);
+        this.bkgBottom = game.add.tileSprite(0, height - bkgHeight, width, bkgHeight, `${bkgSet}_hills`);
+        this.bkgBottom.tileScale.set(bkgScale);
 
         let image = { w: 12, h: 1 };
         image.w *= 64; image.h *= 64;
@@ -59,7 +72,7 @@ export default class Arena extends Controller {
         Controller.tag(collideLayer, TAGS.COLLIDER_LAYER);
 
         // rng tools
-        let r = new Alea();//'rng-jesus');
+        let r = new Alea('rng-jesus');
         const coin = () => (r() * 100 < 50);
 
         // generate platform position
@@ -189,5 +202,10 @@ export default class Arena extends Controller {
     }
 
     update(game, config) {
+        const rear = (0.7);
+        const mid = (0.4) * 0.5;
+        this.bkgTop.tilePosition.set(game.camera.x * -mid, 0);
+        this.bkgBottom.tilePosition.set(game.camera.x * mid, 0);
+        this.bkg.tilePosition.set(game.camera.x * rear, game.camera.y * rear);
     }
 }

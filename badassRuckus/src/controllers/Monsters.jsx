@@ -95,7 +95,7 @@ export default class Monsters extends Controller {
         game.physics.arcade.enable(monster);
         monster.body.collideWorldBounds = true;
         monster.body.setSize(config.w, config.h);
-        monster.body.deltaMax.y = config.h - 2;
+        monster.body.deltaMax.y = config.h * 0.75;
 
         // config health
         monster.health = monster.maxHealth = 8;
