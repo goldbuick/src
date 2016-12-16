@@ -11,7 +11,7 @@ export default class Players extends Controller {
     }
 
     static config = {
-        x: 70 * 16,
+        x: 16,//70 * 16,
         y: 100,
         w: 8,
         h: 16,
@@ -35,7 +35,7 @@ export default class Players extends Controller {
             game.input.gamepad.pad4,
         ];
 
-        const step = 16;
+        const step = 1600;
         for (let i=0; i < game.input.gamepad.padsConnected; ++i) {
             let player = game.add.sprite(config.x + i * step, config.y, image);
             player.anchor.set(0.5, 1);

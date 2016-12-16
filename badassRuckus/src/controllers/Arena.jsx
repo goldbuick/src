@@ -30,10 +30,12 @@ export default class Arena extends Controller {
         const bkgSet = 'set1';
         game.add.tileSprite(0, 0, width, height, `${bkgSet}_background`);
         this.bkg = game.add.tileSprite(0, 0, width, height, `${bkgSet}_tiles`);
+
         const bkgScale = 2;
         const bkgHeight = 480 * bkgScale;
         this.bkgTop = game.add.tileSprite(0, 0, width, bkgHeight, `${bkgSet}_hills`);
         this.bkgTop.tileScale.set(-bkgScale, -bkgScale);
+
         this.bkgBottom = game.add.tileSprite(0, height - bkgHeight, width, bkgHeight, `${bkgSet}_hills`);
         this.bkgBottom.tileScale.set(bkgScale);
 
@@ -68,6 +70,7 @@ export default class Arena extends Controller {
         // collider layer
         let collideLayer = this.tilemap.createBlankLayer('collide-layer', cols, rows, tile.w, tile.h);
         this.tilemap.setCollisionByExclusion([8, 9, 10]);
+        // collideLayer.canvas
 
         // tag collider layer for recall
         Controller.tag(collideLayer, TAGS.COLLIDER_LAYER);

@@ -6,6 +6,10 @@ import { Controller } from '../Controller';
 
 export default class Camera extends Controller {
 
+    static selectScaleLayer(game) {
+        return Controller.selectByTag(game, TAGS.SCALE_LAYER).first;
+    }
+
     static config = {
     }
 
@@ -37,19 +41,21 @@ export default class Camera extends Controller {
         }
 
         const margin = 100;
+        const winWidth = window.innerWidth;
+        const winHeight = window.innerHeight;
         const left = Math.min.apply(Math, x) - margin;
         const right = Math.max.apply(Math, x) + margin;
         const top = Math.min.apply(Math, y) - margin;
         const bottom = Math.max.apply(Math, y) + margin;
-        const width = Math.min(right - left, collideLayer.width);
-        const height = Math.min(bottom - top, collideLayer.height);
-        const scale = Math.max(1, width / game.scale.width, height / game.scale.height);
-        const scaledWidth = game.scale.width * scale;
-        const scaledHeight = game.scale.height * scale;
+        const width = Math.max(right - left, collideLayer.width);
+        const height = Math.max(bottom - top, collideLayer.height);
+        const scale = Math.max(1, width / winWidth, height / winHeight);
+        const scaledWidth = winWidth * scale;
+        const scaledHeight = winHeight * scale;
 
         if (game.width !== scaledWidth || 
             game.height !== scaledHeight) {
-            const smoothItFucker = 10;
+            const smoothItFucker = 1;
             game.scale._updateThrottle = smoothItFucker;
             game.scale._updateThrottleReset = smoothItFucker;
         }

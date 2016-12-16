@@ -109,7 +109,7 @@ export default class extends Phaser.State {
 
     update() {
         const { game } = this;
-        // game.scale.setGameSize(game.scale.width, game.scale.height);
+        game.scale.setGameSize(window.innerWidth, window.innerHeight);
         this.layout(game);
     }
 
