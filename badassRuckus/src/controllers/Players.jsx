@@ -22,6 +22,8 @@ export default class Players extends Controller {
     }
 
     create(game, config) {
+        const weapons = this.control(Weapons);
+
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
         image.rect(0, 0, config.w, config.h, '#36D');
@@ -45,7 +47,7 @@ export default class Players extends Controller {
 
             player.data.jumpTimer = 0;
             player.data.gamePad = pads[i];
-            player.data.weapon = Weapons.add(game, { count: 30 });
+            player.data.weapon = weapons.add(game, { count: 30 });
 
             Controller.tag(player, TAGS.PLAYER);
         }
@@ -76,7 +78,7 @@ export default class Players extends Controller {
 
         let player = players.first;
         while (player) { 
-            const { gamePad, jumpTimer } = player.data;
+            const { gamePad } = player.data;
 
             // update input
             const leftIsPressed = gamePad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) ||
@@ -167,7 +169,13 @@ export default class Players extends Controller {
                 if (leftIsPressed) player.body.velocity.x = -walkSpeed;
                 if (rightIsPressed) player.body.velocity.x = walkSpeed;
 
-                if (jumpIsPressed && player.body.onFloor() && game.time.now > jumpTimer) {
+                if (player.body.onFloor()) {
+                    player.data.floorTimer = game.time.now + 100;
+                }
+
+                if (jumpIsPressed && 
+                    game.time.now > player.data.jumpTimer && 
+                    game.time.now < player.data.floorTimer) {
                     player.body.velocity.y = jumpForce;
                     player.data.jumpTimer = game.time.now + 150;
                 }

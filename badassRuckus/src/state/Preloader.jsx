@@ -1,14 +1,17 @@
 import Phaser from 'phaser';
+import { gameFontName } from '../Text';
 
 export default class extends Phaser.State {
 
     preload() {
+        const { game } = this;
+
         [
             'raygun',
             'raygunBig',
             'raygunPurple',
             'raygunPurpleBig',
-        ].forEach(file => this.game.load.image(`${file}`, `media/weapons/${file}.png`));
+        ].forEach(file => game.load.image(`${file}`, `media/weapons/${file}.png`));
 
         [
             'tileCenter1',
@@ -22,7 +25,7 @@ export default class extends Phaser.State {
             'tileTopCenter',
             'tileTopLeft',
             'tileTopRight',
-        ].forEach(file => this.game.load.image(`${file}`, `media/tiles/${file}.png`));
+        ].forEach(file => game.load.image(`${file}`, `media/tiles/${file}.png`));
 
         [
             'enemyFloating_1',
@@ -49,7 +52,7 @@ export default class extends Phaser.State {
             'enemyWalking_2',
             'enemyWalking_3',
             'enemyWalking_4',
-        ].forEach(file => this.game.load.image(`${file}`, `media/monster/${file}.png`));
+        ].forEach(file => game.load.image(`${file}`, `media/monster/${file}.png`));
 
         [
             'set1_background',
@@ -64,7 +67,7 @@ export default class extends Phaser.State {
             'set4_background',
             'set4_hills',
             'set4_tiles',
-        ].forEach(file => this.game.load.image(`${file}`, `media/bkg/${file}.png`));
+        ].forEach(file => game.load.image(`${file}`, `media/bkg/${file}.png`));
 
         [
             'alienBlue_climb1',
@@ -111,23 +114,25 @@ export default class extends Phaser.State {
             'alienYellow_swim2',
             'alienYellow_walk1',
             'alienYellow_walk2',
-        ].forEach(file => this.game.load.image(`${file}`, `media/players/${file}.png`));
-       
+        ].forEach(file => game.load.image(`${file}`, `media/players/${file}.png`));
+
+        game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js');       
+    }
+
+    ready = () => {
+        const { game } = this;
+        game.state.start('Lobby');
+        game.input.gamepad.start();
     }
 
     create() {
         const { game } = this;
-
         game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
 
-        game.input.gamepad.start();
-        game.input.gamepad.addCallbacks(this, { onConnect: this.onConnect });
-    }
-
-    onConnect() {
-        const { game } = this;
-        clearTimeout(this.ready);
-        this.ready = setTimeout(() => game.state.start('RuckusArena'), 500);
+        WebFont.load({
+            active: this.ready,
+            google: { families: [ gameFontName ] },
+        });
     }
 
 }

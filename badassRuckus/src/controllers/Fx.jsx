@@ -1,6 +1,7 @@
 import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
+import { gameText } from '../Text';
 import { Controller } from '../Controller';
 
 export default class Fx extends Controller {
@@ -9,13 +10,17 @@ export default class Fx extends Controller {
         return Controller.selectByTag(game, TAGS.FX);
     }
 
+    static selectFxTxs(game) {
+        return Controller.selectByTag(game, TAGS.FX_TX);
+    }
+
     static config = {
         w: 2,
         h: 2
     }
 
-    static add(game, { isRed = false }) {
-        let { config } = Fx;
+    add(game, { isRed = false }) {
+        let { config } = this;
 
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
@@ -33,30 +38,44 @@ export default class Fx extends Controller {
         fx.setScale(sMin, sMax, sMin, sMax);
         fx.setAlpha(1, 0, fx.lifespan);
 
-        // tag it
-        Controller.tag(fx, TAGS.FX);
+        // add our own emit function
+        fx.spark = function (x, y) {
+            for (let i=0; i < 10; ++i) {
+                this.emitParticle(x, y);
+            }
+        };
 
-        // return it
-        return fx;
+        // tag it & return
+        return Controller.tag(fx, TAGS.FX);
     }
 
-    static spark(fx, x, y) {
-        const { config } = Fx;
-        for (let i=0; i < 10; ++i) {
-            fx.emitParticle(x, y);
-        }
+    addTx(game, x, y, text) {
+        let tx = gameText(game, { x, y, text, fontSize: 12, color: '#f00' });
+        tx.startY = y;
+        // tag it & return
+        return Controller.tag(tx, TAGS.FX_TX);
     }
 
     update(game, config) {
         const fxs = Fx.selectFxs(game);
+        const txs = Fx.selectFxTxs(game);
         const collideLayer = Arena.selectCollideLayer(game);
 
         let fx = fxs.first;
         while (fx) {
             // check for tiles 
-            game.physics.arcade.collide(fx, collideLayer);            
-
+            game.physics.arcade.collide(fx, collideLayer);
             fx = fxs.next;
+        }
+
+        let tx = txs.first;
+        while (tx) {
+            if (Math.abs(tx.y - tx.startY) < 16) {
+                tx.y -= 2;
+            }
+            tx.alpha -= 0.01;
+            if (tx.alpha <= 0) tx.kill();
+            tx = txs.next;
         }
     }
 

@@ -1,4 +1,3 @@
-import Fx from './Fx';
 import TAGS from '../Tags';
 import { Controller } from '../Controller';
 

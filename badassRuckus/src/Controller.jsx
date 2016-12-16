@@ -59,6 +59,7 @@ export class Controller {
 
     static tag(obj, tag) {
         hash(obj, 'data', 'tags')[tag] = true;
+        return obj;
     }
 
     static selectByTag(game, tag) {

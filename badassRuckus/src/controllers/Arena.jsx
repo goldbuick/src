@@ -17,6 +17,7 @@ export default class Arena extends Controller {
     }
 
     create(game, config) {
+        const ladders = this.control(Ladders);
         const { tile, chunks, chunkSize } = config;
         const cols = chunks.w * chunkSize.w;
         const rows = chunks.h * chunkSize.h;
@@ -72,7 +73,7 @@ export default class Arena extends Controller {
         Controller.tag(collideLayer, TAGS.COLLIDER_LAYER);
 
         // rng tools
-        let r = new Alea('rng-jesus');
+        let r = new Alea();//'rng-jesus');
         const coin = () => (r() * 100 < 50);
 
         // generate platform position
@@ -101,21 +102,16 @@ export default class Arena extends Controller {
             }
         }
 
-        // make sure we have no matching 
-        const calcOverlaps = () => {
-            let ycount = { };
-            for (let i=0; i < platforms.length; ++i) {
-                let y2 = Math.floor(platforms[i].y * 0.5);
-                ycount[y2] = (ycount[y2] || 0) + 1;
+        // prevent close plats
+        platforms.sort((a, b) => b.y - a.y);
+        let cursor = 1000;
+        const spacing = 3;
+        for (let i=0; i < platforms.length; ++i) {
+            let plat = platforms[i];
+            if (cursor - plat.y < spacing) {
+                plat.y = cursor - spacing;
             }
-            return Object.values(ycount).filter(v => v !== 1).length;
-        };
-
-        // keep looping while there are overlaps
-        while (calcOverlaps() > 0) {
-            for (let i=0; i < platforms.length; ++i) {
-                platforms[i].y += coin() ? 1 : -1;
-            }
+            cursor = plat.y;
         }
 
         // plot platform tops
@@ -145,8 +141,9 @@ export default class Arena extends Controller {
                 plotTiles(plat.left, plat.right, plat.y, [0, 1, 2, 3]);
             } else {
                 plotTiles(plat.left, plat.right, plat.y, [4, 5, 6, 7]);
-                for (let y=plat.y+1; y < rows; ++y) {
-                    plotTilesRng(plat.left, plat.right, y, 
+                let height = rows - plat.y;
+                for (let y=1; y < height; ++y) {
+                    plotTilesRng(plat.left, plat.right, plat.y + y, 
                         [8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 10], 'bkg-layer');
                 }
             }
@@ -189,7 +186,7 @@ export default class Arena extends Controller {
                 // too short
                 if (h <= 1) return;
                 // just right!
-                Ladders.add(game, { 
+                ladders.add(game, { 
                     x: x * tile.w, 
                     y: plat.y * tile.h, 
                     h: h * tile.h - 16

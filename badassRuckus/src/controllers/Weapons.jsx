@@ -15,19 +15,20 @@ export default class Weapons extends Controller {
         h: 3
     }
 
-    static handleFire = (bullet, weapon) => {
+    handleFire = (bullet, weapon) => {
         bullet.data.weapon = weapon;
         bullet.body.allowGravity = false;
     }
 
-    static handleKilled = (bullet) => {
+    handleKilled = (bullet) => {
         const { weapon } = bullet.data;
         const { fx } = weapon;
-        Fx.spark(fx, bullet.x, bullet.y);
+        fx.spark(bullet.x, bullet.y);
     }
 
-    static add(game, {count}) {
+    add(game, {count}) {
         const { config } = Weapons;
+        const fx = this.control(Fx);
 
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
@@ -39,9 +40,9 @@ export default class Weapons extends Controller {
         weapon.bulletSpeed = 1024;
         weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
 
-        weapon.fx = Fx.add(game, {});
-        weapon.onFire.add(Weapons.handleFire);
-        weapon.onKill.add(Weapons.handleKilled);
+        weapon.fx = fx.add(game, {});
+        weapon.onFire.add(this.handleFire);
+        weapon.onKill.add(this.handleKilled);
 
         // tag it
         Controller.tag(weapon.bullets, TAGS.WEAPON);

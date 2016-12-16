@@ -58,7 +58,7 @@ export default class Monsters extends Controller {
 
             KILL: (monster) => {
                 const { fx } = monster.data;
-                Fx.spark(fx, monster.x, monster.y);
+                fx.spark(monster.x, monster.y);
                 this.DEAD(monster);
             },
 
@@ -81,7 +81,8 @@ export default class Monsters extends Controller {
 
     add(game, { x, y }) {
         const { config } = this;
-        const ui = this.manager.control(UI);
+        const fx = this.control(Fx);
+        const ui = this.control(UI);
 
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
@@ -102,7 +103,7 @@ export default class Monsters extends Controller {
         ui.healthMeter(game, monster);
 
         // add fx
-        monster.data.fx = Fx.add(game, { isRed: true });
+        monster.data.fx = fx.add(game, { isRed: true });
 
         // add event handlers
         monster.events.onKilled.add(this.KILL);
@@ -115,15 +116,18 @@ export default class Monsters extends Controller {
     }
 
     update(game, config) {
-        const ui = this.manager.control(UI);
+        const fx = this.control(Fx);
+        const ui = this.control(UI);
         const weapons = Weapons.selectWeapons(game);
         const monsters = Monsters.selectMonsters(game);
         const collideLayer = Arena.selectCollideLayer(game);
 
         const handleHit = (monster, bullet) => {
-            monster.damage(1);
+            const dmg = 1;
             bullet.kill();
+            monster.damage(dmg);
             ui.healthMeter(game, monster);
+            fx.addTx(game, monster.x, monster.y - monster.height, ''+dmg);
         };
 
         let monster = monsters.first;

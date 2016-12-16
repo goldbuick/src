@@ -12,12 +12,13 @@ export default class Ladders extends Controller {
         w: 8
     }
 
-    static add(game, {x, y, h} = {}) {
-        const { config } = Ladders;
+    add(game, {x, y, h} = {}) {
+        const { config } = this;
         
         // temp image
         let image = game.make.bitmapData(config.w, h);
-        image.rect(0, 0, config.w, h, '#AA7243');
+        let hw = config.w * 0.5;
+        image.rect(hw * 0.5, 0, hw, h, '#AA7243');
 
         let ladder = game.add.sprite(x, y, image);
         ladder.anchor.set(0.5, 0);
@@ -26,6 +27,7 @@ export default class Ladders extends Controller {
         ladder.body.setSize(config.w, h);
         ladder.body.allowGravity = false;
 
-        Controller.tag(ladder, TAGS.LADDER);
+        // return it
+        return Controller.tag(ladder, TAGS.LADDER);
     }
 }
