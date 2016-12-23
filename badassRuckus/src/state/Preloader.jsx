@@ -6,27 +6,7 @@ export default class extends Phaser.State {
     preload() {
         const { game } = this;
 
-        [
-            'raygun',
-            'raygunBig',
-            'raygunPurple',
-            'raygunPurpleBig',
-        ].forEach(file => game.load.image(`${file}`, `media/weapons/${file}.png`));
-
-        [
-            'tileCenter1',
-            'tileCenter2',
-            'tileCenter3',
-            'tileCrust',
-            'tileCrustCenter',
-            'tileCrustLeft',
-            'tileCrustRight',
-            'tileTop',
-            'tileTopCenter',
-            'tileTopLeft',
-            'tileTopRight',
-        ].forEach(file => game.load.image(`${file}`, `media/tiles/${file}.png`));
-
+        // mobs
         [
             'enemyFloating_1',
             'enemyFloating_2',
@@ -54,6 +34,8 @@ export default class extends Phaser.State {
             'enemyWalking_4',
         ].forEach(file => game.load.image(`${file}`, `media/monster/${file}.png`));
 
+        // tiles & bkg
+        game.load.image('tilesheet', `media/tiles/tilesheet.png`);
         [
             'set1_background',
             'set1_hills',
@@ -69,6 +51,15 @@ export default class extends Phaser.State {
             'set4_tiles',
         ].forEach(file => game.load.image(`${file}`, `media/bkg/${file}.png`));
 
+        // player gear
+        [
+            'raygun',
+            'raygunBig',
+            'raygunPurple',
+            'raygunPurpleBig',
+        ].forEach(file => game.load.image(`${file}`, `media/weapons/${file}.png`));
+
+        // player anim
         [
             'alienBlue_climb1',
             'alienBlue_climb2',

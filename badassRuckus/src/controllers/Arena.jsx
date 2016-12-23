@@ -18,16 +18,21 @@ export default class Arena extends Controller {
 
     create(game, config) {
         const ladders = this.control(Ladders);
-        const { tile, chunks, chunkSize } = config;
+        const { tile, chunks, chunkSize, sourceTile } = config;
         const cols = chunks.w * chunkSize.w;
         const rows = chunks.h * chunkSize.h;
         const width = cols * tile.w;
         const height = rows * tile.h;
 
+        // just incase camera scale doesn't change
         game.world.setBounds(0, 0, width, height);
 
+        // rng tools
+        let r = new Alea();//'rng-jesus');
+        const coin = () => (r() * 100 < 50);
+
         // parallax bkg
-        const bkgSet = 'set1';
+        const bkgSet = pickFrom(r, ['set1', 'set2', 'set3', 'set4']);
         game.add.tileSprite(0, 0, width, height, `${bkgSet}_background`);
         this.bkg = game.add.tileSprite(0, 0, width, height, `${bkgSet}_tiles`);
 
@@ -39,49 +44,33 @@ export default class Arena extends Controller {
         this.bkgBottom = game.add.tileSprite(0, height - bkgHeight, width, bkgHeight, `${bkgSet}_hills`);
         this.bkgBottom.tileScale.set(bkgScale);
 
-        let image = { w: 12, h: 1 };
-        image.w *= 64; image.h *= 64;
-        let tilesetImage = game.make.bitmapData(image.w, image.h);
-        tilesetImage.clear(0, 0, image.w, image.h);
-
-        let x = 0;
-        const drawTile = (source, o) => tilesetImage.copy(source, 0, 0, 64, 64, o * 32, 0, 32, 32);
-
-        drawTile('tileCrust', x++);
-        drawTile('tileCrustLeft', x++);
-        drawTile('tileCrustCenter', x++);
-        drawTile('tileCrustRight', x++);
-
-        drawTile('tileTop', x++);
-        drawTile('tileTopLeft', x++);
-        drawTile('tileTopCenter', x++);
-        drawTile('tileTopRight', x++);
-
-        drawTile('tileCenter1', x++);
-        drawTile('tileCenter2', x++);
-        drawTile('tileCenter3', x++);
-
+        // tilemap
         this.tilemap = game.add.tilemap(null, tile.w, tile.h, cols, rows);
-        this.tilemap.addTilesetImage(tilesetImage);
+        this.tilemap.addTilesetImage('tilesheet');
 
         // bkg layer
         let bkgLayer = this.tilemap.createBlankLayer('bkg-layer', cols, rows, tile.w, tile.h);
 
+        // deco layer
+        let decoLayer = this.tilemap.createBlankLayer('deco-layer', cols, rows, tile.w, tile.h);
+
         // collider layer
         let collideLayer = this.tilemap.createBlankLayer('collide-layer', cols, rows, tile.w, tile.h);
 
+        // pick base tile index
+        // 22 x 12, 22 x 3, 66
+        const tset = pickFrom(r, [0, 1, 2, 3]);
+        const ti = arr => arr.map(v => (tset * 66) + v);
+        const td = arr => arr.map(v => (tset * 44) + v);
+
         // define collision tiles
-        this.tilemap.setCollisionByExclusion([8, 9, 10]);
+        this.tilemap.setCollision(ti([1, 2, 3, 4, 5, 6, 7, 8]));
 
         // fix layer sizing
         [ bkgLayer, collideLayer ].forEach(l => l.resize(width, height));
 
         // tag collider layer for recall
         Controller.tag(collideLayer, TAGS.COLLIDER_LAYER);
-
-        // rng tools
-        let r = new Alea();//'rng-jesus');
-        const coin = () => (r() * 100 < 50);
 
         // generate platform position
         const genPlatform = (x, y) => {
@@ -136,7 +125,8 @@ export default class Arena extends Controller {
 
         const plotTilesRng = (x1, x2, y1, indexes, layer) => {
             for (let x=x1; x <= x2; ++x) {
-                this.tilemap.putTile(pickFrom(r, indexes), x, y1, layer);
+                let t = pickFrom(r, indexes);
+                if (t !== -1) this.tilemap.putTile(t, x, y1, layer);
             }
         };
 
@@ -145,19 +135,26 @@ export default class Arena extends Controller {
 
         platforms.forEach(plat => {
             if (coin()) {
-                plotTiles(plat.left, plat.right, plat.y, [0, 1, 2, 3]);
+                plotTiles(plat.left, plat.right, plat.y, ti([8, 5, 6, 7]));
             } else {
-                plotTiles(plat.left, plat.right, plat.y, [4, 5, 6, 7]);
+                plotTiles(plat.left, plat.right, plat.y, ti([4, 1, 2, 3]));
                 let height = rows - plat.y;
                 for (let y=1; y < height; ++y) {
                     plotTilesRng(plat.left, plat.right, plat.y + y, 
-                        [8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 10], 'bkg-layer');
+                        ti([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 44]), 'bkg-layer');
                 }
             }
+            // deco tops
+            plotTilesRng(plat.left, plat.right, plat.y - 1, 
+                td([9, 10, 11, 31, 32, 33]).concat([
+                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                ]), 'deco-layer');
         });
 
         // floor
-        plotTiles(0, cols - 1, rows - 1, [4, 5, 6, 7]);
+        plotTiles(0, cols - 1, rows - 1, ti([4, 1, 2, 3]));
 
         // detect open column
         const map = collideLayer.map;
