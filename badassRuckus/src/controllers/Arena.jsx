@@ -32,7 +32,7 @@ export default class Arena extends Controller {
         const coin = () => (r() * 100 < 50);
 
         // parallax bkg
-        const bkgSet = pickFrom(r, ['set1', 'set2', 'set3', 'set4']);
+        const bkgSet = pickFrom(r, ['set2']);
         game.add.tileSprite(0, 0, width, height, `${bkgSet}_background`);
         this.bkg = game.add.tileSprite(0, 0, width, height, `${bkgSet}_tiles`);
 

@@ -63,8 +63,9 @@ export default class Monsters extends Controller {
             },
 
             KILL: (monster) => {
-                const { fx } = monster.data;
-                fx.spark(monster.x, monster.y);
+                for (let i=0; i<5; ++i) {
+                    monster.data.fx.spark(monster.x, monster.y);
+                }
                 this.DEAD(monster);
             },
 
@@ -136,6 +137,7 @@ export default class Monsters extends Controller {
             bullet.kill();
             monster.damage(dmg);
             ui.healthMeter(game, monster);
+            monster.data.fx.spark(monster.x, monster.y);
             fx.addTx(game, monster.x, monster.y - monster.height, ''+dmg);
         };
 

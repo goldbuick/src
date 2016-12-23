@@ -21,24 +21,28 @@ export default class Weapons extends Controller {
     }
 
     handleKilled = (bullet) => {
-        const { weapon } = bullet.data;
-        const { fx } = weapon;
-        fx.spark(bullet.x, bullet.y);
+        // const { weapon } = bullet.data;
+        // const { fx } = weapon;
+        // fx.spark(bullet.x, bullet.y);
     }
 
-    add(game, {count}) {
+    add(game) {
         const { config } = Weapons;
         const fx = this.control(Fx);
 
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
-        image.rect(0, 0, config.w, config.h, '#FF0');
+        image.rect(0, 0, config.w, config.h, '#666');
+        image.rect(1, 1, config.w - 2, config.h - 2, '#fff');
 
         // weapon factory
-        let weapon = game.add.weapon(count, image);
+        let weapon = game.add.weapon(10, image);
         weapon.fireRate = 256;
         weapon.bulletSpeed = 1024;
-        weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+        weapon.bulletLifespan = 512;
+        weapon.bulletAngleVariance = 1;
+        weapon.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;
+        console.log('weapon', weapon.bulletDistance, weapon.bulletKillType);
 
         weapon.fx = fx.add(game, {});
         weapon.onFire.add(this.handleFire);
@@ -52,6 +56,9 @@ export default class Weapons extends Controller {
     }
 
     handleCollideLayer = (bullet, other) => {
+        const { weapon } = bullet.data;
+        const { fx } = weapon;
+        fx.spark(bullet.x, bullet.y);
         bullet.kill();
     }
 

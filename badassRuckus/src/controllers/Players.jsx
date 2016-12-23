@@ -38,7 +38,7 @@ export default class Players extends Controller {
 
         player.data.jumpTimer = 0;
         player.data.gamePad = pad;
-        player.data.weapon = weapons.add(game, { count: 30 });
+        player.data.weapon = weapons.add(game);
 
         // config health
         player.health = player.maxHealth = 128;
