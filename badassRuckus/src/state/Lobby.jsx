@@ -88,23 +88,29 @@ export default class extends Phaser.State {
         const txSetup = (tx, name, pad) => {
             tx.align = 'center';
             tx.name = name.toUpperCase(); 
-            pad.addCallbacks(this, {
-                onDown: btn => {
-                    if (btn === Phaser.Gamepad.XBOX360_X) {
-                        onDown(tx);
-                    }
-                }
-            });
         };
 
         this.ui('p1', joinStr, (tx, name) => { 
-            tx.x = cL; tx.y = cT; txSetup(tx, name, game.input.gamepad.pad1); });
+            tx.x = cL; tx.y = cT; txSetup(tx, name); });
         this.ui('p2', joinStr, (tx, name) => { 
-            tx.x = cR; tx.y = cT; txSetup(tx, name, game.input.gamepad.pad2); });
+            tx.x = cR; tx.y = cT; txSetup(tx, name); });
         this.ui('p3', joinStr, (tx, name) => { 
-            tx.x = cL; tx.y = cB; txSetup(tx, name, game.input.gamepad.pad3); });
+            tx.x = cL; tx.y = cB; txSetup(tx, name); });
         this.ui('p4', joinStr, (tx, name) => { 
-            tx.x = cR; tx.y = cB; txSetup(tx, name, game.input.gamepad.pad4); });
+            tx.x = cR; tx.y = cB; txSetup(tx, name); });
+
+        game.input.gamepad.addCallbacks(this, {
+            onDown: (btn, value, index) => {
+                const { p1, p2, p3, p4, timer, timerEvent } = this;
+                let tx = [ p1, p2, p3, p4 ][index];
+                if (btn === Phaser.Gamepad.XBOX360_X) onDown(tx);
+            }
+        });
+    }
+    
+    shutdown() {
+        const { game } = this;
+        game.input.gamepad.onDownCallback = null;
     }
 
     update() {
@@ -112,5 +118,4 @@ export default class extends Phaser.State {
         game.scale.setGameSize(window.innerWidth, window.innerHeight);
         this.layout(game);
     }
-
 }

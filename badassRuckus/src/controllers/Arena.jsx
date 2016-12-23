@@ -65,12 +65,16 @@ export default class Arena extends Controller {
         this.tilemap.addTilesetImage(tilesetImage);
 
         // bkg layer
-        this.tilemap.createBlankLayer('bkg-layer', cols, rows, tile.w, tile.h);
+        let bkgLayer = this.tilemap.createBlankLayer('bkg-layer', cols, rows, tile.w, tile.h);
 
         // collider layer
         let collideLayer = this.tilemap.createBlankLayer('collide-layer', cols, rows, tile.w, tile.h);
+
+        // define collision tiles
         this.tilemap.setCollisionByExclusion([8, 9, 10]);
-        // collideLayer.canvas
+
+        // fix layer sizing
+        [ bkgLayer, collideLayer ].forEach(l => l.resize(width, height));
 
         // tag collider layer for recall
         Controller.tag(collideLayer, TAGS.COLLIDER_LAYER);

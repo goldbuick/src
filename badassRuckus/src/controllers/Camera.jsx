@@ -47,8 +47,8 @@ export default class Camera extends Controller {
         const right = Math.max.apply(Math, x) + margin;
         const top = Math.min.apply(Math, y) - margin;
         const bottom = Math.max.apply(Math, y) + margin;
-        const width = Math.max(right - left, collideLayer.width);
-        const height = Math.max(bottom - top, collideLayer.height);
+        const width = Math.min(right - left, collideLayer.width);
+        const height = Math.min(bottom - top, collideLayer.height);
         const scale = Math.max(1, width / winWidth, height / winHeight);
         const scaledWidth = winWidth * scale;
         const scaledHeight = winHeight * scale;
@@ -58,10 +58,12 @@ export default class Camera extends Controller {
             const smoothItFucker = 1;
             game.scale._updateThrottle = smoothItFucker;
             game.scale._updateThrottleReset = smoothItFucker;
+            game.scale.setGameSize(scaledWidth, scaledHeight);
+            game.world.setBounds(0, 0, collideLayer.width, collideLayer.height);
         }
 
         this.target.worldPosition.x = left + width * 0.5;
         this.target.worldPosition.y = top + height * 0.5;
-        game.scale.setGameSize(scaledWidth, scaledHeight);
+
     }
 }
