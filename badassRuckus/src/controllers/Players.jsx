@@ -1,7 +1,11 @@
+import Fx from './Fx';
+import UI from './UI';
+import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
 import Ladders from './Ladders';
 import Weapons from './Weapons';
+import { pickFrom } from '../Util';
 import { Controller } from '../Controller';
 
 export default class Players extends Controller {
@@ -11,8 +15,6 @@ export default class Players extends Controller {
     }
 
     static config = {
-        x: 16,//70 * 16,
-        y: 100,
         w: 8,
         h: 16,
         gravity: 1600,
@@ -21,9 +23,35 @@ export default class Players extends Controller {
         ladderSpeed: 125,
     }
 
-    create(game, config) {
+    add(game, { x, y, pad, image, config }) {
+        const fx = this.control(Fx);
+        const ui = this.control(UI);
         const weapons = this.control(Weapons);
 
+        let player = game.add.sprite(x, y, image);
+        player.anchor.set(0.5, 1);
+        game.physics.arcade.enable(player);
+
+        player.body.collideWorldBounds = true;
+        player.body.setSize(config.w, config.h);
+        player.body.deltaMax.y = config.h * 0.75;
+
+        player.data.jumpTimer = 0;
+        player.data.gamePad = pad;
+        player.data.weapon = weapons.add(game, { count: 30 });
+
+        // config health
+        player.health = player.maxHealth = 128;
+        ui.healthMeter(game, player);
+
+        // add fx
+        player.data.fx = fx.add(game, { isRed: true });
+
+        // track it
+        Controller.tag(player, TAGS.PLAYER);
+    }
+
+    create(game, config) {
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
         image.rect(0, 0, config.w, config.h, '#36D');
@@ -35,21 +63,14 @@ export default class Players extends Controller {
             game.input.gamepad.pad4,
         ];
 
-        const step = 1600;
+        let r = new Alea();
+        const collideLayer = Arena.selectCollideLayer(game);
         for (let i=0; i < game.input.gamepad.padsConnected; ++i) {
-            let player = game.add.sprite(config.x + i * step, config.y, image);
-            player.anchor.set(0.5, 1);
-            game.physics.arcade.enable(player);
-
-            player.body.collideWorldBounds = true;
-            player.body.setSize(config.w, config.h);
-            player.body.deltaMax.y = config.h * 0.75;
-
-            player.data.jumpTimer = 0;
-            player.data.gamePad = pads[i];
-            player.data.weapon = weapons.add(game, { count: 30 });
-
-            Controller.tag(player, TAGS.PLAYER);
+            const plat = pickFrom(r, collideLayer.data.platforms);
+            const x = Math.round(plat.pleft + r() * plat.pwidth);
+            const y = plat.py - 1;
+            const pad = pads[i];
+            this.add(game, { x, y, pad, image, config });
         }
     }
 

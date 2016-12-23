@@ -19,8 +19,10 @@ export default class Camera extends Controller {
             worldPosition: { x: 0, y: 0 },
         };
         this.bounds = Phaser.Rectangle.clone(game.world.bounds);
+
         const lerp = 0.1;
         game.camera.follow(this.target, Phaser.Camera.FOLLOW_LOCKON, lerp, lerp);
+
         Controller.tag(game.add.group(), TAGS.SCALE_LAYER);
     }
 
@@ -43,8 +45,8 @@ export default class Camera extends Controller {
         const margin = 100;
         const winWidth = window.innerWidth;
         const winHeight = window.innerHeight;
-        const left = Math.min.apply(Math, x) - margin;
-        const right = Math.max.apply(Math, x) + margin;
+        const left = Math.min.apply(Math, x) - (margin * 2);
+        const right = Math.max.apply(Math, x) + (margin * 2);
         const top = Math.min.apply(Math, y) - margin;
         const bottom = Math.max.apply(Math, y) + margin;
         const width = Math.min(right - left, collideLayer.width);
@@ -64,6 +66,5 @@ export default class Camera extends Controller {
 
         this.target.worldPosition.x = left + width * 0.5;
         this.target.worldPosition.y = top + height * 0.5;
-
     }
 }

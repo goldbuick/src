@@ -1,8 +1,10 @@
 import Fx from './Fx';
 import UI from './UI';
+import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
 import Weapons from './Weapons';
+import { pickFrom } from '../Util';
 import { Controller } from '../Controller';
 
 export default class Monsters extends Controller {
@@ -14,6 +16,10 @@ export default class Monsters extends Controller {
     static config = {
         w: 20,
         h: 20
+    }
+
+    shutdown(game, config) {
+        game.time.events.remove(this.spawnTimer);
     }
 
     create(game, config) {
@@ -64,19 +70,22 @@ export default class Monsters extends Controller {
 
             DEAD: this.noop
         });
+
+        this.spawn(game);
+        this.spawnTimer = game.time.events.loop(10000, () => this.spawn(game));        
     }
 
     spawn(game) {
         // not too many
         if (Monsters.selectMonsters(game).total >= 20) return;
 
+        let r = new Alea();
         const collideLayer = Arena.selectCollideLayer(game);
-        const padding = 100;
-        const width = collideLayer.width - padding * 2;
-        this.add(game, {
-            x: padding + Math.random() * width,
-            y: padding
-        });
+        const plat = pickFrom(r, collideLayer.data.platforms);
+        const x = Math.round(plat.pleft + r() * plat.pwidth);
+        const y = plat.py - 10;
+
+        this.add(game, { x, y });
     }
 
     add(game, { x, y }) {

@@ -29,16 +29,16 @@ export default class extends ManagedState {
         manager.create(Players);
         manager.create(Monsters);
 
-        const monsters = manager.control(Monsters);
-        const spawn = () => monsters.spawn(game);
-        this.spawnTimer = game.time.events.loop(10000, spawn);
+        // const monsters = manager.control(Monsters);
+        // const spawn = () => monsters.spawn(game);
+        // this.spawnTimer = game.time.events.loop(10000, spawn);
     }
 
     onUpdate(game, manager) {
     }
 
     shutdown() {
-        this.game.time.events.remove(this.spawnTimer);
+        // this.game.time.events.remove(this.spawnTimer);
     }
 
 }

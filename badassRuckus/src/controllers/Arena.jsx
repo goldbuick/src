@@ -67,7 +67,7 @@ export default class Arena extends Controller {
         this.tilemap.setCollision(ti([1, 2, 3, 4, 5, 6, 7, 8]));
 
         // fix layer sizing
-        [ bkgLayer, collideLayer ].forEach(l => l.resize(width, height));
+        [ bkgLayer, decoLayer, collideLayer ].forEach(l => l.resize(width, height));
 
         // tag collider layer for recall
         Controller.tag(collideLayer, TAGS.COLLIDER_LAYER);
@@ -110,6 +110,17 @@ export default class Arena extends Controller {
             cursor = plat.y;
         }
 
+        // drop plats that are off the bottom of the map
+        platforms = platforms.filter(p => (rows - p.y) > 5);
+
+        // calc pixel x & y
+        platforms.forEach(p => {
+            p.py = p.y * tile.h;
+            p.pleft = p.left * tile.w;
+            p.pright = p.right * tile.w;
+            p.pwidth = p.pright - p.pleft;
+        });
+
         // plot platform tops
         const plotTiles = (x1, x2, y1, indexes) => {
             if (x1 === x2) {
@@ -141,7 +152,10 @@ export default class Arena extends Controller {
                 let height = rows - plat.y;
                 for (let y=1; y < height; ++y) {
                     plotTilesRng(plat.left, plat.right, plat.y + y, 
-                        ti([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 44]), 'bkg-layer');
+                        ti([22, 44,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                        ]), 'bkg-layer');
                 }
             }
             // deco tops
@@ -200,6 +214,8 @@ export default class Arena extends Controller {
             addLadder();
             if (w > 12 && coin()) addLadder();
         });
+
+        collideLayer.data.platforms = platforms;
     }
 
     update(game, config) {

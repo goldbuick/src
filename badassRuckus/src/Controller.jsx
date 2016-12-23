@@ -21,6 +21,10 @@ class ControllerManager {
     update() {
         this.controllers.forEach(c => c.update && c.update(this.game, c.config));
     }
+
+    shutdown() {
+        this.controllers.forEach(c => c.shutdown && c.shutdown(this.game, c.config));
+    }
 }
 
 export class ManagedState extends Phaser.State {
@@ -33,6 +37,11 @@ export class ManagedState extends Phaser.State {
     update() {
         this.manager.update();
         this.onUpdate && this.onUpdate(this.game, this.manager);
+    }
+
+    shutdown() {
+        this.manager.shutdown();
+        this.onShutdown && this.onShutdown(this.game, this.manager);
     }
 
 }
@@ -91,6 +100,8 @@ export class Controller {
     create(game, config) { }
 
     update(game, config) { }
+
+    shutdown(game, config) { }
 
     control(Klass) {
         return this.manager.control(Klass);
