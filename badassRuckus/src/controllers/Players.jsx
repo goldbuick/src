@@ -75,10 +75,13 @@ export default class Players extends Controller {
         }
     }
 
-    handleCoinCollect(game, player) {
+    handleCoinCollect(game, coin) {
+        const fx = this.control(Fx);
         const ui = this.control(UI);
+        const player = coin.data.player;
         player.data.coins = (player.data.coins || 0) + 1;
         ui.coinMeter(game, player);
+        fx.addBeam(game, coin.x, coin.y, coin.width);
     }
 
     handleLadder = (player, ladder) => {

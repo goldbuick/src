@@ -34,15 +34,17 @@ export default class Coins extends Controller {
         
         let coin = coins.first;
         while (coin) {
-            const dx = coin.data.player.x - coin.x;
-            const dy = coin.data.player.y - coin.y;
+            const tx = coin.data.player.x;
+            const ty = coin.data.player.y - 6;
+            const dx = tx - coin.x;
+            const dy = ty - coin.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
             const nx = dx / dist;
             const ny = dy / dist;
 
             if (dist < 8) {
                 coin.kill();
-                player.handleCoinCollect(game, coin.data.player);
+                player.handleCoinCollect(game, coin);
             } else {
                 const vel = Math.min(dist * 0.1, 16);
                 coin.x += nx * vel;

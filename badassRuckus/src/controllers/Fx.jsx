@@ -14,6 +14,10 @@ export default class Fx extends Controller {
         return Controller.selectByTag(game, TAGS.FX_TX);
     }
 
+    static selectFxBxs(game) {
+        return Controller.selectByTag(game, TAGS.FX_BX);
+    }
+
     static config = {
         w: 2,
         h: 2
@@ -56,13 +60,26 @@ export default class Fx extends Controller {
         return Controller.tag(tx, TAGS.FX_TX);
     }
 
-    addLightBeam(game, x, y, w = 8) {
+    addBeam(game, x, y, w = 9) {
+        // temp image
+        let image = game.make.bitmapData(3, 3);
+        image.rect(0, 0, 3, 3, '#fff');
+
         // used for spawns
+        let bx = game.add.sprite(x, y, image);
+        bx.anchor.set(0.5, 0.5);
+
+        bx.width = w;
+        bx.height = 2048;
+
+        // tag it & return
+        return Controller.tag(bx, TAGS.FX_BX);
     }
 
     update(game, config) {
         const fxs = Fx.selectFxs(game);
         const txs = Fx.selectFxTxs(game);
+        const bxs = Fx.selectFxBxs(game);
         const collideLayer = Arena.selectCollideLayer(game);
 
         let fx = fxs.first;
@@ -80,6 +97,16 @@ export default class Fx extends Controller {
             tx.alpha -= 0.01;
             if (tx.alpha <= 0) tx.kill();
             tx = txs.next;
+        }
+
+        let bx = bxs.first;
+        while (bx) {
+            bx.width--;
+            bx.alpha -= 0.1;
+            if (bx.width === 1) {
+                bx.kill();
+            }
+            bx = bxs.next; 
         }
     }
 

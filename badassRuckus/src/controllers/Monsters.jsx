@@ -122,6 +122,9 @@ export default class Monsters extends Controller {
         // start brain
         this.IDLE_START(monster);
 
+        // spawn blip
+        fx.addBeam(game, x, y, monster.width);
+
         // tag it 
         Controller.tag(monster, TAGS.MONSTER);
     }
