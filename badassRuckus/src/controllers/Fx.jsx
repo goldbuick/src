@@ -56,6 +56,10 @@ export default class Fx extends Controller {
         return Controller.tag(tx, TAGS.FX_TX);
     }
 
+    addLightBeam(game, x, y, w = 8) {
+        // used for spawns
+    }
+
     update(game, config) {
         const fxs = Fx.selectFxs(game);
         const txs = Fx.selectFxTxs(game);

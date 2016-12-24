@@ -2,6 +2,7 @@
 export default {
     FX: 'FX',
     FX_TX: 'FX_TX',
+    COINS: 'COINS',
     WEAPON: 'WEAPON',
     LADDER: 'LADDER',
     PLAYER: 'PLAYER',

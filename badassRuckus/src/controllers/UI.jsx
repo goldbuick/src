@@ -7,7 +7,7 @@ export default class UI extends Controller {
     }
 
     healthMeter(game, sprite) {
-        if (sprite.data.meter) sprite.removeChild(sprite.data.meter);
+        if (sprite.data.hMeter) sprite.removeChild(sprite.data.hMeter);
 
         let w = 64, h = 3, ratio = sprite.health / sprite.maxHealth;
 
@@ -15,11 +15,30 @@ export default class UI extends Controller {
         image.rect(0, 0, w, h, '#333');
         image.rect(0, 0, w * ratio, h, '#F62');
 
-        sprite.data.meter = game.make.sprite(0, 0, image);
-        sprite.data.meter.anchor.set(0.5, 1);
-        sprite.data.meter.y = -(sprite.height + 5);
+        sprite.data.hMeter = game.make.sprite(0, 0, image);
+        sprite.data.hMeter.anchor.set(0.5, 1);
+        sprite.data.hMeter.y = -(sprite.height + 5);
 
-        sprite.addChild(sprite.data.meter);
+        sprite.addChild(sprite.data.hMeter);
+    }
+
+    coinMeter(game, sprite) {
+        if (sprite.data.cMeter) sprite.removeChild(sprite.data.cMeter);
+
+        const w = 16;
+        sprite.data.cMeter = game.make.group();
+        sprite.data.cMeter.y = -(sprite.height + w) + 2;
+
+        const left = (sprite.data.coins - 1) * w * 0.5;
+        for (let i=0; i < sprite.data.coins; ++i) {
+            let coin = game.make.sprite(i * w - left, 0, 'godcoin');
+            coin.anchor.set(0.5, 1);
+            coin.width = w - 2;
+            coin.height = w - 2;
+            sprite.data.cMeter.addChild(coin);
+        }
+
+        sprite.addChild(sprite.data.cMeter);
     }
 
 }

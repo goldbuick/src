@@ -42,7 +42,6 @@ export default class Weapons extends Controller {
         weapon.bulletLifespan = 512;
         weapon.bulletAngleVariance = 1;
         weapon.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;
-        console.log('weapon', weapon.bulletDistance, weapon.bulletKillType);
 
         weapon.fx = fx.add(game, {});
         weapon.onFire.add(this.handleFire);

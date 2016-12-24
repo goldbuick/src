@@ -1,13 +1,15 @@
 import Phaser from 'phaser';
+import { ManagedState } from '../Controller';
+
 import Fx from '../controllers/Fx';
 import UI from '../controllers/UI';
 import Arena from '../controllers/Arena';
+import Coins from '../controllers/Coins';
 import Camera from '../controllers/Camera';
 import Ladders from '../controllers/Ladders';
 import Players from '../controllers/Players';
 import Weapons from '../controllers/Weapons';
 import Monsters from '../controllers/Monsters';
-import { ManagedState } from '../Controller';
 
 export default class extends ManagedState {
 
@@ -21,6 +23,7 @@ export default class extends ManagedState {
 
         manager.create(Fx);
         manager.create(UI);
+        manager.create(Coins);
         manager.create(Ladders);
         manager.create(Weapons);
 
@@ -28,17 +31,6 @@ export default class extends ManagedState {
 
         manager.create(Players);
         manager.create(Monsters);
-
-        // const monsters = manager.control(Monsters);
-        // const spawn = () => monsters.spawn(game);
-        // this.spawnTimer = game.time.events.loop(10000, spawn);
-    }
-
-    onUpdate(game, manager) {
-    }
-
-    shutdown() {
-        // this.game.time.events.remove(this.spawnTimer);
     }
 
 }

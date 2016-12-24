@@ -3,6 +3,7 @@ import UI from './UI';
 import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
+import Coins from './Coins';
 import Weapons from './Weapons';
 import { pickFrom } from '../Util';
 import { Controller } from '../Controller';
@@ -63,9 +64,9 @@ export default class Monsters extends Controller {
             },
 
             KILL: (monster) => {
-                for (let i=0; i<5; ++i) {
-                    monster.data.fx.spark(monster.x, monster.y);
-                }
+                const coins = this.control(Coins);
+                coins.add(game, monster.x, monster.y, monster.data.player);
+                for (let i=0; i<5; ++i) monster.data.fx.spark(monster.x, monster.y);
                 this.DEAD(monster);
             },
 
@@ -138,6 +139,7 @@ export default class Monsters extends Controller {
             monster.damage(dmg);
             ui.healthMeter(game, monster);
             monster.data.fx.spark(monster.x, monster.y);
+            monster.data.player = bullet.data.bulletManager.player;
             fx.addTx(game, monster.x, monster.y - monster.height, ''+dmg);
         };
 

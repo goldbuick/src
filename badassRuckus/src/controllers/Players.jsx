@@ -39,6 +39,7 @@ export default class Players extends Controller {
         player.data.jumpTimer = 0;
         player.data.gamePad = pad;
         player.data.weapon = weapons.add(game);
+        player.data.weapon.player = player;
 
         // config health
         player.health = player.maxHealth = 128;
@@ -72,6 +73,12 @@ export default class Players extends Controller {
             const pad = pads[i];
             this.add(game, { x, y, pad, image, config });
         }
+    }
+
+    handleCoinCollect(game, player) {
+        const ui = this.control(UI);
+        player.data.coins = (player.data.coins || 0) + 1;
+        ui.coinMeter(game, player);
     }
 
     handleLadder = (player, ladder) => {
