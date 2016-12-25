@@ -1,5 +1,4 @@
 import Fx from './Fx';
-import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
 import { Controller } from '../Controller';
@@ -37,10 +36,10 @@ export default class Weapons extends Controller {
 
         // weapon factory
         let weapon = game.add.weapon(10, image);
-        weapon.fireRate = 256;
+        weapon.fireRate = 128;
         weapon.bulletSpeed = 1024;
         weapon.bulletLifespan = 512;
-        weapon.bulletAngleVariance = 1;
+        weapon.bulletAngleVariance = 5;
         weapon.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;
 
         weapon.fx = fx.add(game, {});

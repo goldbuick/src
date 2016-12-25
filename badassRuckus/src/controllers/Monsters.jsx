@@ -8,6 +8,8 @@ import Weapons from './Weapons';
 import { pickFrom } from '../Util';
 import { Controller } from '../Controller';
 
+const r = new Alea();
+
 export default class Monsters extends Controller {
 
     static selectMonsters(game) {
@@ -74,23 +76,22 @@ export default class Monsters extends Controller {
         });
 
         this.spawn(game);
-        this.spawnTimer = game.time.events.loop(10000, () => this.spawn(game));        
+        this.spawnTimer = game.time.events.loop(10000, () => this.spawn(game));
     }
 
     spawn(game) {
         // not too many
         if (Monsters.selectMonsters(game).total >= 20) return;
 
-        let r = new Alea();
         const collideLayer = Arena.selectCollideLayer(game);
         const plat = pickFrom(r, collideLayer.data.platforms);
         const x = Math.round(plat.pleft + r() * plat.pwidth);
         const y = plat.py - 10;
 
-        this.add(game, { x, y });
+        this.add(game, x, y);
     }
 
-    add(game, { x, y }) {
+    add(game, x, y) {
         const { config } = this;
         const fx = this.control(Fx);
         const ui = this.control(UI);

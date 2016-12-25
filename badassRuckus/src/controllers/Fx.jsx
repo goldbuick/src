@@ -1,4 +1,4 @@
-import Alea from 'alea';
+// import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
 import { gameText } from '../Text';
@@ -53,24 +53,20 @@ export default class Fx extends Controller {
         return Controller.tag(fx, TAGS.FX);
     }
 
-    addTx(game, x, y, text) {
-        let tx = gameText(game, { x, y, text, fontSize: 12, color: '#f00' });
+    addTx(game, x, y, text, color = '#f00') {
+        let tx = gameText(game, { x, y, text, fontSize: 12, color });
         tx.startY = y;
         // tag it & return
         return Controller.tag(tx, TAGS.FX_TX);
     }
 
     addBeam(game, x, y, w = 9) {
-        // temp image
-        let image = game.make.bitmapData(3, 3);
-        image.rect(0, 0, 3, 3, '#fff');
-
         // used for spawns
-        let bx = game.add.sprite(x, y, image);
+        let bx = game.add.sprite(x, y, 'blink');
         bx.anchor.set(0.5, 0.5);
 
         bx.width = w;
-        bx.height = 2048;
+        bx.height = 512;
 
         // tag it & return
         return Controller.tag(bx, TAGS.FX_BX);

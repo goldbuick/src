@@ -29,13 +29,14 @@ export default class Coins extends Controller {
     }
 
     update(game, config) {
-        const player = this.control(Players);
+        const players = this.control(Players);
         const coins = Coins.selectCoins(game);
         
         let coin = coins.first;
         while (coin) {
-            const tx = coin.data.player.x;
-            const ty = coin.data.player.y - 6;
+            const player = coin.data.player;
+            const tx = player.x;
+            const ty = player.y - 6;
             const dx = tx - coin.x;
             const dy = ty - coin.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -44,7 +45,7 @@ export default class Coins extends Controller {
 
             if (dist < 8) {
                 coin.kill();
-                player.handleCoinCollect(game, coin);
+                players.handleCoinCollect(game, player, coin);
             } else {
                 const vel = Math.min(dist * 0.1, 16);
                 coin.x += nx * vel;

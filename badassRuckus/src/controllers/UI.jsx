@@ -41,4 +41,23 @@ export default class UI extends Controller {
         sprite.addChild(sprite.data.cMeter);
     }
 
+    crownMeter(game, sprite) {
+        if (sprite.data.rMeter) sprite.removeChild(sprite.data.rMeter);
+
+        const w = 16;
+        sprite.data.rMeter = game.make.group();
+        sprite.data.rMeter.y = -(sprite.height + w * 2) + 4;
+
+        const left = (sprite.data.crowns - 1) * w * 0.5;
+        for (let i=0; i < sprite.data.crowns; ++i) {
+            let crown = game.make.sprite(i * w - left, 0, 'crown');
+            crown.anchor.set(0.5, 1);
+            crown.width = w - 2;
+            crown.height = w - 2;
+            sprite.data.rMeter.addChild(crown);
+        }
+
+        sprite.addChild(sprite.data.rMeter);
+    }
+
 }

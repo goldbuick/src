@@ -34,8 +34,10 @@ export default class extends Phaser.State {
             'enemyWalking_4',
         ].forEach(file => game.load.image(`${file}`, `media/monster/${file}.png`));
 
-        // items
+        // items & extras
         [
+            'crown',
+            'blink',
             'buffbox',
             'godcoin',
         ].forEach(file => game.load.image(`${file}`, `media/tiles/${file}.png`));

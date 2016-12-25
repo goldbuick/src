@@ -15,8 +15,8 @@ export default class Players extends Controller {
     }
 
     static config = {
-        w: 8,
-        h: 16,
+        w: 10,
+        h: 18,
         gravity: 1600,
         walkSpeed: 250,
         jumpForce: -450,
@@ -75,13 +75,36 @@ export default class Players extends Controller {
         }
     }
 
-    handleCoinCollect(game, coin) {
+    handleCoinCollect(game, player, coin) {
         const fx = this.control(Fx);
         const ui = this.control(UI);
-        const player = coin.data.player;
-        player.data.coins = (player.data.coins || 0) + 1;
-        ui.coinMeter(game, player);
         fx.addBeam(game, coin.x, coin.y, coin.width);
+        player.data.coins = (player.data.coins || 0) + 1;
+        if (player.data.coins > 5) {
+            player.data.coins = 0;
+        }
+        ui.coinMeter(game, player);
+    }
+
+    handleCrownCollect(game, player, crown) {
+        const fx = this.control(Fx);
+        const ui = this.control(UI);
+        fx.addBeam(game, crown.x, crown.y, crown.width);
+        player.data.crowns = (player.data.crowns || 0) + 1;
+        if (player.data.crowns > 5) {
+            player.data.crowns = 0;
+        }
+        ui.crownMeter(game, player);
+    }
+
+    handleCoinCheck(game, player) {
+        const ui = this.control(UI);
+        const coins = (player.data.coins || 0);
+        const nextCoins = coins - 3;
+        if (nextCoins < 0) return false;
+        player.data.coins = nextCoins;
+        ui.coinMeter(game, player);
+        return true;
     }
 
     handleLadder = (player, ladder) => {

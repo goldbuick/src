@@ -4,7 +4,9 @@ import { ManagedState } from '../Controller';
 import Fx from '../controllers/Fx';
 import UI from '../controllers/UI';
 import Arena from '../controllers/Arena';
+import Buffs from '../controllers/Buffs';
 import Coins from '../controllers/Coins';
+import Crowns from '../controllers/Crowns';
 import Camera from '../controllers/Camera';
 import Ladders from '../controllers/Ladders';
 import Players from '../controllers/Players';
@@ -29,6 +31,8 @@ export default class extends ManagedState {
 
         manager.create(Arena);
 
+        manager.create(Buffs);
+        manager.create(Crowns);
         manager.create(Players);
         manager.create(Monsters);
     }
