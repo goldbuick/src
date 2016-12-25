@@ -65,9 +65,12 @@ export default class Monsters extends Controller {
             },
 
             KILL: (monster) => {
+                const fx = this.control(Fx);
                 const coins = this.control(Coins);
                 coins.add(game, monster.x, monster.y, monster.data.player);
-                for (let i=0; i<5; ++i) monster.data.fx.spark(monster.x, monster.y);
+
+                fx.audio.splat.play();
+                monster.data.fx.spark(monster.x, monster.y);
                 this.DEAD(monster);
             },
 
@@ -123,6 +126,7 @@ export default class Monsters extends Controller {
         this.IDLE_START(monster);
 
         // spawn blip
+        fx.audio.monster.play();
         fx.addBeam(game, x, y, monster.width);
 
         // tag it 
@@ -143,6 +147,7 @@ export default class Monsters extends Controller {
             ui.healthMeter(game, monster);
             monster.data.player = player;
             monster.data.fx.spark(monster.x, monster.y);
+            fx.audio.impact.play();
             fx.addTx(game, monster.x, monster.y - monster.height, ''+bulletDamage);
         };
 

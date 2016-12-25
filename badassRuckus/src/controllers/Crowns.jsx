@@ -56,6 +56,7 @@ export default class Crowns extends Controller {
         crown.body.deltaMax.y = config.h * 0.75;
 
         // spawn blip
+        fx.audio.spawn.play();
         fx.addBeam(game, x, y, crown.width);
         
         // tag it 

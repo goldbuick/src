@@ -19,12 +19,6 @@ export default class Weapons extends Controller {
         bullet.body.allowGravity = false;
     }
 
-    handleKilled = (bullet) => {
-        // const { weapon } = bullet.data;
-        // const { fx } = weapon;
-        // fx.spark(bullet.x, bullet.y);
-    }
-
     add(game) {
         const { config } = Weapons;
         const fx = this.control(Fx);
@@ -45,7 +39,6 @@ export default class Weapons extends Controller {
 
         weapon.fx = fx.add(game, {});
         weapon.onFire.add(this.handleFire);
-        weapon.onKill.add(this.handleKilled);
 
         // tag it
         Controller.tag(weapon.bullets, TAGS.WEAPON);
@@ -56,8 +49,9 @@ export default class Weapons extends Controller {
 
     handleCollideLayer = (bullet, other) => {
         const { weapon } = bullet.data;
-        const { fx } = weapon;
-        fx.spark(bullet.x, bullet.y);
+        const fx = this.control(Fx);
+        fx.audio.impact.play();
+        weapon.fx.spark(bullet.x, bullet.y);
         bullet.kill();
     }
 

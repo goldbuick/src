@@ -54,6 +54,7 @@ export default class Buffs extends Controller {
         buff.body.deltaMax.y = config.h * 0.75;
 
         // spawn blip
+        fx.audio.spawn.play();
         fx.addBeam(game, x, y, buff.width);
         
         // tag it 
@@ -95,6 +96,7 @@ export default class Buffs extends Controller {
             }
 
             buff.kill();
+            fx.audio.buff.play();
             fx.addBeam(game, buff.x, buff.y, buff.width);
             fx.addTx(game, buff.x, buff.y - buff.height, buffName, '#0f0');
         };

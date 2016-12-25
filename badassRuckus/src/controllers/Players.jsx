@@ -78,6 +78,7 @@ export default class Players extends Controller {
     handleCoinCollect(game, player, coin) {
         const fx = this.control(Fx);
         const ui = this.control(UI);
+        fx.audio.coin.play();
         fx.addBeam(game, coin.x, coin.y, coin.width);
         fx.addTx(game, coin.x, coin.y - coin.height, 'coins unlock buff drops', '#fff');
         player.data.coins = (player.data.coins || 0) + 1;
@@ -90,6 +91,7 @@ export default class Players extends Controller {
     handleCrownCollect(game, player, crown) {
         const fx = this.control(Fx);
         const ui = this.control(UI);
+        fx.audio.crown.play();
         fx.addBeam(game, crown.x, crown.y, crown.width);
         player.data.crowns = (player.data.crowns || 0) + 1;
         if (player.data.crowns >= 5) {
@@ -110,7 +112,7 @@ export default class Players extends Controller {
     }
 
     handleLadder = (player, ladder) => {
-        player.data.ladderTop = ladder.y;// - player.height;
+        player.data.ladderTop = ladder.y;
         player.data.ladderBottom = ladder.y + ladder.height - 2;
         if ((player.data.input.upIsPressed && player.y > player.data.ladderTop) ||
             (player.data.input.downIsPressed && player.y < player.data.ladderBottom)) {
@@ -128,7 +130,9 @@ export default class Players extends Controller {
         const stickThreshold = 0.5;
         const { walkSpeed, jumpForce, ladderSpeed } = config;
 
+        const fx = this.control(Fx);
         const players = Players.selectPlayers(game);
+        const weapons = Weapons.selectWeapons(game);
         const selectLadders = Ladders.selectLadders(game);
         const collideLayer = Arena.selectCollideLayer(game);
 
@@ -184,6 +188,7 @@ export default class Players extends Controller {
                 let from = player.position.clone();
                 from.y -= player.height - 5;
                 from.x += player.width * facing;
+                fx.audio.gun.play();
                 player.data.weapon.fire(from, from.x + facing * 32, from.y);
             }
 

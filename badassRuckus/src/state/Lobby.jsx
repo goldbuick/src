@@ -10,6 +10,21 @@ export default class extends Phaser.State {
     create() {
         const { game } = this;
         game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+
+        let loop = game.add.audio('loop');
+        loop.loopFull();
+
+        this.audio = { };
+        [
+            'coin',
+            'voice1',
+            'voice2',
+            'voice3',
+            'voiceFight',
+        ].forEach(name => {
+            this.audio[name] = game.add.audio(name);
+        });
+
         this.layout(game);
     }
 
@@ -47,6 +62,12 @@ export default class extends Phaser.State {
             } else {
                 this.counter = counter - 1;
                 timer.text = this.counter + '...';
+                switch (this.counter) {
+                    case 3: this.audio.voice3.play(); break;
+                    case 2: this.audio.voice2.play(); break;
+                    case 1: this.audio.voice1.play(); break;
+                    default: this.audio.voiceFight.play(); break;
+                }
                 if (this.counter <= 0) {
                     game.state.start('RuckusArena');
                 }
@@ -101,6 +122,7 @@ export default class extends Phaser.State {
 
         game.input.gamepad.addCallbacks(this, {
             onDown: (btn, value, index) => {
+                this.audio.coin.play();
                 const { p1, p2, p3, p4, timer, timerEvent } = this;
                 let tx = [ p1, p2, p3, p4 ][index];
                 if (btn === Phaser.Gamepad.XBOX360_X) onDown(tx);

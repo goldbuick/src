@@ -6,6 +6,25 @@ export default class extends Phaser.State {
     preload() {
         const { game } = this;
 
+        // audio
+        [
+            'buff',
+            'coin',
+            'crown',
+            'dash',
+            'gameover',
+            'gun',
+            'impact',
+            'loop',
+            'monster',
+            'spawn',
+            'splat',
+            'voice1',
+            'voice2',
+            'voice3',
+            'voiceFight',
+        ].forEach(file => game.load.audio(`${file}`, `media/audio/${file}.wav`));
+
         // mobs
         [
             'enemyFloating_1',

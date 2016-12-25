@@ -23,6 +23,28 @@ export default class Fx extends Controller {
         h: 2
     }
 
+    create(game, config) {
+        this.audio = { };
+        [
+            'buff',
+            'coin',
+            'crown',
+            'dash',
+            'gameover',
+            'gun',
+            'impact',
+            'monster',
+            'spawn',
+            'splat',
+            'voice1',
+            'voice2',
+            'voice3',
+            'voiceFight',
+        ].forEach(name => {
+            this.audio[name] = game.add.audio(name);
+        });
+    }
+
     add(game, { isRed = false }) {
         let { config } = this;
 
