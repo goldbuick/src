@@ -131,10 +131,22 @@ export default class Players extends Controller {
         const { walkSpeed, jumpForce, ladderSpeed } = config;
 
         const fx = this.control(Fx);
+        const ui = this.control(UI);
         const players = Players.selectPlayers(game);
         const weapons = Weapons.selectWeapons(game);
         const selectLadders = Ladders.selectLadders(game);
         const collideLayer = Arena.selectCollideLayer(game);
+
+        const handleHit = (target, bullet) => {
+            const { player, bulletDamage } = bullet.data.bulletManager;
+            if (target === player) return;
+            bullet.kill();
+            target.damage(bulletDamage);
+            ui.healthMeter(game, target);
+            fx.audio.impact.play();
+            fx.addTx(game, target.x, target.y - target.height, ''+bulletDamage);
+        };
+
 
         let player = players.first;
         while (player) { 
@@ -241,6 +253,9 @@ export default class Players extends Controller {
                     player.data.jumpTimer = game.time.now + 150;
                 }
             }
+
+            // check for bullets
+            game.physics.arcade.overlap(player, weapons.list, handleHit);
 
             player = players.next;
         }

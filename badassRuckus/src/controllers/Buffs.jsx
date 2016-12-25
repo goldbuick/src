@@ -79,7 +79,7 @@ export default class Buffs extends Controller {
                     buffName = 'spread shot';
                     break;
                 case 1:
-                    buffName = 'seeking shot';
+                    // buffName = 'seeking shot';
                     break;
                 case 2:
                     buffName = 'damage up';
