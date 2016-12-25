@@ -9,7 +9,7 @@ export default class UI extends Controller {
     healthMeter(game, sprite) {
         if (sprite.data.hMeter) sprite.removeChild(sprite.data.hMeter);
 
-        let w = 64, h = 3, ratio = sprite.health / sprite.maxHealth;
+        let w = 64, h = 3, ratio = Math.max(0, sprite.health) / sprite.maxHealth;
 
         let image = game.make.bitmapData(w, h);
         image.rect(0, 0, w, h, '#333');

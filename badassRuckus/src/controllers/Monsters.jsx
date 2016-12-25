@@ -137,13 +137,13 @@ export default class Monsters extends Controller {
         const collideLayer = Arena.selectCollideLayer(game);
 
         const handleHit = (monster, bullet) => {
-            const dmg = 1;
+            const { player, bulletDamage } = bullet.data.bulletManager;
             bullet.kill();
-            monster.damage(dmg);
+            monster.damage(bulletDamage);
             ui.healthMeter(game, monster);
+            monster.data.player = player;
             monster.data.fx.spark(monster.x, monster.y);
-            monster.data.player = bullet.data.bulletManager.player;
-            fx.addTx(game, monster.x, monster.y - monster.height, ''+dmg);
+            fx.addTx(game, monster.x, monster.y - monster.height, ''+bulletDamage);
         };
 
         let monster = monsters.first;

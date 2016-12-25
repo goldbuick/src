@@ -37,9 +37,10 @@ export default class Weapons extends Controller {
         // weapon factory
         let weapon = game.add.weapon(10, image);
         weapon.fireRate = 128;
+        weapon.bulletDamage = 1;
         weapon.bulletSpeed = 1024;
         weapon.bulletLifespan = 512;
-        weapon.bulletAngleVariance = 5;
+        weapon.bulletAngleVariance = 6;
         weapon.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;
 
         weapon.fx = fx.add(game, {});
