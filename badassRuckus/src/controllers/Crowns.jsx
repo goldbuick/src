@@ -2,11 +2,10 @@ import Fx from './Fx';
 import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
+import { r } from '../Globals';
 import Players from './Players';
 import { Controller } from '../Controller';
 import { range, pickFrom } from '../Util';
-
-const r = new Alea();
 
 export default class Crowns extends Controller {
 
@@ -24,9 +23,7 @@ export default class Crowns extends Controller {
     }
     
     create(game, config) {
-        for (let i=0; i < 5; ++i) {
-            this.spawn(game);
-        }
+        this.reset(game);
     }
 
     spawn(game) {
@@ -36,6 +33,12 @@ export default class Crowns extends Controller {
         const y = plat.py - 10;
 
         this.add(game, x, y);
+    }
+
+    reset(game) {
+        for (let i=0; i < 5; ++i) {
+            this.spawn(game);
+        }
     }
 
     add(game, x, y) {
@@ -68,10 +71,17 @@ export default class Crowns extends Controller {
 
         const handlePickup = (crown, player) => {
             const players = this.control(Players);
-            players.handleCrownCollect(game, player, crown);
+            const count = players.handleCrownCollect(game, player, crown);
             crown.kill();
             fx.addBeam(game, crown.x, crown.y, crown.width);
-            fx.addTx(game, crown.x, crown.y - crown.height, 'collect all 5', '#fff');
+            const phrase = [
+                'you wot m8',
+                'collect all 5',
+                '3 to go',
+                '2 to go',
+                '1 to go (kill them)',
+            ][count];
+            fx.addTx(game, crown.x, crown.y - crown.height, phrase, '#fff');
         };
         
         let crown = crowns.first;

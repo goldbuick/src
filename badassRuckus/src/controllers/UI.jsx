@@ -27,11 +27,11 @@ export default class UI extends Controller {
 
         const w = 16;
         sprite.data.cMeter = game.make.group();
-        sprite.data.cMeter.y = -(sprite.height + w) + 2;
+        sprite.data.cMeter.y = -(sprite.height + w) + 5;
 
         const left = (sprite.data.coins - 1) * w * 0.5;
         for (let i=0; i < sprite.data.coins; ++i) {
-            let coin = game.make.sprite(i * w - left, 0, 'godcoin');
+            let coin = game.make.sprite(i * w - left, 0, 'coin');
             coin.anchor.set(0.5, 1);
             coin.width = w - 2;
             coin.height = w - 2;
@@ -44,16 +44,17 @@ export default class UI extends Controller {
     crownMeter(game, sprite) {
         if (sprite.data.rMeter) sprite.removeChild(sprite.data.rMeter);
 
-        const w = 16;
+        const w = 18;
+        const h = 16;
         sprite.data.rMeter = game.make.group();
-        sprite.data.rMeter.y = -(sprite.height + w * 2) + 4;
+        sprite.data.rMeter.y = -(sprite.height + h * 2) + 2;
 
         const left = (sprite.data.crowns - 1) * w * 0.5;
         for (let i=0; i < sprite.data.crowns; ++i) {
             let crown = game.make.sprite(i * w - left, 0, 'crown');
             crown.anchor.set(0.5, 1);
-            crown.width = w - 2;
-            crown.height = w - 2;
+            crown.width = w - 4;
+            crown.height = h - 2;
             sprite.data.rMeter.addChild(crown);
         }
 

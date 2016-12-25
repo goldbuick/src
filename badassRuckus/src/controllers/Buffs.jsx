@@ -2,11 +2,10 @@ import Fx from './Fx';
 import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
+import { r } from '../Globals';
 import Players from './Players';
 import { Controller } from '../Controller';
 import { range, pickFrom } from '../Util';
-
-const r = new Alea();
 
 export default class Buffs extends Controller {
 

@@ -18,10 +18,8 @@ export default class Coins extends Controller {
         const { config } = this;
 
         // create sprite
-        let coin = game.add.sprite(x, y, 'godcoin');
+        let coin = game.add.sprite(x, y, 'coin');
         coin.anchor.set(0.5, 1);
-        coin.width = config.w;
-        coin.height = config.h;
         coin.data.player = player;
         
         // tag it 

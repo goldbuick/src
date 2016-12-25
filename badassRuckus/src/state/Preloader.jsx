@@ -36,10 +36,10 @@ export default class extends Phaser.State {
 
         // items & extras
         [
+            'coin',
             'crown',
             'blink',
             'buffbox',
-            'godcoin',
         ].forEach(file => game.load.image(`${file}`, `media/tiles/${file}.png`));
 
         // tiles & bkg

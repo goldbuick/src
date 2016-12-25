@@ -3,6 +3,7 @@ import UI from './UI';
 import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
+import { r } from '../Globals';
 import Ladders from './Ladders';
 import Weapons from './Weapons';
 import { pickFrom } from '../Util';
@@ -64,7 +65,6 @@ export default class Players extends Controller {
             game.input.gamepad.pad4,
         ];
 
-        let r = new Alea();
         const collideLayer = Arena.selectCollideLayer(game);
         for (let i=0; i < game.input.gamepad.padsConnected; ++i) {
             const plat = pickFrom(r, collideLayer.data.platforms);
@@ -79,6 +79,7 @@ export default class Players extends Controller {
         const fx = this.control(Fx);
         const ui = this.control(UI);
         fx.addBeam(game, coin.x, coin.y, coin.width);
+        fx.addTx(game, coin.x, coin.y - coin.height, 'coins unlock buff drops', '#fff');
         player.data.coins = (player.data.coins || 0) + 1;
         if (player.data.coins > 5) {
             player.data.coins = 0;
@@ -91,16 +92,17 @@ export default class Players extends Controller {
         const ui = this.control(UI);
         fx.addBeam(game, crown.x, crown.y, crown.width);
         player.data.crowns = (player.data.crowns || 0) + 1;
-        if (player.data.crowns > 5) {
+        if (player.data.crowns >= 5) {
             player.data.crowns = 0;
         }
         ui.crownMeter(game, player);
+        return player.data.crowns;
     }
 
     handleCoinCheck(game, player) {
         const ui = this.control(UI);
         const coins = (player.data.coins || 0);
-        const nextCoins = coins - 3;
+        const nextCoins = coins - 1;
         if (nextCoins < 0) return false;
         player.data.coins = nextCoins;
         ui.coinMeter(game, player);

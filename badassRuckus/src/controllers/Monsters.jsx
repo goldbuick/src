@@ -4,11 +4,10 @@ import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
 import Coins from './Coins';
+import { r } from '../Globals';
 import Weapons from './Weapons';
 import { pickFrom } from '../Util';
 import { Controller } from '../Controller';
-
-const r = new Alea();
 
 export default class Monsters extends Controller {
 
