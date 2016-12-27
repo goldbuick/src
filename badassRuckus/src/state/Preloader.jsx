@@ -16,7 +16,6 @@ export default class extends Phaser.State {
             'gun',
             'impact',
             'loop',
-            'monster',
             'spawn',
             'splat',
             'voice1',

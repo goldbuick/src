@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import globals from '../Globals';
 import { gameText } from '../Text';
 
 export default class extends Phaser.State {
@@ -76,7 +77,10 @@ export default class extends Phaser.State {
 
         const checkTimer = () => {
             const { p1, p2, p3, p4, timer, timerEvent } = this;
-            let go = [ p1, p2, p3, p4 ].filter(p => p.ready).length > 0;
+            let go = [ p1, p2, p3, p4 ].filter((p, i) => {
+                globals.playerActive[i] = p.ready;
+                return globals.playerActive[i];
+            }).length > 0;
             if (go) {
                 this.counter = 4;
                 if (!timerEvent) {

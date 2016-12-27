@@ -8,8 +8,7 @@ export default class UI extends Controller {
 
     healthMeter(game, sprite) {
         if (sprite.data.hMeter) sprite.removeChild(sprite.data.hMeter);
-
-        let w = 64, h = 3, ratio = Math.max(0, sprite.health) / sprite.maxHealth;
+        const w = 64, h = 3, ratio = Math.max(0, sprite.health) / sprite.maxHealth;
 
         let image = game.make.bitmapData(w, h);
         image.rect(0, 0, w, h, '#333');
@@ -24,8 +23,8 @@ export default class UI extends Controller {
 
     coinMeter(game, sprite) {
         if (sprite.data.cMeter) sprite.removeChild(sprite.data.cMeter);
-
         const w = 16;
+
         sprite.data.cMeter = game.make.group();
         sprite.data.cMeter.y = -(sprite.height + w) + 5;
 
@@ -43,9 +42,8 @@ export default class UI extends Controller {
 
     crownMeter(game, sprite) {
         if (sprite.data.rMeter) sprite.removeChild(sprite.data.rMeter);
+        const w = 18, h = 16;
 
-        const w = 18;
-        const h = 16;
         sprite.data.rMeter = game.make.group();
         sprite.data.rMeter.y = -(sprite.height + h * 2) + 2;
 
@@ -59,6 +57,23 @@ export default class UI extends Controller {
         }
 
         sprite.addChild(sprite.data.rMeter);
+    }
+
+    cooldownMeter(game, sprite, name, align, ratio) {
+        if (sprite.data[name]) sprite.removeChild(sprite.data[name]);
+        if (ratio === 0) return;
+        const w = 24, h = 3, nudge = 8;
+
+        let image = game.make.bitmapData(w, h);
+        image.rect(0, 0, w, h, '#333');
+        image.rect(0, 0, w * ratio, h, '#FA2');
+
+        sprite.data[name] = game.make.sprite(0, 0, image);
+        sprite.data[name].anchor.set(align, 1);
+        sprite.data[name].y = 8;
+        sprite.data[name].x = align ? -nudge : nudge;
+
+        sprite.addChild(sprite.data[name]);
     }
 
 }

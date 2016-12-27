@@ -111,11 +111,10 @@ export class Controller {
 
     behaviors(STATES) {
         Object.keys(STATES).forEach(STATE => {
-            this[STATE.toUpperCase()] = (object, args = {}) => {
-                object.data.STATE = STATE.toUpperCase();
-                const fn = STATES[object.data.STATE];
-                if (fn) fn(object, args);
-            };
+            const invoke = STATE.toUpperCase();
+            const exec = '_' + invoke;
+            this[exec] = STATES[invoke];
+            this[invoke] = (object) => object.data.STATE = exec;
         });
     }
 
@@ -124,12 +123,38 @@ export class Controller {
         if (fn) fn(object, args);
     }
 
-    ready(game, object, fn, args) {
-        if (game.time.now > object.data.TIMER) fn(object, args);
+    ready(game, object, fn) {
+        if (game.time.now > object.data.TIMER) fn(object);
     }
 
     wait(game, object, delay = 0) {
         object.data.TIMER = game.time.now + delay;
+    }
+
+    cooldown(COOLDOWNS) {
+        Object.keys(COOLDOWNS).forEach(NAME => {
+            const name = NAME.toLowerCase();
+            const delay = COOLDOWNS[NAME] * 1000;
+
+            const delayName = name + 'Delay';
+            const cooldownRatio = name + 'Ratio';
+            const cooldownName = name + 'Cooldown';
+            this[cooldownName] = (game, object) => {
+                const current = (object.data[name] || 0);
+                const max = (object.data[delayName] || delay);
+                if (game.time.now > current) {
+                    object.data[name] = game.time.now + max;
+                    return true;
+                }
+                return false;
+            };
+            this[cooldownRatio] = (game, object) => {
+                const current = (object.data[name] || 0);
+                const max = (object.data[delayName] || delay);
+                const diff = Math.max(0, current - game.time.now);
+                return (diff / max);
+            };
+        });
     }
 
 }

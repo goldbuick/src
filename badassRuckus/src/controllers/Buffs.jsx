@@ -7,6 +7,33 @@ import Players from './Players';
 import { Controller } from '../Controller';
 import { range, pickFrom } from '../Util';
 
+const BUFFS = {
+    // gun
+    // dash
+    // jump
+    // health
+};
+
+
+            //         buffName = 'spread shot';
+            //         break;
+            //     case 1:
+            //         // buffName = 'seeking shot';
+            //         break;
+            //     case 2:
+            //         buffName = 'damage up';
+            //         break;
+            //     case 3:
+            //         buffName = 'accuracy';
+            //         break;
+            //     case 4:
+            //         buffName = 'range up';
+            //         break;
+            //     case 5:
+            //         buffName = 'speed up';
+            //         break;
+
+
 export default class Buffs extends Controller {
 
     static selectBuffs(game) {
@@ -23,13 +50,12 @@ export default class Buffs extends Controller {
     }
     
     create(game, config) {
-        this.spawn(game);
-        this.spawnTimer = game.time.events.loop(10000, () => this.spawn(game));
+        this.spawnTimer = game.time.events.loop(15 * 1000, () => this.spawn(game));
     }
 
     spawn(game) {
         // not too many
-        if (Buffs.selectBuffs(game).total >= 5) return;
+        if (Buffs.selectBuffs(game).total >= 15) return;
 
         const collideLayer = Arena.selectCollideLayer(game);
         const plat = pickFrom(r, collideLayer.data.platforms);
@@ -74,26 +100,26 @@ export default class Buffs extends Controller {
             
             const types = 5;
             let buffName = '';
-            switch (pickFrom(r, range(0, types))) {
-                case 0:
-                    buffName = 'spread shot';
-                    break;
-                case 1:
-                    // buffName = 'seeking shot';
-                    break;
-                case 2:
-                    buffName = 'damage up';
-                    break;
-                case 3:
-                    buffName = 'accuracy';
-                    break;
-                case 4:
-                    buffName = 'range up';
-                    break;
-                case 5:
-                    buffName = 'speed up';
-                    break;
-            }
+            // switch (pickFrom(r, range(0, types))) {
+            //     case 0:
+            //         buffName = 'spread shot';
+            //         break;
+            //     case 1:
+            //         // buffName = 'seeking shot';
+            //         break;
+            //     case 2:
+            //         buffName = 'damage up';
+            //         break;
+            //     case 3:
+            //         buffName = 'accuracy';
+            //         break;
+            //     case 4:
+            //         buffName = 'range up';
+            //         break;
+            //     case 5:
+            //         buffName = 'speed up';
+            //         break;
+            // }
 
             buff.kill();
             fx.audio.buff.play();

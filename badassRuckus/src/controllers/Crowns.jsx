@@ -23,7 +23,7 @@ export default class Crowns extends Controller {
     }
     
     create(game, config) {
-        this.reset(game);
+        this.spawnTimer = game.time.events.repeat(120 * 1000, 0, () => this.reset(game));
     }
 
     spawn(game) {

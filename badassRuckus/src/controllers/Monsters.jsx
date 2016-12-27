@@ -41,8 +41,6 @@ export default class Monsters extends Controller {
             },
 
             WALK: (monster, { collideLayer }) => {
-                collideLayer = collideLayer || Arena.selectCollideLayer(game);
-
                 monster.body.velocity.x = 0;
                 if (monster.body.onFloor()) {
                     // walkin
@@ -77,7 +75,6 @@ export default class Monsters extends Controller {
             DEAD: this.noop
         });
 
-        this.spawn(game);
         this.spawnTimer = game.time.events.loop(10000, () => this.spawn(game));
     }
 
@@ -126,7 +123,7 @@ export default class Monsters extends Controller {
         this.IDLE_START(monster);
 
         // spawn blip
-        fx.audio.monster.play();
+        fx.audio.spawn.play();
         fx.addBeam(game, x, y, monster.width);
 
         // tag it 

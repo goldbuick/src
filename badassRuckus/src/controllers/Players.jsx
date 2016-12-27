@@ -3,10 +3,11 @@ import UI from './UI';
 import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
-import { r } from '../Globals';
+import Phaser from 'phaser';
 import Ladders from './Ladders';
 import Weapons from './Weapons';
 import { pickFrom } from '../Util';
+import globals, { r } from '../Globals';
 import { Controller } from '../Controller';
 
 export default class Players extends Controller {
@@ -20,16 +21,19 @@ export default class Players extends Controller {
         h: 18,
         gravity: 1600,
         walkSpeed: 250,
+        dashSpeed: 1024,
         jumpForce: -450,
         ladderSpeed: 125,
     }
 
-    add(game, { x, y, pad, image, config }) {
+    add(game, { x, y, pad, name, image, config }) {
         const fx = this.control(Fx);
         const ui = this.control(UI);
         const weapons = this.control(Weapons);
 
         let player = game.add.sprite(x, y, image);
+        player.width = config.w;
+        player.height = config.h;
         player.anchor.set(0.5, 1);
         game.physics.arcade.enable(player);
 
@@ -39,7 +43,7 @@ export default class Players extends Controller {
 
         player.data.jumpTimer = 0;
         player.data.gamePad = pad;
-        player.data.weapon = weapons.add(game);
+        player.data.weapon = weapons.add(game, Phaser.Bullet);
         player.data.weapon.player = player;
 
         // config health
@@ -49,30 +53,11 @@ export default class Players extends Controller {
         // add fx
         player.data.fx = fx.add(game, { isRed: true });
 
+        // start brain
+        this.ACTIVE(player);
+
         // track it
         Controller.tag(player, TAGS.PLAYER);
-    }
-
-    create(game, config) {
-        // temp image
-        let image = game.make.bitmapData(config.w, config.h);
-        image.rect(0, 0, config.w, config.h, '#36D');
-
-        const pads = [
-            game.input.gamepad.pad1,
-            game.input.gamepad.pad2,
-            game.input.gamepad.pad3,
-            game.input.gamepad.pad4,
-        ];
-
-        const collideLayer = Arena.selectCollideLayer(game);
-        for (let i=0; i < game.input.gamepad.padsConnected; ++i) {
-            const plat = pickFrom(r, collideLayer.data.platforms);
-            const x = Math.round(plat.pleft + r() * plat.pwidth);
-            const y = plat.py - 1;
-            const pad = pads[i];
-            this.add(game, { x, y, pad, image, config });
-        }
     }
 
     handleCoinCollect(game, player, coin) {
@@ -80,7 +65,7 @@ export default class Players extends Controller {
         const ui = this.control(UI);
         fx.audio.coin.play();
         fx.addBeam(game, coin.x, coin.y, coin.width);
-        fx.addTx(game, coin.x, coin.y - coin.height, 'coins unlock buff drops', '#fff');
+        fx.addTx(game, coin.x, coin.y - coin.height, 'unlock barrels', '#fff');
         player.data.coins = (player.data.coins || 0) + 1;
         if (player.data.coins > 5) {
             player.data.coins = 0;
@@ -118,23 +103,169 @@ export default class Players extends Controller {
             (player.data.input.downIsPressed && player.y < player.data.ladderBottom)) {
             player.body.allowGravity = false;
             player.data.ladder = ladder;
+            this.LADDER(player);
         }
     }
 
     leaveLadder(player) {
         delete player.data.ladder;
         player.body.allowGravity = true;
+        this.ACTIVE(player);
+    }
+
+    create(game, config) {
+        const { walkSpeed, dashSpeed, jumpForce, ladderSpeed } = config;
+
+        const weaponTrigger = (player, { fx, primaryWeaponPressed }) => {
+            // shoootan
+            if (primaryWeaponPressed) {
+                const facing = player.data.facing || 1;
+                let from = player.position.clone();
+                from.y -= player.height - 5;
+                from.x += player.width * facing;
+                player.data.weapon.fire(from, from.x + facing * 32, from.y);
+            }
+        };
+
+        this.cooldown({
+            alt: 5, // secondary weapon
+            dash: 5, // primary dodge
+        });
+
+        this.behaviors({
+            ACTIVE: (player, { fx, ladders, collideLayer }) => {
+                const { jumpIsPressed, 
+                    leftIsPressed, rightIsPressed,
+                    primaryDodgePressed, secondaryDodgePressed,
+                    primaryWeaponPressed, secondaryWeaponPressed } = player.data.input;
+
+                // check for ladders first
+                game.physics.arcade.overlap(player, ladders.list, this.handleLadder);
+
+                // check for tiles second
+                game.physics.arcade.collide(player, collideLayer);
+
+                // triggers
+                weaponTrigger(player, { fx, primaryWeaponPressed, secondaryWeaponPressed });
+                if (primaryDodgePressed && this.dashCooldown(game, player)) {
+                    this.DASH_START(player);
+                }
+                if (secondaryDodgePressed && this.dashCooldown(game, player)) {
+
+                }
+
+                // update movement
+                player.body.velocity.x = 0;
+                if (leftIsPressed) player.body.velocity.x = -walkSpeed;
+                if (rightIsPressed) player.body.velocity.x = walkSpeed;
+
+                if (player.body.onFloor()) {
+                    player.data.floorTimer = game.time.now + 100;
+                }
+
+                if (jumpIsPressed && 
+                    game.time.now > player.data.jumpTimer && 
+                    game.time.now < player.data.floorTimer) {
+                    player.body.velocity.y = jumpForce;
+                    player.data.jumpTimer = game.time.now + 150;
+                }
+            },
+            LADDER: (player, { fx }) => {
+                const { ladder, ladderTop, ladderBottom } = player.data;
+                const { leftIsPressed, rightIsPressed, upIsPressed, downIsPressed,
+                    jumpIsPressed, primaryWeaponPressed, secondaryWeaponPressed } = player.data.input;
+
+                // triggers
+                weaponTrigger(player, { fx, primaryWeaponPressed, secondaryWeaponPressed });
+
+                // update movement
+                player.body.velocity.x = 0;
+                player.body.velocity.y = 0;
+                if (upIsPressed) player.body.velocity.y = -ladderSpeed;
+                if (downIsPressed) player.body.velocity.y = ladderSpeed;
+
+                // snap to ladder
+                player.x = ladder.x;
+
+                // jump from ladder
+                if (jumpIsPressed && !upIsPressed && !downIsPressed &&
+                    (leftIsPressed || rightIsPressed)) {
+                    this.leaveLadder(player, ladderTop)
+                    player.body.velocity.y = jumpForce;
+                    player.data.jumpTimer = game.time.now + 150;
+                }
+
+                // climb off the top of the ladder AND
+                // climb off the bottom of the ladder
+                if (player.y < ladderTop || player.y > ladderBottom) {
+                    this.leaveLadder(player, ladderTop);
+                }
+            },
+            DASH_START: (player, { fx }) => {
+                fx.audio.dash.play();
+                player.data.dashing = true;
+                player.body.allowGravity = false;
+                this.wait(game, player, 128);
+                this.DASH(player);
+            },
+            DASH: (player, { collideLayer }) => {
+                const facing = player.data.facing || 1;
+                player.body.velocity.y = 0;
+                player.body.velocity.x = facing * dashSpeed;
+
+                // check for tiles second
+                game.physics.arcade.collide(player, collideLayer);
+
+                // bail when done
+                this.ready(game, player, this.DASH_DONE);
+            },
+            DASH_DONE: (player) => {
+                player.data.dashing = false;
+                player.body.allowGravity = true;
+                this.ACTIVE(player);
+            },
+            UNDEAD: (player) => {
+
+            }
+        });
+
+        const names = [
+            'alienBlue',
+            'alienGreen',
+            'alienPink',
+            'alienYellow',
+        ];
+
+        const pads = [
+            game.input.gamepad.pad1,
+            game.input.gamepad.pad2,
+            game.input.gamepad.pad3,
+            game.input.gamepad.pad4,
+        ];
+        
+        // temp image
+        let image = game.make.bitmapData(config.w, config.h);
+        image.rect(0, 0, config.w, config.h, '#36D');
+
+        const collideLayer = Arena.selectCollideLayer(game);
+        for (let i=0; i < 4; ++i) {
+            if (globals.playerActive[i]) {
+                const plat = pickFrom(r, collideLayer.data.platforms);
+                const x = Math.round(plat.pleft + r() * plat.pwidth);
+                const y = plat.py - 1;
+                const pad = pads[i];
+                this.add(game, { x, y, pad, name, image, config });
+            }
+        }
     }
 
     update(game, config) {
         const stickThreshold = 0.5;
-        const { walkSpeed, jumpForce, ladderSpeed } = config;
-
         const fx = this.control(Fx);
         const ui = this.control(UI);
         const players = Players.selectPlayers(game);
         const weapons = Weapons.selectWeapons(game);
-        const selectLadders = Ladders.selectLadders(game);
+        const ladders = Ladders.selectLadders(game);
         const collideLayer = Arena.selectCollideLayer(game);
 
         const handleHit = (target, bullet) => {
@@ -146,7 +277,6 @@ export default class Players extends Controller {
             fx.audio.impact.play();
             fx.addTx(game, target.x, target.y - target.height, ''+bulletDamage);
         };
-
 
         let player = players.first;
         while (player) { 
@@ -178,12 +308,17 @@ export default class Players extends Controller {
             const secondaryDodgePressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_LEFT_BUMPER));
             const secondaryWeaponPressed = (gamePad.isDown(Phaser.Gamepad.XBOX360_RIGHT_BUMPER));
 
-            // cache this for collider callbacks
+            // cache inputs
             player.data.input = {
-                leftIsPressed, rightIsPressed,
-                upIsPressed, downIsPressed,
-                primaryDodgePressed, primaryWeaponPressed, 
-                secondaryDodgePressed, secondaryWeaponPressed, 
+                jumpIsPressed,
+                leftIsPressed,
+                rightIsPressed,
+                upIsPressed, 
+                downIsPressed,
+                primaryDodgePressed, 
+                primaryWeaponPressed, 
+                secondaryDodgePressed, 
+                secondaryWeaponPressed, 
             };
 
             // cache current facing direction
@@ -194,69 +329,21 @@ export default class Players extends Controller {
                 player.data.facing = 1;
             }
 
-            // shoootan
-            if (primaryWeaponPressed) {
-                const facing = player.data.facing || 1;
-                let from = player.position.clone();
-                from.y -= player.height - 5;
-                from.x += player.width * facing;
-                fx.audio.gun.play();
-                player.data.weapon.fire(from, from.x + facing * 32, from.y);
-            }
-
-            if (player.data.ladder) {
-                const { ladder, ladderTop, ladderBottom } = player.data;
-
-                // update movement
-                player.body.velocity.x = 0;
-                player.body.velocity.y = 0;
-                if (upIsPressed) player.body.velocity.y = -ladderSpeed;
-                if (downIsPressed) player.body.velocity.y = ladderSpeed;
-
-                // snap to ladder
-                player.x = ladder.x;
-
-                // jump from ladder
-                if (jumpIsPressed && !upIsPressed && !downIsPressed &&
-                    (leftIsPressed || rightIsPressed)) {
-                    this.leaveLadder(player, ladderTop)
-                    player.body.velocity.y = jumpForce;
-                    player.data.jumpTimer = game.time.now + 150;
-                }
-
-                // climb off the top of the ladder AND
-                // climb off the bottom of the ladder
-                if (player.y < ladderTop || player.y > ladderBottom) {
-                    this.leaveLadder(player, ladderTop);
-                }
-
-            } else {
-                // check for ladders first
-                game.physics.arcade.overlap(player, selectLadders.list, this.handleLadder);
-
-                // check for tiles second
-                game.physics.arcade.collide(player, collideLayer);
-
-                // update movement
-                player.body.velocity.x = 0;
-                if (leftIsPressed) player.body.velocity.x = -walkSpeed;
-                if (rightIsPressed) player.body.velocity.x = walkSpeed;
-
-                if (player.body.onFloor()) {
-                    player.data.floorTimer = game.time.now + 100;
-                }
-
-                if (jumpIsPressed && 
-                    game.time.now > player.data.jumpTimer && 
-                    game.time.now < player.data.floorTimer) {
-                    player.body.velocity.y = jumpForce;
-                    player.data.jumpTimer = game.time.now + 150;
-                }
-            }
+            // execute current behavior
+            this.run(player, { fx, ui, players, weapons, ladders, collideLayer });
 
             // check for bullets
-            game.physics.arcade.overlap(player, weapons.list, handleHit);
+            if (!player.data.dashing) {
+                game.physics.arcade.overlap(player, weapons.list, handleHit);
+            }
 
+            // update cooldowns
+            const altMeter = this.altRatio(game, player);
+            const dashMeter = this.dashRatio(game, player);
+            ui.cooldownMeter(game, player, 'altMeter', 0, altMeter);
+            ui.cooldownMeter(game, player, 'dashMeter', 1, dashMeter);
+
+            // update next player
             player = players.next;
         }
     }

@@ -33,7 +33,6 @@ export default class Fx extends Controller {
             'gameover',
             'gun',
             'impact',
-            'monster',
             'spawn',
             'splat',
             'voice1',

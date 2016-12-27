@@ -15,11 +15,13 @@ export default class Weapons extends Controller {
     }
 
     handleFire = (bullet, weapon) => {
+        const fx = this.control(Fx);
+        fx.audio.gun.play();
         bullet.data.weapon = weapon;
         bullet.body.allowGravity = false;
     }
 
-    add(game) {
+    add(game, klass) {
         const { config } = Weapons;
         const fx = this.control(Fx);
 
@@ -29,8 +31,11 @@ export default class Weapons extends Controller {
         image.rect(1, 1, config.w - 2, config.h - 2, '#fff');
 
         // weapon factory
-        let weapon = game.add.weapon(10, image);
-        weapon.fireRate = 128;
+        let weapon = this.game.plugins.add(Phaser.Weapon);
+        weapon._bulletClass = klass;
+        weapon.createBullets(32, image);
+        weapon.fireRate = 300;
+        weapon.multiFire = true;
         weapon.bulletDamage = 1;
         weapon.bulletSpeed = 1024;
         weapon.bulletLifespan = 512;
