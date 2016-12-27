@@ -6,7 +6,7 @@ import Arena from './Arena';
 import Coins from './Coins';
 import { r } from '../Globals';
 import Weapons from './Weapons';
-import { pickFrom } from '../Util';
+import { range, pickFrom } from '../Util';
 import { Controller } from '../Controller';
 
 export default class Monsters extends Controller {
@@ -16,8 +16,6 @@ export default class Monsters extends Controller {
     }
 
     static config = {
-        w: 20,
-        h: 20
     }
 
     shutdown(game, config) {
@@ -91,13 +89,34 @@ export default class Monsters extends Controller {
     }
 
     add(game, x, y) {
-        const { config } = this;
         const fx = this.control(Fx);
         const ui = this.control(UI);
 
+        const type = pickFrom(r, range(0, 3));
+
+        let w, h, color, health;
+        switch (type) {
+            case 0:
+                w = h = 20;
+                health = 8;
+                color = '#BA55D3';
+                break;
+            case 1:
+                w = 10;
+                h = 22;
+                health = 12;
+                color = '#F59C5D';
+                break;
+            case 2:
+                w = h = 10;
+                health = 6;
+                color = '#A32A51';
+                break;
+        }
+
         // temp image
-        let image = game.make.bitmapData(config.w, config.h);
-        image.rect(0, 0, config.w, config.h, '#BA55D3');
+        let image = game.make.bitmapData(w, h);
+        image.rect(0, 0, w, h, color);
 
         // create sprite
         let monster = game.add.sprite(x, y, image);
@@ -106,8 +125,8 @@ export default class Monsters extends Controller {
         // config physics
         game.physics.arcade.enable(monster);
         monster.body.collideWorldBounds = true;
-        monster.body.setSize(config.w, config.h);
-        monster.body.deltaMax.y = config.h * 0.75;
+        monster.body.setSize(w, h);
+        monster.body.deltaMax.y = h * 0.75;
 
         // config health
         monster.health = monster.maxHealth = 8;

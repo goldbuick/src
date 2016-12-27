@@ -87,51 +87,13 @@ export default class extends Phaser.State {
 
         // player anim
         [
-            'alienBlue_climb1',
-            'alienBlue_climb2',
-            'alienBlue_duck',
-            'alienBlue_front',
-            'alienBlue_hit',
-            'alienBlue_jump',
-            'alienBlue_stand',
-            'alienBlue_swim1',
-            'alienBlue_swim2',
-            'alienBlue_walk1',
-            'alienBlue_walk2',
-            'alienGreen_climb1',
-            'alienGreen_climb2',
-            'alienGreen_duck',
-            'alienGreen_front',
-            'alienGreen_hit',
-            'alienGreen_jump',
-            'alienGreen_stand',
-            'alienGreen_swim1',
-            'alienGreen_swim2',
-            'alienGreen_walk1',
-            'alienGreen_walk2',
-            'alienPink_climb1',
-            'alienPink_climb2',
-            'alienPink_duck',
-            'alienPink_front',
-            'alienPink_hit',
-            'alienPink_jump',
-            'alienPink_stand',
-            'alienPink_swim1',
-            'alienPink_swim2',
-            'alienPink_walk1',
-            'alienPink_walk2',
-            'alienYellow_climb1',
-            'alienYellow_climb2',
-            'alienYellow_duck',
-            'alienYellow_front',
-            'alienYellow_hit',
-            'alienYellow_jump',
-            'alienYellow_stand',
-            'alienYellow_swim1',
-            'alienYellow_swim2',
-            'alienYellow_walk1',
-            'alienYellow_walk2',
-        ].forEach(file => game.load.image(`${file}`, `media/players/${file}.png`));
+            'alienBlue',
+            'alienGreen',
+            'alienPink',
+            'alienYellow',
+        ].forEach(file => {
+            game.load.atlas(`${file}`, `media/players/${file}.png`, `media/players/${file}.json`);
+        });
 
         game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js');       
     }

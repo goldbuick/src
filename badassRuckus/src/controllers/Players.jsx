@@ -19,6 +19,7 @@ export default class Players extends Controller {
     static config = {
         w: 10,
         h: 18,
+        skw: 16,
         gravity: 1600,
         walkSpeed: 250,
         dashSpeed: 1024,
@@ -45,6 +46,24 @@ export default class Players extends Controller {
         player.data.gamePad = pad;
         player.data.weapon = weapons.add(game, Phaser.Bullet);
         player.data.weapon.player = player;
+
+        // add animated sprite
+        let skin = game.make.sprite(0, 0, name);
+        skin.width = config.skw;
+        skin.height = config.skw * 2;
+        skin.anchor.set(0.5, 1);
+        skin.animations.add('climb', [0]);
+        skin.animations.add('climbing', [0, 1]);
+        skin.animations.add('dash', [2]);
+        skin.animations.add('hit', [4]);
+        skin.animations.add('jump', [5]);
+        skin.animations.add('stand', [3, 6]);
+        skin.animations.add('swim', [7, 8]);
+        skin.animations.add('walk', [9, 10]);
+        skin.play('stand', 3, true);
+        player.addChild(skin);
+        player.data.skin = skin;
+        player.data.skinScale = skin.scale.x;
 
         // config health
         player.health = player.maxHealth = 128;
@@ -116,17 +135,6 @@ export default class Players extends Controller {
     create(game, config) {
         const { walkSpeed, dashSpeed, jumpForce, ladderSpeed } = config;
 
-        const weaponTrigger = (player, { fx, primaryWeaponPressed }) => {
-            // shoootan
-            if (primaryWeaponPressed) {
-                const facing = player.data.facing || 1;
-                let from = player.position.clone();
-                from.y -= player.height - 5;
-                from.x += player.width * facing;
-                player.data.weapon.fire(from, from.x + facing * 32, from.y);
-            }
-        };
-
         this.cooldown({
             alt: 5, // secondary weapon
             dash: 5, // primary dodge
@@ -134,6 +142,8 @@ export default class Players extends Controller {
 
         this.behaviors({
             ACTIVE: (player, { fx, ladders, collideLayer }) => {
+                const { skin } = player.data;
+                const { currentAnim } = skin.animations;
                 const { jumpIsPressed, 
                     leftIsPressed, rightIsPressed,
                     primaryDodgePressed, secondaryDodgePressed,
@@ -146,12 +156,42 @@ export default class Players extends Controller {
                 game.physics.arcade.collide(player, collideLayer);
 
                 // triggers
-                weaponTrigger(player, { fx, primaryWeaponPressed, secondaryWeaponPressed });
+                if (primaryWeaponPressed) {
+                    const facing = player.data.facing || 1;
+                    let from = player.position.clone();
+                    from.y -= player.height - 5;
+                    from.x += player.width * facing;
+                    player.data.weapon.fire(from, from.x + facing * 32, from.y);
+                }
+                if (secondaryWeaponPressed && this.altCooldown(game, player)) {
+                }
                 if (primaryDodgePressed && this.dashCooldown(game, player)) {
                     this.DASH_START(player);
                 }
                 if (secondaryDodgePressed && this.dashCooldown(game, player)) {
+                }
 
+                // update animation
+                switch (currentAnim.name) {
+                    case 'stand':
+                        if (!player.body.onFloor()) {
+                            skin.play('jump');
+                        } else if (leftIsPressed || rightIsPressed) {
+                            skin.play('walk', 6, true);
+                        }
+                        break;
+                    case 'walk':
+                        if (!player.body.onFloor()) {
+                            skin.play('jump');
+                        } else if (!leftIsPressed && !rightIsPressed) {
+                            skin.play('stand', 3, true);
+                        }
+                        break;
+                    default:
+                        if (player.body.onFloor()) {
+                            skin.play('stand', 3, true);
+                        }
+                        break;
                 }
 
                 // update movement
@@ -171,12 +211,25 @@ export default class Players extends Controller {
                 }
             },
             LADDER: (player, { fx }) => {
-                const { ladder, ladderTop, ladderBottom } = player.data;
+                const { skin, ladder, ladderTop, ladderBottom } = player.data;
+                const { currentAnim } = skin.animations;
                 const { leftIsPressed, rightIsPressed, upIsPressed, downIsPressed,
                     jumpIsPressed, primaryWeaponPressed, secondaryWeaponPressed } = player.data.input;
-
-                // triggers
-                weaponTrigger(player, { fx, primaryWeaponPressed, secondaryWeaponPressed });
+                
+                // update animation
+                switch (currentAnim.name) {
+                    default:
+                    case 'climb':
+                        if (upIsPressed || downIsPressed) {
+                            skin.play('climbing', 6, true);
+                        }
+                        break;
+                    case 'climbing':
+                        if (!upIsPressed && !downIsPressed) {
+                            skin.play('climb');
+                        }
+                        break;
+                }
 
                 // update movement
                 player.body.velocity.x = 0;
@@ -202,6 +255,8 @@ export default class Players extends Controller {
                 }
             },
             DASH_START: (player, { fx }) => {
+                const { skin } = player.data;
+                skin.play('dash');
                 fx.audio.dash.play();
                 player.data.dashing = true;
                 player.body.allowGravity = false;
@@ -245,7 +300,7 @@ export default class Players extends Controller {
         
         // temp image
         let image = game.make.bitmapData(config.w, config.h);
-        image.rect(0, 0, config.w, config.h, '#36D');
+        // image.rect(0, 0, config.w, config.h, '#36D');
 
         const collideLayer = Arena.selectCollideLayer(game);
         for (let i=0; i < 4; ++i) {
@@ -254,6 +309,7 @@ export default class Players extends Controller {
                 const x = Math.round(plat.pleft + r() * plat.pwidth);
                 const y = plat.py - 1;
                 const pad = pads[i];
+                const name = names[i];
                 this.add(game, { x, y, pad, name, image, config });
             }
         }
@@ -327,6 +383,9 @@ export default class Players extends Controller {
             }
             if (!leftIsPressed && rightIsPressed) {
                 player.data.facing = 1;
+            }
+            if (player.data.facing) {                
+                player.data.skin.scale.x = player.data.skinScale * player.data.facing;
             }
 
             // execute current behavior

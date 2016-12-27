@@ -100,26 +100,23 @@ export default class Buffs extends Controller {
             
             const types = 5;
             let buffName = '';
-            // switch (pickFrom(r, range(0, types))) {
-            //     case 0:
-            //         buffName = 'spread shot';
-            //         break;
-            //     case 1:
-            //         // buffName = 'seeking shot';
-            //         break;
-            //     case 2:
-            //         buffName = 'damage up';
-            //         break;
-            //     case 3:
-            //         buffName = 'accuracy';
-            //         break;
-            //     case 4:
-            //         buffName = 'range up';
-            //         break;
-            //     case 5:
-            //         buffName = 'speed up';
-            //         break;
-            // }
+            switch (pickFrom(r, range(0, types))) {
+                case 0:
+                    buffName = 'spread shot';
+                    break;
+                case 1:
+                    buffName = 'speed up';
+                    break;
+                case 2:
+                    buffName = 'damage up';
+                    break;
+                case 3:
+                    buffName = 'accuracy';
+                    break;
+                case 4:
+                    buffName = 'range up';
+                    break;
+            }
 
             buff.kill();
             fx.audio.buff.play();
