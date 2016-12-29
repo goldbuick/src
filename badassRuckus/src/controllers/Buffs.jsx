@@ -40,12 +40,10 @@ export default class Buffs extends Controller {
         // not too many
         if (Buffs.selectBuffs(game).total >= 15) return;
 
-        const collideLayer = Arena.selectCollideLayer(game);
-        const plat = pickFrom(r, collideLayer.data.platforms);
-        const x = Math.round(plat.pleft + r() * plat.pwidth);
-        const y = plat.py - 10;
+        const arena = this.control(Arena);
+        let { x, y } = arena.pickSpawn(game, 10);
 
-        this.add(game, x, y);
+        this.add(game, x, y - 10);
     }
 
     add(game, x, y) {

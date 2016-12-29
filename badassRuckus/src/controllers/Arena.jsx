@@ -1,5 +1,6 @@
 import Alea from 'alea';
 import TAGS from '../Tags';
+import { r } from '../Globals';
 import Ladders from './Ladders';
 import { range, pickFrom } from '../Util';
 import { Controller } from '../Controller';
@@ -216,6 +217,16 @@ export default class Arena extends Controller {
         });
 
         collideLayer.data.platforms = platforms;
+    }
+
+    pickSpawn(game, padding) {
+        const collideLayer = Arena.selectCollideLayer(game);
+        const plat = pickFrom(r, collideLayer.data.platforms);
+        const left = plat.pleft + padding;
+        const width = plat.pwidth - padding * 2;
+        const x = Math.round(left + r() * width);
+        const y = plat.py;
+        return { x, y };        
     }
 
     update(game, config) {

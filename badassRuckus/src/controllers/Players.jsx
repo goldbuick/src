@@ -47,7 +47,7 @@ export default class Players extends Controller {
         player.data.healthGen = 1;
         player.data.healthTick = 0;
         player.data.jumpTimer = 0;
-        player.data.jumpCount = 0;
+        player.data.jumpCount = 1;
         player.data.jumpForce = jumpForce;
         player.data.weapon = weapons.add(game, Phaser.Bullet);
         player.data.weapon.player = player;
@@ -151,6 +151,7 @@ export default class Players extends Controller {
         delete player.data.ladder;
         player.body.allowGravity = true;
         player.data.gunz.visible = true;
+        player.data.jumpsLeft = player.data.jumpCount - 1;
         this.ACTIVE(player);
     }
 
@@ -228,15 +229,18 @@ export default class Players extends Controller {
                     player.data.jumpsLeft = player.data.jumpCount;
                 }
 
-                if (jumpIsPressed && 
+                if (jumpIsPressed &&
                     game.time.now > player.data.jumpTimer) {
-                    let canJump = game.time.now < player.data.floorTimer;
-                    if (player.data.jumpsLeft) {
-                        canJump = true;
+
+                    const jumpsLeft = player.data.jumpsLeft > 0;
+                    const onFloor = game.time.now < player.data.floorTimer;
+                    const canJump = onFloor || (!onFloor && jumpsLeft);
+
+                    player.data.jumpTimer = game.time.now + 300;
+                    if (canJump) {
                         --player.data.jumpsLeft;
+                        player.body.velocity.y = player.data.jumpForce;
                     }
-                    player.body.velocity.y = player.data.jumpForce;
-                    player.data.jumpTimer = game.time.now + 150;
                 }
             },
             LADDER: (player, { fx }) => {
@@ -334,12 +338,11 @@ export default class Players extends Controller {
         let image = game.make.bitmapData(config.w, config.h);
         // image.rect(0, 0, config.w, config.h, '#36D');
 
-        const collideLayer = Arena.selectCollideLayer(game);
+        const arena = this.control(Arena);
         for (let i=0; i < 4; ++i) {
             if (globals.playerActive[i]) {
-                const plat = pickFrom(r, collideLayer.data.platforms);
-                const x = Math.round(plat.pleft + r() * plat.pwidth);
-                const y = plat.py - 1;
+                let { x, y } = arena.pickSpawn(game, 10);
+                y -= 10;
                 const pad = pads[i];
                 const name = names[i];
                 this.add(game, { x, y, pad, name, image, config });
