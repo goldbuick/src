@@ -34,8 +34,9 @@ export default class Weapons extends Controller {
         let weapon = this.game.plugins.add(Phaser.Weapon);
         weapon._bulletClass = klass;
         weapon.createBullets(32, image);
-        weapon.fireRate = 300;
+        weapon.shouldFire = 1;
         weapon.multiFire = true;
+        weapon.fireRate = 300;
         weapon.bulletDamage = 1;
         weapon.bulletSpeed = 1024;
         weapon.bulletLifespan = 512;

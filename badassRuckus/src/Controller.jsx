@@ -134,25 +134,36 @@ export class Controller {
     cooldown(COOLDOWNS) {
         Object.keys(COOLDOWNS).forEach(NAME => {
             const name = NAME.toLowerCase();
-            const delay = COOLDOWNS[NAME] * 1000;
+            const delay = COOLDOWNS[NAME];
 
             const delayName = name + 'Delay';
+            const cooldownTimer = name + 'Timer';
             const cooldownRatio = name + 'Ratio';
             const cooldownName = name + 'Cooldown';
+
+            const maxDelay = (object) => {
+                const delayInSeconds = (object.data[delayName] || delay);
+                return Math.round(delayInSeconds * 1000);
+            };
+            
+            this[cooldownTimer] = (object, value) => {
+                if (value !== undefined) object.data[delayName] = value;
+                return (object.data[delayName] || delay);
+            };
+
             this[cooldownName] = (game, object) => {
                 const current = (object.data[name] || 0);
-                const max = (object.data[delayName] || delay);
                 if (game.time.now > current) {
-                    object.data[name] = game.time.now + max;
+                    object.data[name] = game.time.now + maxDelay(object);
                     return true;
                 }
                 return false;
             };
+
             this[cooldownRatio] = (game, object) => {
                 const current = (object.data[name] || 0);
-                const max = (object.data[delayName] || delay);
                 const diff = Math.max(0, current - game.time.now);
-                return (diff / max);
+                return (diff / maxDelay(object));
             };
         });
     }

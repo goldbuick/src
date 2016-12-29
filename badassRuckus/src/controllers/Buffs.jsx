@@ -8,31 +8,13 @@ import { Controller } from '../Controller';
 import { range, pickFrom } from '../Util';
 
 const BUFFS = {
-    // gun
-    // dash
-    // jump
-    // health
+    GUN: 'gun',
+    JUMP: 'jump',
+    HEALTH: 'health',
+    ALT_GUN: 'new gun',
+    ALT_DASH: 'new dash',
+    COOLDOWN: 'cooldown',
 };
-
-
-            //         buffName = 'spread shot';
-            //         break;
-            //     case 1:
-            //         // buffName = 'seeking shot';
-            //         break;
-            //     case 2:
-            //         buffName = 'damage up';
-            //         break;
-            //     case 3:
-            //         buffName = 'accuracy';
-            //         break;
-            //     case 4:
-            //         buffName = 'range up';
-            //         break;
-            //     case 5:
-            //         buffName = 'speed up';
-            //         break;
-
 
 export default class Buffs extends Controller {
 
@@ -50,7 +32,8 @@ export default class Buffs extends Controller {
     }
     
     create(game, config) {
-        this.spawnTimer = game.time.events.loop(15 * 1000, () => this.spawn(game));
+        for (let i=0; i < 5; ++i) this.spawn(game);
+        this.spawnTimer = game.time.events.loop(10000, () => this.spawn(game));
     }
 
     spawn(game) {
@@ -98,23 +81,91 @@ export default class Buffs extends Controller {
             const players = this.control(Players);
             if (!players.handleCoinCheck(game, player)) return;
             
-            const types = 5;
-            let buffName = '';
-            switch (pickFrom(r, range(0, types))) {
-                case 0:
-                    buffName = 'spread shot';
+            // pick category
+            const type = pickFrom(r, [
+                BUFFS.GUN,
+                BUFFS.GUN,
+                BUFFS.GUN,
+                BUFFS.GUN,
+                BUFFS.GUN,
+                BUFFS.JUMP,
+                BUFFS.JUMP,
+                BUFFS.HEALTH,
+                BUFFS.ALT_GUN,
+                BUFFS.ALT_DASH,
+                BUFFS.COOLDOWN,
+                BUFFS.COOLDOWN,
+            ]);
+
+            // pick specific 
+            let buffName = type;
+            const coin = () => (r() * 100 < 50);
+
+            switch (type) {
+                case BUFFS.GUN:
+                    let weapon = player.data.weapon;
+                    switch (pickFrom(r, [0, 1, 2, 3])) {
+                        case 0:
+                            buffName = 'gun fire rate increased';
+                            weapon.fireRate = Math.max(30, weapon.fireRate - 10);
+                            break;
+                        case 1:
+                            buffName = 'increased gun damage';
+                            weapon.bulletDamage += 2;
+                            break;
+                        case 2:
+                            buffName = 'increased gun range';
+                            weapon.bulletLifespan += 32;
+                            break;
+                        case 3:
+                            buffName = 'increased gun accuracy';
+                            weapon.bulletAngleVariance =
+                                Math.max(1, weapon.bulletAngleVariance - 1);
+                            break;
+                    }
                     break;
-                case 1:
-                    buffName = 'speed up';
+
+                case BUFFS.JUMP:
+                    switch (pickFrom(r, [0, 0, 0, 0, 1])) {
+                        case 0:
+                            buffName = 'jump height increased';
+                            player.data.jumpForce -= 64;
+                            break;
+                        case 1:
+                            buffName = 'extra jump';
+                            ++player.data.jumpCount;
+                            break;
+                    }
                     break;
-                case 2:
-                    buffName = 'damage up';
+
+                case BUFFS.HEALTH:
+                    if (coin()) {
+                        buffName = 'health regen increased';
+                        ++player.data.healthGen;
+                    } else {
+                        buffName = 'max health increased';
+                        player.maxHealth += 16;
+                    }
                     break;
-                case 3:
-                    buffName = 'accuracy';
+
+                case BUFFS.ALT_GUN:
                     break;
-                case 4:
-                    buffName = 'range up';
+
+                case BUFFS.ALT_DASH:
+                    break;
+
+                case BUFFS.COOLDOWN:
+                    if (coin()) {
+                        buffName = 'alt cooldown reduced';
+                        let v = players.altTimer(player);
+                        v = players.altTimer(player, Math.max(1, v - 1));
+                        console.log('player.data.altDelay', v);
+                    } else {
+                        buffName = 'dash cooldown reduced';
+                        let v = players.dashTimer(player);
+                        v = players.dashTimer(player, Math.max(1, v - 1));
+                        console.log('player.data.dashDelay', v);
+                    }
                     break;
             }
 

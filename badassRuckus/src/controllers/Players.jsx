@@ -31,6 +31,7 @@ export default class Players extends Controller {
         const fx = this.control(Fx);
         const ui = this.control(UI);
         const weapons = this.control(Weapons);
+        const { jumpForce } = config;
 
         let player = game.add.sprite(x, y, image);
         player.width = config.w;
@@ -42,8 +43,12 @@ export default class Players extends Controller {
         player.body.setSize(config.w, config.h);
         player.body.deltaMax.y = config.h * 0.75;
 
-        player.data.jumpTimer = 0;
         player.data.gamePad = pad;
+        player.data.healthGen = 1;
+        player.data.healthTick = 0;
+        player.data.jumpTimer = 0;
+        player.data.jumpCount = 0;
+        player.data.jumpForce = jumpForce;
         player.data.weapon = weapons.add(game, Phaser.Bullet);
         player.data.weapon.player = player;
 
@@ -64,6 +69,21 @@ export default class Players extends Controller {
         player.addChild(skin);
         player.data.skin = skin;
         player.data.skinScale = skin.scale.x;
+
+        // add gun
+        let gunzSprite = pickFrom(r, [
+            'raygun',
+            'raygunBig',
+            'raygunPurple',
+            'raygunPurpleBig',
+        ]);
+        let gunz = game.make.sprite(0, 0, gunzSprite);
+        gunz.width = gunz.height = 70 * 3;
+        gunz.anchor.set(0.5, 0.5);
+        gunz.x = 80;
+        gunz.y = -45;
+        skin.addChild(gunz);
+        player.data.gunz = gunz;
 
         // config health
         player.health = player.maxHealth = 128;
@@ -120,8 +140,9 @@ export default class Players extends Controller {
         player.data.ladderBottom = ladder.y + ladder.height - 2;
         if ((player.data.input.upIsPressed && player.y > player.data.ladderTop) ||
             (player.data.input.downIsPressed && player.y < player.data.ladderBottom)) {
-            player.body.allowGravity = false;
             player.data.ladder = ladder;
+            player.body.allowGravity = false;
+            player.data.gunz.visible = false;
             this.LADDER(player);
         }
     }
@@ -129,11 +150,12 @@ export default class Players extends Controller {
     leaveLadder(player) {
         delete player.data.ladder;
         player.body.allowGravity = true;
+        player.data.gunz.visible = true;
         this.ACTIVE(player);
     }
 
     create(game, config) {
-        const { walkSpeed, dashSpeed, jumpForce, ladderSpeed } = config;
+        const { walkSpeed, dashSpeed, ladderSpeed } = config;
 
         this.cooldown({
             alt: 5, // secondary weapon
@@ -157,11 +179,13 @@ export default class Players extends Controller {
 
                 // triggers
                 if (primaryWeaponPressed) {
-                    const facing = player.data.facing || 1;
+                    const { weapon, facing } = player.data;
                     let from = player.position.clone();
-                    from.y -= player.height - 5;
-                    from.x += player.width * facing;
-                    player.data.weapon.fire(from, from.x + facing * 32, from.y);
+                    from.y -= 6;
+                    from.x += player.width * (facing || 1);
+                    for (let i=0; i < weapon.shouldFire; ++i) {
+                        weapon.fire(from, from.x + facing * 32, from.y);
+                    }
                 }
                 if (secondaryWeaponPressed && this.altCooldown(game, player)) {
                 }
@@ -201,12 +225,17 @@ export default class Players extends Controller {
 
                 if (player.body.onFloor()) {
                     player.data.floorTimer = game.time.now + 100;
+                    player.data.jumpsLeft = player.data.jumpCount;
                 }
 
                 if (jumpIsPressed && 
-                    game.time.now > player.data.jumpTimer && 
-                    game.time.now < player.data.floorTimer) {
-                    player.body.velocity.y = jumpForce;
+                    game.time.now > player.data.jumpTimer) {
+                    let canJump = game.time.now < player.data.floorTimer;
+                    if (player.data.jumpsLeft) {
+                        canJump = true;
+                        --player.data.jumpsLeft;
+                    }
+                    player.body.velocity.y = player.data.jumpForce;
                     player.data.jumpTimer = game.time.now + 150;
                 }
             },
@@ -244,7 +273,7 @@ export default class Players extends Controller {
                 if (jumpIsPressed && !upIsPressed && !downIsPressed &&
                     (leftIsPressed || rightIsPressed)) {
                     this.leaveLadder(player, ladderTop)
-                    player.body.velocity.y = jumpForce;
+                    player.body.velocity.y = player.data.jumpForce;
                     player.data.jumpTimer = game.time.now + 150;
                 }
 
@@ -260,6 +289,7 @@ export default class Players extends Controller {
                 fx.audio.dash.play();
                 player.data.dashing = true;
                 player.body.allowGravity = false;
+                player.data.gunz.visible = false;
                 this.wait(game, player, 128);
                 this.DASH(player);
             },
@@ -276,7 +306,9 @@ export default class Players extends Controller {
             },
             DASH_DONE: (player) => {
                 player.data.dashing = false;
+                player.data.skin.play('jump');
                 player.body.allowGravity = true;
+                player.data.gunz.visible = true;
                 this.ACTIVE(player);
             },
             UNDEAD: (player) => {
@@ -401,6 +433,12 @@ export default class Players extends Controller {
             const dashMeter = this.dashRatio(game, player);
             ui.cooldownMeter(game, player, 'altMeter', 0, altMeter);
             ui.cooldownMeter(game, player, 'dashMeter', 1, dashMeter);
+
+            // update health
+            if (++player.data.healthTick > 30) {
+                player.data.healthTick = 0;
+                player.heal(player.data.healthGen);
+            }
 
             // update next player
             player = players.next;

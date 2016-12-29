@@ -28,7 +28,7 @@ export default class Arena extends Controller {
         game.world.setBounds(0, 0, width, height);
 
         // rng tools
-        let r = new Alea();//'rng-jesus');
+        let r = new Alea('rng-jesus');
         const coin = () => (r() * 100 < 50);
 
         // parallax bkg

@@ -34,7 +34,7 @@ export default class Monsters extends Controller {
 
             TURN: (monster) => {
                 monster.data.walk = Math.random() < 0.5 ? -1 : 1;
-                this.wait(game, monster, Math.floor(Math.random() * 2000));
+                this.wait(game, monster, 2000 + Math.floor(Math.random() * 4000));
                 this.WALK(monster);
             },
 
@@ -46,7 +46,7 @@ export default class Monsters extends Controller {
 
                     // edge detection
                     const map = collideLayer.map;
-                    let xTest = monster.x + monster.data.walk * monster.width;
+                    let xTest = monster.x + monster.data.walk * 100;
                     let yTest = monster.y - monster.height;
                     xTest = Math.round(xTest / map.tileWidth);
                     yTest = Math.round(yTest / map.tileHeight);
@@ -73,6 +73,7 @@ export default class Monsters extends Controller {
             DEAD: this.noop
         });
 
+        for (let i=0; i < 10; ++i) this.spawn(game);
         this.spawnTimer = game.time.events.loop(10000, () => this.spawn(game));
     }
 
