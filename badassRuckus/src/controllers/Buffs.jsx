@@ -2,8 +2,8 @@ import Fx from './Fx';
 import Alea from 'alea';
 import TAGS from '../Tags';
 import Arena from './Arena';
-import { r } from '../Globals';
 import Players from './Players';
+import { r, coin } from '../Globals';
 import { Controller } from '../Controller';
 import { range, pickFrom } from '../Util';
 
@@ -97,8 +97,6 @@ export default class Buffs extends Controller {
 
             // pick specific 
             let buffName = type;
-            const coin = () => (r() * 100 < 50);
-
             switch (type) {
                 case BUFFS.GUN:
                     let weapon = player.data.weapon;
@@ -157,12 +155,10 @@ export default class Buffs extends Controller {
                         buffName = 'alt cooldown reduced';
                         let v = players.altTimer(player);
                         v = players.altTimer(player, Math.max(1, v - 1));
-                        console.log('player.data.altDelay', v);
                     } else {
                         buffName = 'dash cooldown reduced';
                         let v = players.dashTimer(player);
                         v = players.dashTimer(player, Math.max(1, v - 1));
-                        console.log('player.data.dashDelay', v);
                     }
                     break;
             }

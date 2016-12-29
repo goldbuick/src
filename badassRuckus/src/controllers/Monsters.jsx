@@ -26,15 +26,15 @@ export default class Monsters extends Controller {
         this.behaviors({
             IDLE_START: (monster) => {
                 monster.body.velocity.x = 0;
-                this.wait(game, monster, Math.floor(Math.random() * 8000));
+                this.wait(game, monster, Math.floor(r() * 8000));
                 this.IDLE(monster);
             },
 
             IDLE: (monster) => this.ready(game, monster, this.TURN),
 
             TURN: (monster) => {
-                monster.data.walk = Math.random() < 0.5 ? -1 : 1;
-                this.wait(game, monster, 2000 + Math.floor(Math.random() * 4000));
+                monster.data.walk = r() < 0.5 ? -1 : 1;
+                this.wait(game, monster, 2000 + Math.floor(r() * 4000));
                 this.WALK(monster);
             },
 
@@ -46,7 +46,7 @@ export default class Monsters extends Controller {
 
                     // edge detection
                     const map = collideLayer.map;
-                    let xTest = monster.x + monster.data.walk * 100;
+                    let xTest = monster.x + monster.data.walk * monster.width;
                     let yTest = monster.y - monster.height;
                     xTest = Math.round(xTest / map.tileWidth);
                     yTest = Math.round(yTest / map.tileHeight);

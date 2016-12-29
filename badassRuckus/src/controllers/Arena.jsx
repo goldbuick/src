@@ -1,7 +1,7 @@
 import Alea from 'alea';
 import TAGS from '../Tags';
-import { r } from '../Globals';
 import Ladders from './Ladders';
+import { r, coin } from '../Globals';
 import { range, pickFrom } from '../Util';
 import { Controller } from '../Controller';
 
@@ -27,10 +27,6 @@ export default class Arena extends Controller {
 
         // just incase camera scale doesn't change
         game.world.setBounds(0, 0, width, height);
-
-        // rng tools
-        let r = new Alea('rng-jesus');
-        const coin = () => (r() * 100 < 50);
 
         // parallax bkg
         const bkgSet = pickFrom(r, ['set2']);

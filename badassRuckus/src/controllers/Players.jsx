@@ -47,7 +47,7 @@ export default class Players extends Controller {
         player.data.healthGen = 1;
         player.data.healthTick = 0;
         player.data.jumpTimer = 0;
-        player.data.jumpCount = 1;
+        player.data.jumpCount = 0;
         player.data.jumpForce = jumpForce;
         player.data.weapon = weapons.add(game, Phaser.Bullet);
         player.data.weapon.player = player;
@@ -179,21 +179,33 @@ export default class Players extends Controller {
                 game.physics.arcade.collide(player, collideLayer);
 
                 // triggers
-                if (primaryWeaponPressed) {
-                    const { weapon, facing } = player.data;
+                const weaponFire = () => {
+                    const { facing, weapon, altWeapon } = player.data;
+                    let _facing = facing || 1;
                     let from = player.position.clone();
+                    from.x += player.width * _facing;
                     from.y -= 6;
-                    from.x += player.width * (facing || 1);
-                    for (let i=0; i < weapon.shouldFire; ++i) {
-                        weapon.fire(from, from.x + facing * 32, from.y);
-                    }
+                    return { from, weapon, altWeapon, facing: _facing };
+                };
+
+                if (primaryWeaponPressed) {
+                    const { from, facing, weapon } = weaponFire();
+                    weapon.fire(from, from.x + facing * 32, from.y);
                 }
-                if (secondaryWeaponPressed && this.altCooldown(game, player)) {
+                if (secondaryWeaponPressed) {
+                    const { from, facing, altWeapon } = weaponFire();
+                    if (altWeapon && this.altCooldown(game, player)) {
+                        // GO ALT
+                    }
                 }
                 if (primaryDodgePressed && this.dashCooldown(game, player)) {
                     this.DASH_START(player);
                 }
-                if (secondaryDodgePressed && this.dashCooldown(game, player)) {
+                if (secondaryDodgePressed) {
+                    const { altDash } = player.data;
+                    if (altDash && this.dashCooldown(game, player)) {
+                        // GO DASH
+                    }
                 }
 
                 // update animation
@@ -238,7 +250,7 @@ export default class Players extends Controller {
 
                     player.data.jumpTimer = game.time.now + 300;
                     if (canJump) {
-                        --player.data.jumpsLeft;
+                        if (!onFloor) --player.data.jumpsLeft;
                         player.body.velocity.y = player.data.jumpForce;
                     }
                 }
