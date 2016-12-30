@@ -11,9 +11,9 @@ const BUFFS = {
     GUN: 'gun',
     JUMP: 'jump',
     HEALTH: 'health',
-    ALT_GUN: 'new gun',
-    ALT_DASH: 'new dash',
     COOLDOWN: 'cooldown',
+    ALT_DASH: 'alt dash ',
+    ALT_WEAPON: 'alt weapon ',
 };
 
 export default class Buffs extends Controller {
@@ -81,18 +81,18 @@ export default class Buffs extends Controller {
             
             // pick category
             const type = pickFrom(r, [
-                BUFFS.GUN,
-                BUFFS.GUN,
-                BUFFS.GUN,
-                BUFFS.GUN,
-                BUFFS.GUN,
-                BUFFS.JUMP,
-                BUFFS.JUMP,
-                BUFFS.HEALTH,
-                BUFFS.ALT_GUN,
-                BUFFS.ALT_DASH,
-                BUFFS.COOLDOWN,
-                BUFFS.COOLDOWN,
+                // BUFFS.GUN,
+                // BUFFS.GUN,
+                // BUFFS.GUN,
+                // BUFFS.GUN,
+                // BUFFS.GUN,
+                // BUFFS.JUMP,
+                // BUFFS.JUMP,
+                // BUFFS.HEALTH,
+                BUFFS.ALT_WEAPON,
+                // BUFFS.ALT_DASH,
+                // BUFFS.COOLDOWN,
+                // BUFFS.COOLDOWN,
             ]);
 
             // pick specific 
@@ -144,10 +144,12 @@ export default class Buffs extends Controller {
                     }
                     break;
 
-                case BUFFS.ALT_GUN:
+                case BUFFS.ALT_DASH:
+                    buffName += players.handleAltDashAdd(game, player);
                     break;
 
-                case BUFFS.ALT_DASH:
+                case BUFFS.ALT_WEAPON:
+                    buffName += players.handleAltWeaponAdd(game, player);
                     break;
 
                 case BUFFS.COOLDOWN:

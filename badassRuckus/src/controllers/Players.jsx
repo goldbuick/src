@@ -49,8 +49,7 @@ export default class Players extends Controller {
         player.data.jumpTimer = 0;
         player.data.jumpCount = 0;
         player.data.jumpForce = jumpForce;
-        player.data.weapon = weapons.add(game, Phaser.Bullet);
-        player.data.weapon.player = player;
+        player.data.weapon = weapons.add(game, { player });
 
         // add animated sprite
         let skin = game.make.sprite(0, 0, name);
@@ -97,6 +96,37 @@ export default class Players extends Controller {
 
         // track it
         Controller.tag(player, TAGS.PLAYER);
+    }
+
+    handleAltDashAdd(game, player) {
+        return 'none';
+    }
+
+    weaponChain(game, player) {
+        let chain = [];
+        let lastWeapon = player.data.altWeapon;
+        while (lastWeapon) {
+            chain.push(lastWeapon);
+            lastWeapon = lastWeapon.nextWeapon;
+        }
+        return chain;        
+    }
+
+    handleAltWeaponAdd(game, player) {
+        const weapons = this.control(Weapons);
+        let chain = this.weaponChain(game, player);
+        if (chain.length === 3) return;
+
+        const altWeapon = weapons.addAlt(game, player);
+
+        let lastWeapon = lastWeapon = chain[chain.length - 1];
+        if (lastWeapon === undefined) {
+            player.data.altWeapon = altWeapon;
+        } else {
+            lastWeapon.nextWeapon = altWeapon;
+        }
+
+        return altWeapon.weaponName;
     }
 
     handleCoinCollect(game, player, coin) {
@@ -195,7 +225,9 @@ export default class Players extends Controller {
                 if (secondaryWeaponPressed) {
                     const { from, facing, altWeapon } = weaponFire();
                     if (altWeapon && this.altCooldown(game, player)) {
-                        // GO ALT
+                        for (let i=0; i < altWeapon.shouldFire; ++i) {
+                            altWeapon.fire(from, from.x + facing * 32, from.y);
+                        }
                     }
                 }
                 if (primaryDodgePressed && this.dashCooldown(game, player)) {

@@ -2,11 +2,8 @@ import Phaser from 'phaser';
 
 class BulletMod extends Phaser.Bullet {
     kill() {
-        console.log('BOOOM!');
+        console.log('trigger nextWeapon');
         return super.kill();
-    }
-    update() {
-        super.update();
     }
 }
 
