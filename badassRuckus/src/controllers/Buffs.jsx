@@ -81,18 +81,18 @@ export default class Buffs extends Controller {
             
             // pick category
             const type = pickFrom(r, [
-                // BUFFS.GUN,
-                // BUFFS.GUN,
-                // BUFFS.GUN,
-                // BUFFS.GUN,
-                // BUFFS.GUN,
-                // BUFFS.JUMP,
-                // BUFFS.JUMP,
-                // BUFFS.HEALTH,
+                BUFFS.GUN,
+                BUFFS.GUN,
+                BUFFS.GUN,
+                BUFFS.GUN,
+                BUFFS.JUMP,
+                BUFFS.JUMP,
+                BUFFS.JUMP,
+                BUFFS.HEALTH,
                 BUFFS.ALT_WEAPON,
-                // BUFFS.ALT_DASH,
-                // BUFFS.COOLDOWN,
-                // BUFFS.COOLDOWN,
+                BUFFS.ALT_DASH,
+                BUFFS.COOLDOWN,
+                BUFFS.COOLDOWN,
             ]);
 
             // pick specific 

@@ -44,7 +44,7 @@ export default class Fx extends Controller {
         });
     }
 
-    add(game, { isRed = false }) {
+    add(game, { isRed = false, noGravity = false } = {}) {
         let { config } = this;
 
         // temp image
@@ -56,8 +56,16 @@ export default class Fx extends Controller {
         fx.makeParticles(image, 0, 250, true, true);
 
         const blurst = 256;
-        fx.setXSpeed(-blurst, blurst);
-        fx.setYSpeed(blurst * -2, 0);
+        if (noGravity) {
+            fx.setXSpeed(0, 0);
+            fx.setYSpeed(0, 0);
+            fx.forEach(p => {
+                p.body.allowGravity = false;
+            });
+        } else {
+            fx.setXSpeed(-blurst, blurst);
+            fx.setYSpeed(blurst * -2, 0);
+        }
         fx.bounce.x = fx.bounce.y = 0.5;
         const sMin = 0.25, sMax = 2;
         fx.setScale(sMin, sMax, sMin, sMax);

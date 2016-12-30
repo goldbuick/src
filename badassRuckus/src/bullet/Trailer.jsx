@@ -1,12 +1,11 @@
 import Chained from './Chained';
 
 class BulletMod extends Chained {
-    kill() {
-        console.log('Mine!');
-        return super.kill();
-    }
     update() {
         super.update();
+        if (!this.exists) return;
+        const { fx } = this.data.bulletManager;
+        fx.emitParticle(this.position.x, this.position.y);
     }
 }
 

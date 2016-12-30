@@ -2,22 +2,21 @@ import Fx from './Fx';
 import TAGS from '../Tags';
 import Arena from './Arena';
 import { r } from '../Globals';
-import Mine from '../bullet/Mine';
 import { pickFrom } from '../Util';
-import Rocket from '../bullet/Rocket';
 import Chained from '../bullet/Chained';
-import Grenade from '../bullet/Grenade';
+import Trailer from '../bullet/Trailer';
 import { Controller } from '../Controller';
 
 const ALTS = {
     MINE: 'land mine',
     PLASMA: 'plasma',
-    ROCKET: 'rocket',
+    ROCKETS: 'rockets',
     GRENADE: 'grenade',
     SHOTGUN: 'shotgun',
     RAILGUN: 'railgun',
-    BLACKHOLE: 'singularity',
 };
+
+const MAX_SHIT = 64;
 
 export default class Weapons extends Controller {
 
@@ -31,8 +30,7 @@ export default class Weapons extends Controller {
     handleFire = (bullet, weapon) => {
         const fx = this.control(Fx);
         fx.audio.gun.play();
-        bullet.data.weapon = weapon;
-        bullet.body.allowGravity = false;
+        bullet.body.allowGravity = (weapon.hasGravity === true);
     }
 
     handleFireLimit = (weapon, fireLimit) => {
@@ -40,45 +38,72 @@ export default class Weapons extends Controller {
     }
 
     addAlt(game, player) {
+        const fx = this.control(Fx);
+
         let type = pickFrom(r, [ 
-            ALTS.PLASMA,
-            ALTS.SHOTGUN,
-            // ALTS.MINE, ALTS.PLASMA, ALTS.ROCKET, 
-            // ALTS.GRENADE, ALTS.SHOTGUN, ALTS.RAILGUN, ALTS.BLACKHOLE 
+            ALTS.MINE, ALTS.PLASMA, ALTS.ROCKETS, 
+            ALTS.GRENADE, ALTS.SHOTGUN, ALTS.RAILGUN
         ]);
 
         let weapon;
         switch (type) {
             case ALTS.MINE:
+                weapon = this.add(game, { 
+                    player, w: 10, h: 6, color: '#666', klass: Chained });
+                weapon.bulletSpeed = 0;
+                weapon.hasGravity = true;
+                weapon.bulletDamage = 64;
+                weapon.bulletLifespan = 10000;
+                weapon.bulletAngleVariance = 0;
                 break;
             case ALTS.PLASMA:
                 weapon = this.add(game, { 
-                    player, w: 14, h: 14, color: '#f60', square: false, klass: Chained });
-                weapon.bulletDamage = 32;
+                    player, w: 14, h: 14, color: '#06f', square: false, klass: Chained });
                 weapon.bulletSpeed = 512;
+                weapon.bulletDamage = 16;
                 weapon.bulletLifespan = 1000;
                 weapon.bulletAngleVariance = 0;
                 break;
-            case ALTS.ROCKET:
+            case ALTS.ROCKETS:
+                weapon = this.add(game, { 
+                    player, w: 14, h: 4, color: '#f40', klass: Trailer });
+                weapon.fx = fx.add(game);
+                weapon.shouldFire = 2;
+                weapon.bulletDamage = 8;
+                weapon.bulletAngleVariance = 3;
                 break;
             case ALTS.GRENADE:
+                weapon = this.add(game, { 
+                    player, w: 8, h: 8, color: '#2f4', klass: Trailer });
+                weapon.fx = fx.add(game);
+                weapon.bulletDamage = 32;
+                weapon.hasGravity = true;
+                weapon.angleOffset = -128;
+                weapon.bulletLifespan = 1000;
+                weapon.bulletAngleVariance = 0;
                 break;
             case ALTS.SHOTGUN:
                 weapon = this.add(game, { player, klass: Chained });
-                weapon.shouldFire = 8;
+                weapon.shouldFire = 6;
                 weapon.bulletDamage = 8;
                 weapon.bulletAngleVariance = 10;
                 break;
             case ALTS.RAILGUN:
-                break;
-            case ALTS.BLACKHOLE:
+                weapon = this.add(game, { 
+                    player, w: 64, h: 3, color: '#fff', klass: Trailer });
+                weapon.fx = fx.add(game, { noGravity: true });
+                weapon.bulletDamage = 8;
+                weapon.bulletSpeed = 3000;
+                weapon.bulletLifespan = 512;
+                weapon.bulletAngleVariance = 0;
                 break;
         }
 
         weapon.fireRate = 0;
-        weapon.fireLimit = 32;
         weapon.weaponName = type;
+        weapon.fireLimit = MAX_SHIT;
         weapon.bullets.data.noClip = true;
+        weapon.bullets.data.hasGravity = weapon.hasGravity;
         return weapon;
     }
 
@@ -105,7 +130,7 @@ export default class Weapons extends Controller {
         let weapon = this.game.plugins.add(Phaser.Weapon);
         weapon.player = player;
         weapon._bulletClass = klass;
-        weapon.createBullets(32, image);
+        weapon.createBullets(MAX_SHIT, image);
         weapon.fireRate = 300;
         weapon.bulletDamage = 1;
         weapon.bulletSpeed = 1024;
@@ -117,9 +142,9 @@ export default class Weapons extends Controller {
         weapon.onFire.add(this.handleFire);
         weapon.onFireLimit.add(this.handleFireLimit);
 
-        weapon.altFire = function (from, tx, ty){
+        weapon.altFire = function (from, tx, ty, angleOffset = 0) {
             const fireCount = this.shouldFire || 1;
-            for (let i=0; i < fireCount; ++i) this.fire(from, tx, ty);
+            for (let i=0; i < fireCount; ++i) this.fire(from, tx, ty + angleOffset);
         };
 
         // tag it & return it
@@ -128,7 +153,7 @@ export default class Weapons extends Controller {
     }
 
     handleCollideLayer = (bullet, other) => {
-        const { weapon } = bullet.data;
+        const { bulletManager: weapon } = bullet.data;
         const fx = this.control(Fx);
         fx.audio.impact.play();
         weapon.fx.spark(bullet.x, bullet.y);
@@ -141,8 +166,12 @@ export default class Weapons extends Controller {
 
         let weapon = weapons.first;
         while (weapon) { 
+            const { noClip, hasGravity } = weapon.data;
+
             // check for tiles 
-            if (weapon.data.noClip !== true) {
+            if (hasGravity) {
+                game.physics.arcade.collide(weapon, collideLayer);
+            } else if (!noClip) {
                 game.physics.arcade.collide(weapon, collideLayer, this.handleCollideLayer);
             }
 

@@ -17,10 +17,11 @@ class BulletMod extends Phaser.Bullet {
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 return { t, dist };
             });
-            targets.sort((a, b) => a.dist - b.dist);
-            
-            let target = targets[0].t;
-            nextWeapon.altFire(this.position, target.position.x, target.position.y);
+            if (targets.length) {
+                targets.sort((a, b) => a.dist - b.dist);
+                nextWeapon.altFire(this.position, 
+                    targets[0].t.position.x, targets[0].t.position.y);
+            }
         }
         return super.kill();
     }

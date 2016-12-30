@@ -225,7 +225,8 @@ export default class Players extends Controller {
                 if (secondaryWeaponPressed) {
                     const { from, facing, altWeapon } = weaponFire();
                     if (altWeapon && this.altCooldown(game, player)) {
-                        altWeapon.altFire(from, from.x + facing * 32, from.y);
+                        altWeapon.altFire(from, 
+                            from.x + facing * 32, from.y, altWeapon.angleOffset);
                     }
                 }
                 if (primaryDodgePressed && this.dashCooldown(game, player)) {
