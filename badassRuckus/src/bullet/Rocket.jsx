@@ -1,4 +1,4 @@
-import Chained from './chained';
+import Chained from './Chained';
 
 class BulletMod extends Chained {
     kill() {

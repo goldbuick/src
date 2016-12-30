@@ -99,7 +99,7 @@ export default class Players extends Controller {
     }
 
     handleAltDashAdd(game, player) {
-        return 'none';
+        return 'maxed';
     }
 
     weaponChain(game, player) {
@@ -115,7 +115,7 @@ export default class Players extends Controller {
     handleAltWeaponAdd(game, player) {
         const weapons = this.control(Weapons);
         let chain = this.weaponChain(game, player);
-        if (chain.length === 3) return;
+        if (chain.length === 3) return 'maxed';
 
         const altWeapon = weapons.addAlt(game, player);
 
@@ -225,9 +225,7 @@ export default class Players extends Controller {
                 if (secondaryWeaponPressed) {
                     const { from, facing, altWeapon } = weaponFire();
                     if (altWeapon && this.altCooldown(game, player)) {
-                        for (let i=0; i < altWeapon.shouldFire; ++i) {
-                            altWeapon.fire(from, from.x + facing * 32, from.y);
-                        }
+                        altWeapon.altFire(from, from.x + facing * 32, from.y);
                     }
                 }
                 if (primaryDodgePressed && this.dashCooldown(game, player)) {

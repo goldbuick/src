@@ -2,7 +2,11 @@ import Fx from './Fx';
 import TAGS from '../Tags';
 import Arena from './Arena';
 import { r } from '../Globals';
+import Mine from '../bullet/Mine';
 import { pickFrom } from '../Util';
+import Rocket from '../bullet/Rocket';
+import Chained from '../bullet/Chained';
+import Grenade from '../bullet/Grenade';
 import { Controller } from '../Controller';
 
 const ALTS = {
@@ -31,6 +35,10 @@ export default class Weapons extends Controller {
         bullet.body.allowGravity = false;
     }
 
+    handleFireLimit = (weapon, fireLimit) => {
+        weapon.resetShots();
+    }
+
     addAlt(game, player) {
         let type = pickFrom(r, [ 
             ALTS.PLASMA,
@@ -44,12 +52,22 @@ export default class Weapons extends Controller {
             case ALTS.MINE:
                 break;
             case ALTS.PLASMA:
+                weapon = this.add(game, { 
+                    player, w: 14, h: 14, color: '#f60', square: false, klass: Chained });
+                weapon.bulletDamage = 32;
+                weapon.bulletSpeed = 512;
+                weapon.bulletLifespan = 1000;
+                weapon.bulletAngleVariance = 0;
                 break;
             case ALTS.ROCKET:
                 break;
             case ALTS.GRENADE:
                 break;
             case ALTS.SHOTGUN:
+                weapon = this.add(game, { player, klass: Chained });
+                weapon.shouldFire = 8;
+                weapon.bulletDamage = 8;
+                weapon.bulletAngleVariance = 10;
                 break;
             case ALTS.RAILGUN:
                 break;
@@ -57,7 +75,10 @@ export default class Weapons extends Controller {
                 break;
         }
 
+        weapon.fireRate = 0;
+        weapon.fireLimit = 32;
         weapon.weaponName = type;
+        weapon.bullets.data.noClip = true;
         return weapon;
     }
 
@@ -85,8 +106,6 @@ export default class Weapons extends Controller {
         weapon.player = player;
         weapon._bulletClass = klass;
         weapon.createBullets(32, image);
-        weapon.shouldFire = 1;
-        weapon.multiFire = true;
         weapon.fireRate = 300;
         weapon.bulletDamage = 1;
         weapon.bulletSpeed = 1024;
@@ -96,11 +115,15 @@ export default class Weapons extends Controller {
 
         weapon.fx = fx.add(game, {});
         weapon.onFire.add(this.handleFire);
+        weapon.onFireLimit.add(this.handleFireLimit);
 
-        // tag it
+        weapon.altFire = function (from, tx, ty){
+            const fireCount = this.shouldFire || 1;
+            for (let i=0; i < fireCount; ++i) this.fire(from, tx, ty);
+        };
+
+        // tag it & return it
         Controller.tag(weapon.bullets, TAGS.WEAPON);
-
-        // return it
         return weapon;
     }
 
@@ -119,7 +142,9 @@ export default class Weapons extends Controller {
         let weapon = weapons.first;
         while (weapon) { 
             // check for tiles 
-            game.physics.arcade.collide(weapon, collideLayer, this.handleCollideLayer);
+            if (weapon.data.noClip !== true) {
+                game.physics.arcade.collide(weapon, collideLayer, this.handleCollideLayer);
+            }
 
             weapon = weapons.next;
         }

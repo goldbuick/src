@@ -2,7 +2,7 @@ import Chained from './Chained';
 
 class BulletMod extends Chained {
     kill() {
-        console.log('Mine!');
+        console.log('Grenade!');
         return super.kill();
     }
     update() {
