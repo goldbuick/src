@@ -1,0 +1,1 @@
+webpackJsonp([0],{"./src/app.js":function(module,exports){eval("\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/app.js\n// module id = ./src/app.js\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/app.js?")}},["./src/app.js"]);
