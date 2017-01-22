@@ -1,0 +1,11 @@
+
+html, body {
+    background-color: #000;
+}
+
+html, body, #exculta, .renderer {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}

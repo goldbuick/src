@@ -8,11 +8,11 @@ const nodeEnv = process.env.NODE_ENV || 'development';
 const isProd = nodeEnv === 'production';
 
 const plugins = [
-    new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        minChunks: Infinity,
-        filename: 'vendor.bundle.js'
-    }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //     name: 'app',
+    //     minChunks: Infinity,
+    //     filename: 'app.bundle.js'
+    // }),
     new webpack.DefinePlugin({
         'process.env': { NODE_ENV: JSON.stringify(nodeEnv) }
     }),
@@ -53,7 +53,7 @@ module.exports = {
     plugins,
     entry: {
         app: './src/app.js',
-        vendor: [ 'react' ]
+        // vendor: vendor
     },
     output: {
         path: distPath,
