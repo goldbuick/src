@@ -4,9 +4,9 @@
   "description": "find me in the net",
   "main": "index.js",
   "scripts": {
-    "build": "webpack -p",
     "dev": "webpack-dev-server",
-    "prod": "webpack-dev-server -p"
+    "build": "cross-env NODE_ENV=production webpack -p",
+    "prod": "cross-env NODE_ENV=production webpack-dev-server -p"
   },
   "repository": {
     "type": "git",
@@ -32,6 +32,7 @@
     "babel-preset-es2015": "6.22.0",
     "babel-preset-react": "6.22.0",
     "babel-preset-stage-0": "6.22.0",
+    "cross-env": "3.1.4",
     "css-loader": "0.26.1",
     "style-loader": "0.13.1",
     "webpack": "2.2.0",

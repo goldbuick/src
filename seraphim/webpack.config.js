@@ -5,20 +5,14 @@ const srcPath = path.resolve(__dirname, './src');
 const distPath = path.resolve(__dirname, './dist');
 
 const nodeEnv = process.env.NODE_ENV || 'development';
-const isProd = nodeEnv === 'production';
 
 const plugins = [
-    // new webpack.optimize.CommonsChunkPlugin({
-    //     name: 'app',
-    //     minChunks: Infinity,
-    //     filename: 'app.bundle.js'
-    // }),
-    new webpack.DefinePlugin({
-        'process.env': { NODE_ENV: JSON.stringify(nodeEnv) }
-    }),
     new webpack.NamedModulesPlugin(),
+    new webpack.ProvidePlugin({ THREE: 'three' }),
+    new webpack.DefinePlugin({ 'NODE_ENV': JSON.stringify(nodeEnv) }),
 ];
 
+const isProd = nodeEnv === 'production';
 if (isProd) {
     plugins.push(
         new webpack.LoaderOptionsPlugin({
@@ -51,10 +45,7 @@ if (isProd) {
 
 module.exports = {
     plugins,
-    entry: {
-        app: './src/app.js',
-        // vendor: vendor
-    },
+    entry: { app: './src/app.js' },
     output: {
         path: distPath,
         filename: 'app.bundle.js',
