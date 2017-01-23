@@ -14,11 +14,11 @@ const TestRender = (props) => {
                 rng = VizGen.rng({ seed }),
                 color = new THREE.Color(1, 0.5, 0.1);
 
-            for (let i=1; i < 8; ++i) {
+            for (let i=1; i < 20; ++i) {
                 display.drawBracket({ rng, w: 64, y: 320, x: i * -128, h: 512 + i * 16, facing: 1, color });
-                display.drawBracket({ rng, w: 64, y: 320, x: i * 128, h: 512 + i * 16, facing: -1, color });
-                display.drawBracket({ rng, w: 64, y: -320, x: i * -128, h: 512 - i * 8, facing: 1, color, z: 128 });
-                display.drawBracket({ rng, w: 64, y: -320, x: i * 128, h: 512 - i * 8, facing: -1, color, z: 128 });
+                display.drawBracket({ rng, w: 64, y: 320, x: i * 128, h: 512 - i * 16, facing: -1, color });
+                display.drawBracket({ rng, w: 64, y: -320, x: i * -128, h: 512 - i * 8, facing: 1, color });
+                display.drawBracket({ rng, w: 64, y: -320, x: i * 128, h: 512 + i * 8, facing: -1, color });
             }
 
             /*/
@@ -30,9 +30,10 @@ const TestRender = (props) => {
             bazz.add(VizGen.text({
                 color,
                 scale: 3,
-                text: '--<=={ haxkz }==>--',
+                text: '--<=={ exculta }==>--',
                 // nudge: { x: 0, y: 11, z: 128 }
-            }));            
+            }));
+
             return bazz;
         }}
 
