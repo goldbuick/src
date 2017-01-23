@@ -16,8 +16,8 @@ export default class RenderScene extends React.Component {
         return (this._scene = this._scene || new THREE.Scene());
     }
 
-    handleCreate = (renderer, composer, width, height) => {
-        this.camera = new THREE.PerspectiveCamera(60, 4 / 3, 0.1, 20000);
+    handleCreate = (renderer, composer, width, height) => { 
+        this.camera = new THREE.PerspectiveCamera(60, width / height, 1, 16000);
 
         return this.props.onCreate(renderer, composer, 
             this.scene, this.camera, width, height);

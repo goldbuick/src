@@ -24,7 +24,7 @@ const TestRender = (props) => {
             /*/
             let bazz = display.build(VizProjection.plane(1));
             /*/
-            let bazz = display.build(VizProjection.column(320, 1));
+            let bazz = display.build(VizProjection.column(2048, 1));
             //*/
 
             bazz.add(VizGen.text({
