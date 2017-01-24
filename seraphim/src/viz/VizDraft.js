@@ -184,21 +184,3 @@ class VizDraft extends VizEtch {
 }
 
 export default VizDraft;
-
-/* more complex structures 
-
-diamond gridded backgrounds
-gridded backgrounds
-cross hatching fields 
-dot fields ( each dot can be scalable )
-hex fields ( each hex can be scalable )
-
-linear auto-rigging for skeleton animation
-
-map contours ??
-
-sphere shells - wtf do I mean here ?
-
-identi glyphs !!!
-
-*/

@@ -1,20 +1,20 @@
 import React from 'react';
 import TWEEN from 'tween.js';
 import RenderScene from '../render/RenderScene';
+import '../threejs/postprocessing/EffectComposer';
 
 import '../threejs/shaders/FilmShader';
 import '../threejs/shaders/CopyShader';
-import '../threejs/shaders/BokehShader';
 import '../threejs/shaders/DigitalGlitch';
 import '../threejs/shaders/ConvolutionShader';
-import '../threejs/postprocessing/EffectComposer';
+import '../threejs/shaders/LuminosityHighPassShader';
+
 import '../threejs/postprocessing/MaskPass';
-import '../threejs/postprocessing/BokehPass';
 import '../threejs/postprocessing/FilmPass';
-import '../threejs/postprocessing/BloomPass';
 import '../threejs/postprocessing/ShaderPass';
 import '../threejs/postprocessing/GlitchPass';
 import '../threejs/postprocessing/RenderPass';
+import '../threejs/postprocessing/UnrealBloomPass';
 
 export default class Scene extends React.Component {
 
@@ -40,11 +40,11 @@ export default class Scene extends React.Component {
 
         return [
             new THREE.RenderPass(scene, camera),
-            // strength, kernelSize, sigma, resolution
-            new THREE.BloomPass(1.5, 25, 4, 256),
+            new THREE.FilmPass(0.25, 1.5, height * 2, false),
+            // resolution, strength, radius, threshold
+            new THREE.UnrealBloomPass(new THREE.Vector2(512, 512), 0.4, 1, 0.3),
             new THREE.ShaderPass(THREE.CopyShader),
-            new THREE.FilmPass(0.25, 0.5, height * 2, false),
-            // new THREE.GlitchPass(64),
+            new THREE.GlitchPass(64),
         ];
     }
 
