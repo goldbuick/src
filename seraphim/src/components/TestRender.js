@@ -1,6 +1,7 @@
 import React from 'react';
 import VizGen from '../viz/VizGen';
 import VizDraft from '../viz/VizDraft';
+import { range } from '../util/UtilArray';
 import VizProjection from '../viz/VizProjection';
 import RenderObject from '../render/RenderObject';
 
@@ -32,24 +33,27 @@ const TestRender = (props) => {
                 text: '--<=={ exculta }==>--',
             }));
 
-            display = new VizDraft();
+            let count = 256;
+            let split = 64;
+            display = range(0, Math.round(count / split)).map(d => new VizDraft());
 
             let noise = VizGen.noise({ seed });
-            let count = 256;
             let steps = 256;
-            let radius = 512;
-            let velocity = 10;
+            let radius = 600;
+            let velocity = 64;
             for (let i=0; i < count; ++i) {
-                let toffset = i * 0.01;
-                let x = 0, y = 0, z = 0;
+                let toffset = i * 0.002;
                 let angle = (i / count) * Math.PI * 2;
+
+                let x = 0, y = 0, z = 0;
                 x = Math.cos(angle) * radius;
                 y = Math.sin(angle) * radius;
+
                 let points = VizGen.flow({ noise, x, y, z, velocity, steps, toffset });
-                display.drawLine(points, color);
+                display[Math.round(i / split)].drawLine(points, color);
             }
 
-            bazz.add(display.build(VizProjection.plane(1)));
+            display.forEach(d => bazz.add(d.build(VizProjection.plane(1))));
 
             return bazz;
         }}

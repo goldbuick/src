@@ -44,7 +44,7 @@ export default class Scene extends React.Component {
             // resolution, strength, radius, threshold
             new THREE.UnrealBloomPass(new THREE.Vector2(512, 512), 0.4, 1, 0.3),
             new THREE.ShaderPass(THREE.CopyShader),
-            new THREE.GlitchPass(64),
+            // new THREE.GlitchPass(64),
         ];
     }
 
