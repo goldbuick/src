@@ -14,9 +14,9 @@ const TestRender = (props) => {
                 display = new VizDraft(),
                 rng = VizGen.rng({ seed }),
                 color = new THREE.Color(
-                    199 / 255,
-                    116 / 255, 
-                    232 / 255);
+                    148 / 255,
+                    208 / 255, 
+                    255 / 255);
 
             for (let i=1; i < 20; ++i) {
                 display.drawBracket({ rng, w: 64, y: 320, x: i * -128, h: 512 + i * 16, facing: 1, color });
