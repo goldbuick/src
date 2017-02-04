@@ -5,6 +5,7 @@ export default class RendererObject extends React.Component {
     static defaultProps = {
         onRender3D: () => { },
         onAnimate3D: () => { },
+        hasInputElement: false,
     }
 
     findRoot(parent) {
@@ -74,6 +75,17 @@ export default class RendererObject extends React.Component {
         this.props.onAnimate3D(this.object3D, this.animateState, delta);
     }
 
+    handlePointer = (e, id, pressed, point) => {
+        this.animateState = this.animateState || { };
+        this.props.onPointer({ 
+            id,
+            point,
+            pressed,
+            object3D: this.object3D,
+            animateState: this.animateState 
+        });
+    }
+
     render3D() {
         this.clear3D();
         this.object3D = this.props.onRender3D() || new THREE.Object3D();
@@ -87,6 +99,16 @@ export default class RendererObject extends React.Component {
                 'rotation-x', 'rotation-y', 'rotation-z',
                 'position-x', 'position-y', 'position-z'
             );
+            if (this.props.onPointer && !(this.object3D instanceof THREE.Scene)) {
+                let placed = false;
+                this.object3D.traverse(obj => {
+                    if (placed === false && obj.geometry) {
+                        placed = true;
+                        obj.userData.onPointer = this.handlePointer;
+                        obj.userData.hasInputElement = this.props.hasInputElement;
+                    }
+                });
+            }
         }
     }
 

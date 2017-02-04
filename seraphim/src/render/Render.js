@@ -57,7 +57,7 @@ export default class Render extends React.Component {
         let width = this.container.offsetWidth,
             height = this.container.offsetHeight;
         this.renderer.setSize(width, height);
-        this.props.onResize(this.renderer, width, height);
+        this.props.onResize(this.renderer, width, height);        
     }
 
     render() {

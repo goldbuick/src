@@ -22,6 +22,7 @@ class VizEtch {
         for (let i=0; i < points.length; ++i) {
             this.glyph.addPoint(offset + i);
         }
+        return this;
     }
 
     drawLine(points, color=WHITE) {
@@ -30,6 +31,7 @@ class VizEtch {
         for (let i=0; i < points.length-1; ++i) {
             this.glyph.addLine(offset + i, offset + i + 1);
         }
+        return this;
     }
 
     drawLoop({ x, y, z, steps, radius, front, back, drift, bump, color, 
@@ -47,6 +49,7 @@ class VizEtch {
         }
 
         this.drawLine(VizGen.arc({ x, y, z, steps, radius, front, back, drift, bump}), color);
+        return this;
     }
 
     drawLoopFn({ x, y, z, steps, radius, front, back, drift, bump, color, fn } = {}) {
@@ -65,9 +68,10 @@ class VizEtch {
                 }
             }
         }
+        return this;
     }
 
-    drawRect({ x, y, w, h, z=0, color, alpha } = {}) {
+    drawRect({ x, y, w, h, z=0, color, alpha, filled = true } = {}) {
         let offset = this.glyph.count,
             hw = w * 0.5,
             hh = h * 0.5;
@@ -76,11 +80,19 @@ class VizEtch {
         this.glyph.addVert(x + hw, y - hh, z, color);
         this.glyph.addVert(x - hw, y + hh, z, color);
         this.glyph.addVert(x + hw, y + hh, z, color);
-        this.glyph.addFill(offset, offset + 1, offset + 2, alpha);
-        this.glyph.addFill(offset + 2, offset + 1, offset + 3, alpha);
+        if (!filled) {
+            this.glyph.addLine(offset + 0, offset + 1);
+            this.glyph.addLine(offset + 1, offset + 3);
+            this.glyph.addLine(offset + 3, offset + 2);
+            this.glyph.addLine(offset + 2, offset + 0);
+        } else {
+            this.glyph.addFill(offset, offset + 1, offset + 2, alpha);
+            this.glyph.addFill(offset + 2, offset + 1, offset + 3, alpha);
+        }
+        return this;
     }
 
-    drawDiamond({ x, y, w, h, z=0, color, alpha } = {}) {
+    drawDiamond({ x, y, w, h, z=0, color, alpha, filled = true } = {}) {
         let offset = this.glyph.count,
             hw = w * 0.5,
             hh = h * 0.5;
@@ -89,11 +101,19 @@ class VizEtch {
         this.glyph.addVert(x + hw, y, z, color);
         this.glyph.addVert(x, y + hh, z, color);
         this.glyph.addVert(x - hw, y, z, color);
-        this.glyph.addFill(offset, offset + 1, offset + 2, alpha);
-        this.glyph.addFill(offset, offset + 2, offset + 3, alpha);
+        if (!filled) {
+            this.glyph.addLine(offset + 0, offset + 1);
+            this.glyph.addLine(offset + 1, offset + 2);
+            this.glyph.addLine(offset + 2, offset + 3);
+            this.glyph.addLine(offset + 3, offset + 0);
+        } else {
+            this.glyph.addFill(offset, offset + 1, offset + 2, alpha);
+            this.glyph.addFill(offset, offset + 2, offset + 3, alpha);
+        }
+        return this;
     }
 
-    drawCircle({ x, y, z, steps, radius, front, back, drift, bump, color, alpha } = {}) {
+    drawCircle({ x, y, z, steps, radius, front, back, drift, bump, color, alpha, filled = true } = {}) {
         let offset = this.glyph.count,
             points = VizGen.arc({ x, y, z, steps, radius, front, back, drift, bump}),
             center = offset,
@@ -104,9 +124,16 @@ class VizEtch {
             this.glyph.addVert(points[i].x , points[i].y, points[i].z, color);
         }
 
-        for (let i=0; i < points.length-1; ++i) {
-            this.glyph.addFill(center, base + i + 1, base + i, alpha);
+        if (!filled) {
+            for (let i=0; i < points.length-1; ++i) {
+                this.glyph.addLine(base + i, base + i + 1);
+            }
+        } else {
+            for (let i=0; i < points.length-1; ++i) {
+                this.glyph.addFill(center, base + i + 1, base + i, alpha);
+            }
         }
+        return this;
     }
 
     drawSwipeWith({ ipoints, opoints, color, alpha } = {}) {
@@ -120,11 +147,13 @@ class VizEtch {
             this.glyph.addFill(base, base + 1, base + len, alpha);
             this.glyph.addFill(base + len, base + 1, base + len + 1, alpha);
         }
+        return this;
     }
 
     drawSwipeLineWith({ ipoints, opoints, color }) {
         this.drawLine(ipoints, color);
         this.drawLine(opoints, color);        
+        return this;
     }
 
     drawSwipe({ x, y, z, steps, radius, width, front, back, drift, bump, color, alpha } = {}) {
@@ -133,12 +162,14 @@ class VizEtch {
             ipoints = VizGen.arc({ x, y, z, steps, radius: innerRadius, front, back, drift, bump }),
             opoints = VizGen.arc({ x, y, z, steps, radius: outerRadius, front, back, drift, bump });
         this.drawSwipeWith({ ipoints, opoints, color, alpha });
+        return this;
     }
 
     drawSwipeAlt({ x, y, z, steps, radius, width, front, back, drift, bump, color, alpha } = {}) {
         let ipoints = VizGen.arc({ x, y, z, steps, radius, front, back, drift, bump }),
             opoints = VizGen.arc({ x, y, z: (z + width), steps, radius, front, back, drift, bump });
         this.drawSwipeWith({ ipoints, opoints, color, alpha });
+        return this;
     }
 
     drawSwipeLine({ x, y, z, steps, radius, width, front, back, drift, bump, color }) {
@@ -147,12 +178,14 @@ class VizEtch {
             ipoints = VizGen.arc({ x, y, z, steps, radius: innerRadius, front, back, drift, bump }),
             opoints = VizGen.arc({ x, y, z, steps, radius: outerRadius, front, back, drift, bump });
         this.drawSwipeLineWith({ ipoints, opoints, color });
+        return this;
     }
 
     drawSwipeLineAlt({ x, y, z, steps, radius, width, front, back, drift, bump, color }) {
         let ipoints = VizGen.arc({ x, y, z, steps, radius, front, back, drift, bump }),
             opoints = VizGen.arc({ x, y, z: (z + width), steps, radius, front, back, drift, bump });
         this.drawSwipeLineWith({ ipoints, opoints, color });
+        return this;
     }
 
 }

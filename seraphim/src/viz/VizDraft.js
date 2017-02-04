@@ -1,13 +1,22 @@
 import VizGen from './VizGen';
 import VizEtch from './VizEtch';
+import { range } from '../util/UtilArray';
 
 class VizDraft extends VizEtch {
+
+    drawRange(a, b, fn) {
+        range(a, b).forEach(v => {
+            fn(this, v);
+        });
+        return this;
+    }
 
     drawHexPod({ x, y, z, radius, count, step, color } = {}) {
         for (let i=0; i < count; ++i) {
             this.drawLoop({ x, y, z, steps: 6, radius, color });
             radius += step;
         }
+        return this;
     }
 
     drawFeatherArc({ x, y, z=0, radius, count, r, width, depth, drift, color, alpha } = {}) {
@@ -21,10 +30,12 @@ class VizDraft extends VizEtch {
                 drift: -drift, color, alpha });
             radius += width + 2;
         }
+        return this;
     }
 
     drawChevron({ x, y, z, radius, angle, spread, color } = {}) {
         this.drawLine(VizGen.chevron({ x, y, z, radius, angle, spread, color }));
+        return this;
     }
 
     drawDashesWith({ points, gap, color } = {}) {
@@ -43,12 +54,14 @@ class VizDraft extends VizEtch {
 
             this.drawLine([ a, b ], color);
         }
+        return this;
     }
 
     drawLinesWith({ ipoints, opoints, color } = {}) {
         for (let i=0; i < ipoints.length; ++i) {
             this.drawLine([ipoints[i], opoints[i]], color);
         }
+        return this;
     }
 
     drawGridLines({ cx, cy, cz, points, color } = {}) {
@@ -90,6 +103,7 @@ class VizDraft extends VizEtch {
                 }
             }
         }
+        return this;
     }
 
     drawGridDashes({ cx, cy, cz, gap, points, color } = {}) {
@@ -131,6 +145,7 @@ class VizDraft extends VizEtch {
                 }
             }
         }
+        return this;
     }
 
     drawHatchLines({ points, length=32, color } = {}) {
@@ -147,6 +162,7 @@ class VizDraft extends VizEtch {
                 x: pt.x + length, y: pt.y - length, z: pt.z
             }], color);
         }
+        return this;
     }
 
     drawBracket({ x=0, y=0, z=0, w=32, h=256, facing=1, color, rng } = {}) {
@@ -179,6 +195,7 @@ class VizDraft extends VizEtch {
 
         (facing > 0) ? mapping(ipoints, opoints) : mapping(opoints, ipoints);
         this.drawSwipeWith({ ipoints, opoints, color });
+        return this;
     }
 
 }
