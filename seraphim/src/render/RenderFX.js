@@ -8,6 +8,13 @@ export default class RenderFX extends React.Component {
         onCreate: () => [ ],
         onUpdate: () => { },
         onResize: () => { },
+        onWheel: () => { },
+        onTouchStart: () => { },
+        onTouchMove: () => { },
+        onTouchEnd: () => { },
+        onMouseDown: () => { },
+        onMouseMove: () => { },
+        onMouseUp: () => { },
     }
 
     handleCreate = (renderer, width, height) => {
@@ -41,7 +48,14 @@ export default class RenderFX extends React.Component {
             {...this.props}
             onCreate={this.handleCreate} 
             onUpdate={this.handleUpdate} 
-            onResize={this.handleResize}>{this.props.children}</Render>;
+            onResize={this.handleResize}
+            onWheel={this.props.onWheel}
+            onTouchStart={this.props.onTouchStart}
+            onTouchMove={this.props.onTouchMove}
+            onTouchEnd={this.props.onTouchEnd}
+            onMouseDown={this.props.onMouseDown}
+            onMouseMove={this.props.onMouseMove}
+            onMouseUp={this.props.onMouseUp}>{this.props.children}</Render>;
     }
 
 }

@@ -21,7 +21,7 @@ export default class Render extends React.Component {
             height = this.container.offsetHeight;
 
         this.renderer = new THREE.WebGLRenderer({
-            antialias: false,
+            // antialias: false,
             preserveDrawingBuffer: true
         });
         this.renderer.setSize(width, height);
@@ -60,25 +60,17 @@ export default class Render extends React.Component {
         this.props.onResize(this.renderer, width, height);
     }
 
-    handleWheel = (e) => this.props.onWheel(this.renderer, e)
-    handleTouchStart = (e) => this.props.onTouchStart(this.renderer, e)
-    handleTouchMove = (e) => this.props.onTouchMove(this.renderer, e)
-    handleTouchEnd = (e) => this.props.onTouchEnd(this.renderer, e)
-    handleMouseDown = (e) => this.props.onMouseDown(this.renderer, e)
-    handleMouseMove = (e) => this.props.onMouseMove(this.renderer, e)
-    handleMouseUp = (e) => this.props.onMouseUp(this.renderer, e)
-
     render() {
         return <div 
             className="renderer"
             ref={el => this.container = el}
-            onWheel={this.handleWheel}
-            onTouchStart={this.handleTouchStart}
-            onTouchMove={this.handleTouchMove}
-            onTouchEnd={this.handleTouchEnd}
-            onMouseDown={this.handleMouseDown}
-            onMouseMove={this.handleMouseMove}
-            onMouseUp={this.handleMouseUp}>{this.props.children}</div>;
+            onWheel={this.props.onWheel}
+            onTouchStart={this.props.onTouchStart}
+            onTouchMove={this.props.onTouchMove}
+            onTouchEnd={this.props.onTouchEnd}
+            onMouseDown={this.props.onMouseDown}
+            onMouseMove={this.props.onMouseMove}
+            onMouseUp={this.props.onMouseUp}>{this.props.children}</div>;
     }
 
 }

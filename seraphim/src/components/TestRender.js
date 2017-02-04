@@ -33,7 +33,7 @@ const TestRender = (props) => {
                 text: '--<=={ exculta }==>--',
             }));
 
-            let count = 256;
+            let count = 64;
             let split = 64;
             display = range(0, Math.round(count / split)).map(d => new VizDraft());
 
