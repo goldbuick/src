@@ -3,7 +3,7 @@ import loadFont from 'load-bmfont';
 let fontData = { },
     fontQueue = { },
     Texture = new THREE.TextureLoader(),
-    VizFont = (name, retry) => {
+    Font = (name, retry) => {
         if (fontData[name]) {
             return fontData[name];
         }
@@ -14,7 +14,7 @@ let fontData = { },
         return undefined;
     };
 
-[ 'LOGO', 'TECH', 'TECHMONO' ].forEach(name => {
+[ 'LOGO', 'TECH', 'TECHMONO', 'NEONOIRE' ].forEach(name => {
     let url = `media/${name}.fnt`;
     loadFont(url, (err, config) => {
         if (err) throw err;
@@ -40,5 +40,5 @@ let fontData = { },
     });
 });
 
-export default VizFont;
+export default Font;
 

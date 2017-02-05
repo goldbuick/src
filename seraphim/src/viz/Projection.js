@@ -1,5 +1,5 @@
 
-class VizProjection {
+class Projection {
 
     plane(scale) {
         return (x, y, z) => {
@@ -42,4 +42,4 @@ class VizProjection {
 
 }
 
-export default new VizProjection();
+export default new Projection();

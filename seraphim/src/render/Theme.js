@@ -1,6 +1,6 @@
 
 let Theme = {
-    color: new THREE.Color("rgb(148, 208, 255)")
+    color: new THREE.Color("rgb(135,149,232)")
 };
 
 export default Theme;

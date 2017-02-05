@@ -1,17 +1,15 @@
-import VizGen from './VizGen';
-import VizEtch from './VizEtch';
-import { range } from '../util/UtilArray';
+import Etch from './Etch';
+import GenAlgo from './GenAlgo';
+import GenPoints from './GenPoints';
 
-class VizDraft extends VizEtch {
+class Draft extends Etch {
 
-    drawRange(a, b, fn) {
-        range(a, b).forEach(v => {
-            fn(this, v);
-        });
+    drawRange({ from, to, fn }) {
+        GenAlgo.range({ from, to }).forEach(v => fn(this, v));
         return this;
     }
 
-    drawHexPod({ x, y, z, radius, count, step, color } = {}) {
+    drawHexPod({ x, y, z=0, radius, count, step, color } = {}) {
         for (let i=0; i < count; ++i) {
             this.drawLoop({ x, y, z, steps: 6, radius, color });
             radius += step;
@@ -200,4 +198,4 @@ class VizDraft extends VizEtch {
 
 }
 
-export default VizDraft;
+export default Draft;

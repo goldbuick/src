@@ -40,10 +40,11 @@ export default class Scene extends React.Component {
         // default camera position
         camera.position.z = 1024;
 
+        const rez = 1024;
         return [
             new THREE.RenderPass(scene, camera),
             new THREE.FilmPass(0.25, 0.5, height * 2, false),
-            new THREE.BloomBlendPass(1, 2),
+            new THREE.BloomBlendPass(1, 2.5, new THREE.Vector2(rez, rez)),
             // new THREE.GlitchPass(64),
         ];
     }

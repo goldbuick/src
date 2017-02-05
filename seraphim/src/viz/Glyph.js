@@ -13,14 +13,20 @@ let fillMaterial = new THREE.MeshBasicMaterial({
     vertexColors: THREE.VertexColors
 });
 
-let alphaFillMaterial = new THREE.MeshBasicMaterial({
+let alphaFillMaterialBack = new THREE.MeshBasicMaterial({
     opacity: 0.08,
     transparent: true,
-    side: THREE.DoubleSide,
+    side: THREE.BackSide,
     vertexColors: THREE.VertexColors
 });
 
-class VizGlyph {
+let alphaFillMaterialFront = new THREE.MeshBasicMaterial({
+    opacity: 0.08,
+    transparent: true,
+    vertexColors: THREE.VertexColors
+});
+
+class Glyph {
 
     constructor() {
         this.count = 0;
@@ -264,8 +270,11 @@ class VizGlyph {
                 new THREE.BufferAttribute(new Float32Array(this.colors), 3));
             alphaFillGeometry.computeBoundingSphere();
 
-            let alphaFillMesh = new THREE.Mesh(alphaFillGeometry, alphaFillMaterial);
-            group.add(alphaFillMesh);
+            let alphaFillMeshBack = new THREE.Mesh(alphaFillGeometry, alphaFillMaterialBack);
+            group.add(alphaFillMeshBack);
+
+            let alphaFillMeshFront = new THREE.Mesh(alphaFillGeometry, alphaFillMaterialFront);
+            group.add(alphaFillMeshFront);
         }
 
         if (this.points.length) {
@@ -304,4 +313,4 @@ class VizGlyph {
     }
 }
 
-export default VizGlyph;
+export default Glyph;
