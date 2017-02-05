@@ -20,9 +20,10 @@ const Sphere = (props) => {
                 draft.drawTri({ points, alpha: true });
                 draft.drawTri({ points, filled: false });
 
-                const transform2 = GenTransform.radialTranslate({ radius: 16 });
+                const transform2 = GenTransform.radialTranslate({ radius: 32 });
                 const peak = transform2(face.mid);
                 draft.drawTri({ points: [ peak, points[0], points[1] ], filled: false });
+                draft.drawTri({ points: [ peak, points[1], points[2] ], filled: false });
                 draft.drawTri({ points: [ peak, points[2], points[0] ], filled: false });
             });
 
@@ -32,11 +33,16 @@ const Sphere = (props) => {
             object3D.add(object3D.userData.sphere);
 
             object3D.add(Text.create({
-                scale: 3,
+                scale: 5,
+                font: 'LOGO',
+                text: 'crypto.cafe',
+                position: { x: 0, y: -128, z: 380 }
+            }));
+            object3D.add(Text.create({
+                scale: 1.8,
                 font: 'NEONOIRE',
                 text: 'merveilles',
-                // text: 'crypto.cafe',
-                position: { x: 0, y: -300, z: 200 }
+                position: { x: 0, y: -256, z: 380 }
             }));
 
             return object3D;
