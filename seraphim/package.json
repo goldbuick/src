@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "find me in the net",
   "main": "index.js",
+  "bin": {
+    "webpack": "./node_modules/.bin/webpack",
+    "webpack-dev-server": "./node_modules/.bin/webpack-dev-server"
+  },
   "scripts": {
     "dev": "webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack --progress",
