@@ -8,7 +8,8 @@ class Etch {
     glyph = new Glyph()
 
     tessellate(step) {
-        return this.glyph.tessellate(step);
+        this.glyph.tessellate(step);
+        return this;
     }
 
     build(transform) {

@@ -9,13 +9,15 @@ import Scene from './Scene';
 // import Projection from '../viz/Projection';
 
 import Sphere from './Sphere';
+import SphereConstruct from './SphereConstruct';
 
 export default class Page extends React.Component {
 
     render() {
         return <Scene>
-            <Sphere
-            />
+            <Sphere>
+                <SphereConstruct />
+            </Sphere>
         </Scene>;
     }
 

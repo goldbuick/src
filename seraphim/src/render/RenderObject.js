@@ -6,6 +6,7 @@ export default class RendererObject extends React.Component {
         onRender3D: () => { },
         onAnimate3D: () => { },
         hasInputElement: false,
+        // onChildren3D, add this to customize props, children of this component 
     }
 
     findRoot(parent) {
@@ -112,12 +113,21 @@ export default class RendererObject extends React.Component {
         }
     }
 
-    render() {
-        let children = React.Children.map(this.props.children, 
-            child => React.cloneElement(child, { parent: this }));
+    children3D() {
+        let children = React.Children.map(this.props.children, child => {
+            return React.cloneElement(child, { parent: this });
+        });
 
+        if (this.props.onChildren3D) {
+            children = this.props.onChildren3D(children);
+        }
+
+        return children || null;
+    }
+
+    render() {
         this.render3D();
-        return <div>{children}</div>;
+        return <div>{this.children3D()}</div>;
     }
 
 }
