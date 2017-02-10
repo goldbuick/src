@@ -58,25 +58,24 @@ const Sphere = (props) => {
         //     // // }));
 
         //     // return object3D;
-            return Text.create({
-                scale: 2.5,
-                font: 'TECHMONO',
-                text: '//= 53R4PHIM =//',
-            });
+            // return Text.create({
+            //     scale: 2.5,
+            //     font: 'TECHMONO',
+            //     text: '//= 53R4PHIM =//',
+            // });
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
-            animateState.angle = (animateState.angle || 0) + delta * 0.1;
-            object3D.rotation.y = animateState.angle;
+            // animateState.angle = (animateState.angle || 0) + delta * 0.1;
+            // object3D.rotation.y = animateState.angle;
 
             const constructs = RenderObject.byType(object3D.children, SphereConstruct);
             RenderObject.animate(constructs, animateState, (construct, anim, index) => {
                 if (anim.toQuat === undefined) {
                     const faces = GenFaces.createFromTriSphere({ radius: props.radius, detail: 1 });
 
-                    const _index = index; //Math.round(Math.random() * (faces.length - 1));
-                    anim.index = _index;
-                    const face = faces[_index];
+                    anim.index = Math.round((index / (constructs.length-1)) * (faces.length-1));
+                    const face = faces[anim.index];
                     const forward = new THREE.Vector3(0, 0, 1);
 
                     const normal = new THREE.Vector3(face.mid.x, face.mid.y, face.mid.z).normalize();
@@ -89,8 +88,8 @@ const Sphere = (props) => {
                     anim.fromQuat.setFromUnitVectors(forward, from);
 
                     const tween = new TWEEN.Tween(anim).
-                        to({ toQuatRatio: 1 }, 1000).
-                        easing(TWEEN.Easing.Exponential.InOut).
+                        to({ toQuatRatio: 1 }).
+                        easing(TWEEN.Easing.Cubic.Out).
                         delay(500).
                         start();
                 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import Scene from './Scene';
+import { range } from '../util/UtilArray';
 
 // import TWEEN from 'tween.js';
 // import Theme from '../render/Theme';
@@ -11,64 +12,34 @@ import Scene from './Scene';
 import Sphere from './Sphere';
 import SphereConstruct from './SphereConstruct';
 
-export default class Page extends React.Component {
+const Page = (props) => {
+    const count = 30;
+    const radius = 300;
+    const offsetX = radius + 32;
+    const offsetY = offsetX - 64;
 
-    render() {
-        return <Scene>
-            <Sphere radius={400}>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
-                <SphereConstruct mode="A"/>
-                <SphereConstruct mode="B"/>
-                <SphereConstruct mode="C"/>
+    return (
+        <Scene>
+            <Sphere radius={radius} position-x={-offsetX} position-y={offsetY}>
+                {range(1, count).map(v => {
+                    return <SphereConstruct mode="A"/>;
+                })}
             </Sphere>
-        </Scene>;
-    }
+            <Sphere radius={radius} position-x={0} position-y={-offsetY}>
+                {range(1, count).map(v => {
+                    return <SphereConstruct mode="B"/>;
+                })}
+            </Sphere>
+            <Sphere radius={radius} position-x={offsetX} position-y={offsetY}>
+                {range(1, count).map(v => {
+                    return <SphereConstruct mode="C"/>;
+                })}
+            </Sphere>
+        </Scene>
+    );
+};
 
-}
+export default Page;
 
 /*
             <Button name="TestButton"

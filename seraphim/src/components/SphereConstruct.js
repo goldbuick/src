@@ -21,6 +21,7 @@ const SphereConstruct = (props) => {
                     draft.drawChevron({ y: dist * 0.25, radius: dist * 0.8, angle: Math.PI * 1.5 });
                     break;
                 case 'C':
+                    draft.drawRect({ x: 0, y: 0, w: dist * 0.5, h: dist * 0.5, filled: false });
                     draft.drawDiamond({ x: 0, y: 0, w: dist, h: dist, filled: false });
                     break;
             }
