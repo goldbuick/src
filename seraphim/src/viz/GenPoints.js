@@ -33,20 +33,22 @@ class GenPoints {
         }];
     }
 
-    chevron({ x=0, y=0, z=0, radius=32, angle=0, spread=1.57 } = {}) {
+    chevron({ x=0, y=0, z=0, radius=32, angle=0, spread=0.6 } = {}) {
         let points = [ ];
         // left
+        const leftAngle = angle - spread;
         points.push({
-            x: x + Math.cos(angle - spread) * radius,
-            y: y + Math.sin(angle - spread) * radius,
+            x: x + Math.cos(leftAngle) * radius,
+            y: y + Math.sin(leftAngle) * radius,
             z: z
         });
         // center
         points.push({ x: x, y: y, z: z });
-        // left
+        // right
+        const rightAngle = angle + spread;
         points.push({
-            x: x + Math.cos(angle + spread) * radius,
-            y: y + Math.sin(angle + spread) * radius,
+            x: x + Math.cos(rightAngle) * radius,
+            y: y + Math.sin(rightAngle) * radius,
             z: z
         });
         return points;

@@ -32,7 +32,7 @@ class Draft extends Etch {
     }
 
     drawChevron({ x, y, z, radius, angle, spread, color } = {}) {
-        this.drawLine(VizGen.chevron({ x, y, z, radius, angle, spread, color }));
+        this.drawLine(GenPoints.chevron({ x, y, z, radius, angle, spread }), color);
         return this;
     }
 
@@ -183,7 +183,7 @@ class Draft extends Etch {
             points1[0].x = x;
             points1[last].x = x;
             let fhw = hw * facing,
-                mid = VizGen.range(rng, 4, segments - 4);
+                mid = GenPoints.range(rng, 4, segments - 4);
 
             for (let i=1; i < segments-1; ++i) {
                 let bevel = Math.abs(i - mid) < 2 ? 1.5 : 1;

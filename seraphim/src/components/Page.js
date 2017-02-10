@@ -15,8 +15,55 @@ export default class Page extends React.Component {
 
     render() {
         return <Scene>
-            <Sphere>
-                <SphereConstruct />
+            <Sphere radius={400}>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
+                <SphereConstruct mode="A"/>
+                <SphereConstruct mode="B"/>
+                <SphereConstruct mode="C"/>
             </Sphere>
         </Scene>;
     }

@@ -2,8 +2,10 @@ import React from 'react';
 import Draft from '../viz/Draft';
 import Theme from '../render/Theme';
 import Projection from '../viz/Projection';
+import SphereConstruct from './SphereConstruct';
 import RenderObject from '../render/RenderObject';
 
+import TWEEN from 'tween.js';
 import Text from '../viz/Text';
 import GenFaces from '../viz/GenFaces';
 import GenTransform from '../viz/GenTransform';
@@ -12,10 +14,14 @@ const Sphere = (props) => {
     return <RenderObject {...props}
         
         onChildren3D={(children) => {
-            return children.map(child => React.cloneElement(child, { sphereRadius: props.radius }));
+            const constructs = RenderObject.byType(children, SphereConstruct, { sphereRadius: props.radius });
+            // console.log(constructs);
+            return [
+                constructs
+            ];
         }}
 
-        // onRender3D={() => {
+        onRender3D={() => {
         //     console.log('Render Sphere');
         //     // const draft = new Draft();
 
@@ -52,10 +58,46 @@ const Sphere = (props) => {
         //     // // }));
 
         //     // return object3D;
-        // }}
+            return Text.create({
+                scale: 2.5,
+                font: 'TECHMONO',
+                text: '//= 53R4PHIM =//',
+            });
+        }}
 
         onAnimate3D={(object3D, animateState, delta) => {
-            // object3D.userData.sphere.rotation.y += delta * 0.1;
+            animateState.angle = (animateState.angle || 0) + delta * 0.1;
+            object3D.rotation.y = animateState.angle;
+
+            const constructs = RenderObject.byType(object3D.children, SphereConstruct);
+            RenderObject.animate(constructs, animateState, (construct, anim, index) => {
+                if (anim.toQuat === undefined) {
+                    const faces = GenFaces.createFromTriSphere({ radius: props.radius, detail: 1 });
+
+                    const _index = index; //Math.round(Math.random() * (faces.length - 1));
+                    anim.index = _index;
+                    const face = faces[_index];
+                    const forward = new THREE.Vector3(0, 0, 1);
+
+                    const normal = new THREE.Vector3(face.mid.x, face.mid.y, face.mid.z).normalize();
+                    anim.toQuat = new THREE.Quaternion();
+                    anim.toQuat.setFromUnitVectors(forward, normal);
+                    anim.toQuatRatio = 0;
+
+                    const from = new THREE.Vector3((Math.random() - 0.5) * props.radius * 2, 0, 0).normalize();
+                    anim.fromQuat = new THREE.Quaternion(); 
+                    anim.fromQuat.setFromUnitVectors(forward, from);
+
+                    const tween = new TWEEN.Tween(anim).
+                        to({ toQuatRatio: 1 }, 1000).
+                        easing(TWEEN.Easing.Exponential.InOut).
+                        delay(500).
+                        start();
+                }
+
+                construct.quaternion.copy(anim.fromQuat);
+                construct.quaternion.slerp(anim.toQuat, anim.toQuatRatio);
+            });
         }}
     />;
 };
