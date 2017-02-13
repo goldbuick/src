@@ -9,21 +9,12 @@ const SphereConstruct = (props) => {
 
         onRender3D={() => {
             const draft = new Draft();
-            const dist = 256;
 
-            switch (props.mode) {
-                case 'A':
-                    draft.drawHexPod({ radius: dist * 0.3, count: 3, step: dist * 0.07 });
-                    break;
-                case 'B':
-                    draft.drawChevron({ y: dist * 0.45, radius: dist * 0.8, angle: Math.PI * 1.5 });
-                    draft.drawChevron({ y: dist * 0.35, radius: dist * 0.8, angle: Math.PI * 1.5 });
-                    draft.drawChevron({ y: dist * 0.25, radius: dist * 0.8, angle: Math.PI * 1.5 });
-                    break;
-                case 'C':
-                    draft.drawRect({ x: 0, y: 0, w: dist * 0.5, h: dist * 0.5, filled: false });
-                    draft.drawDiamond({ x: 0, y: 0, w: dist, h: dist, filled: false });
-                    break;
+            if (props.onConstruct) {
+                props.onConstruct(draft);
+            } else {
+                const radius = 256;
+                draft.drawHexPod({ radius: radius, count: 3, step: radius * 0.1 });
             }
 
             return draft.tessellate(16).build(Projection.sphere(props.sphereRadius, 1));

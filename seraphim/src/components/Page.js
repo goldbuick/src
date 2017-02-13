@@ -13,28 +13,13 @@ import Sphere from './Sphere';
 import SphereConstruct from './SphereConstruct';
 
 const Page = (props) => {
-    const count = 30;
-    const radius = 300;
-    const offsetX = radius + 32;
-    const offsetY = offsetX - 64;
+    const radius = 512;
+    const offset = radius + 32;
 
     return (
         <Scene>
-            <Sphere radius={radius} position-x={-offsetX} position-y={offsetY}>
-                {range(1, count).map(v => {
-                    return <SphereConstruct mode="A"/>;
-                })}
-            </Sphere>
-            <Sphere radius={radius} position-x={0} position-y={-offsetY}>
-                {range(1, count).map(v => {
-                    return <SphereConstruct mode="B"/>;
-                })}
-            </Sphere>
-            <Sphere radius={radius} position-x={offsetX} position-y={offsetY}>
-                {range(1, count).map(v => {
-                    return <SphereConstruct mode="C"/>;
-                })}
-            </Sphere>
+            <Sphere radius={radius} position-x={-offset}>{range(1, 5).map(v => <SphereConstruct key={v} mode="A"/>)}</Sphere>
+            <Sphere radius={radius} position-x={offset}>{range(1, 8).map(v => <SphereConstruct key={v} mode="A"/>)}</Sphere>
         </Scene>
     );
 };

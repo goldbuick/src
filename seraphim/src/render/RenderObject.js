@@ -1,4 +1,5 @@
 import React from 'react';
+import { flatten } from '../util/UtilArray';
 
 export default class RendererObject extends React.Component {
 
@@ -118,9 +119,9 @@ export default class RendererObject extends React.Component {
         });
     }
 
-    render3D() {
+    render3D(children) {
         this.clear3D();
-        this.object3D = this.props.onRender3D() || new THREE.Object3D();
+        this.object3D = this.props.onRender3D(children) || new THREE.Object3D();
         
         // uuid created when component mounts and renders
         if (!this.objectUuid) this.objectUuid = this.object3D.uuid;
@@ -164,15 +165,16 @@ export default class RendererObject extends React.Component {
         if (this.props.onChildren3D) {
             children = this.props.onChildren3D(children);
             // flatten array
-            children = [].concat.apply([], children);
+            children = flatten(children);
         }
 
         return children || null;
     }
 
     render() {
-        this.render3D();
-        return <div>{this.children3D()}</div>;
+        const children = this.children3D();
+        this.render3D(children);
+        return <div>{children}</div>;
     }
 
 }
