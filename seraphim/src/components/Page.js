@@ -3,6 +3,7 @@ import Scene from './Scene';
 import { range } from '../util/UtilArray';
 
 import Sphere from './Sphere';
+import SphereHalo from './SphereHalo';
 import SphereConstruct from './SphereConstruct';
 import SphereSubStrate from './SphereSubStrate';
 
@@ -17,6 +18,7 @@ const Page = (props) => {
         <Scene>
             <Sphere radius={radius} position-x={-offset}>
                 {sphereConstruct(5)}
+                <SphereHalo />
                 {sphereSubStrate(3)}
             </Sphere>
             <Sphere radius={radius} position-x={offset}>

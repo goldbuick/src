@@ -5,6 +5,7 @@ import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
 import { first, range, flatten } from '../util/UtilArray';
 
+import SphereHalo from './SphereHalo';
 import SphereConstruct from './SphereConstruct';
 import SphereSubStrate from './SphereSubStrate';
 
@@ -37,9 +38,11 @@ const Sphere = (props) => {
     return <RenderObject {...props}
         
         onChildren3D={(children) => {
+            const halos = RenderObject.byType(children, SphereHalo, { sphereRadius: props.radius + props.haloDist });
             const constructs = RenderObject.byType(children, SphereConstruct, { sphereRadius: props.radius });
             const substrates = RenderObject.byType(children, SphereSubStrate, { sphereRadius: props.radius });
             return [
+                halos,
                 constructs,
                 substrates
             ];
@@ -150,6 +153,7 @@ const Sphere = (props) => {
 
 Sphere.defaultProps = {
     radius: 512,
+    haloDist: 32,
     substrateDist: 64,
     substrateStep: 32,
 };
