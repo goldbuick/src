@@ -2,9 +2,11 @@ import React from 'react';
 import Draft from '../viz/Draft';
 import Theme from '../render/Theme';
 import Projection from '../viz/Projection';
-import SphereConstruct from './SphereConstruct';
 import RenderObject from '../render/RenderObject';
 import { first, range, flatten } from '../util/UtilArray';
+
+import SphereConstruct from './SphereConstruct';
+import SphereSubStrate from './SphereSubStrate';
 
 import TWEEN from 'tween.js';
 import Text from '../viz/Text';
@@ -36,9 +38,10 @@ const Sphere = (props) => {
         
         onChildren3D={(children) => {
             const constructs = RenderObject.byType(children, SphereConstruct, { sphereRadius: props.radius });
-            // console.log(constructs);
+            const substrates = RenderObject.byType(children, SphereSubStrate, { sphereRadius: props.radius });
             return [
-                constructs
+                constructs,
+                substrates
             ];
         }}
 
@@ -87,11 +90,14 @@ const Sphere = (props) => {
 
         onAnimate3D={(object3D, animateState, delta) => {
             if (!animateState.scale) {
+                animateState.spin = 0;
                 animateState.scale = smallScale;
                 animateState.rotation = Math.PI;
                 new TWEEN.Tween(animateState).to({ scale: 1 }, tweenDuration1).easing(tweenAlgo1).delay(tweenDelay).start();
                 new TWEEN.Tween(animateState).to({ rotation: 0 }, tweenDuration2).easing(tweenAlgo2).delay(tweenDelay).start();
             }
+            animateState.spin += delta * 0.2;
+            object3D.rotation.y = animateState.spin;
             object3D.userData.connect.rotation.y = animateState.rotation;
             object3D.userData.connect.scale.setScalar(animateState.scale);
 
@@ -123,12 +129,29 @@ const Sphere = (props) => {
                 construct.quaternion.copy(anim.fromQuat);
                 construct.quaternion.slerp(anim.toQuat, anim.toQuatRatio);
             });
+
+            const substrates = RenderObject.byType(object3D.children, SphereSubStrate);
+            RenderObject.animate(substrates, animateState, (substrate, anim, index) => {
+                substrate.rotation.x = Math.PI * 0.5;
+                if (anim.scale === undefined) {
+                    anim.scale = smallScale;
+                    anim.position = 1024;
+                    const targetPosition = props.radius + props.substrateDist + (index * props.substrateStep);
+                    new TWEEN.Tween(anim).to({ scale: 1 }, tweenDuration1).easing(tweenAlgo1).delay(tweenDelay).start();
+                    new TWEEN.Tween(anim).to({ position: targetPosition }, tweenDuration2).easing(tweenAlgo2).delay(tweenDelay).start();                    
+                }
+                substrate.scale.setScalar(anim.scale);
+                substrate.position.y = -anim.position;
+            });
+
         }}
     />;
 };
 
 Sphere.defaultProps = {
-    radius: 512
+    radius: 512,
+    substrateDist: 64,
+    substrateStep: 32,
 };
 
 export default Sphere;

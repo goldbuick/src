@@ -2,24 +2,27 @@ import React from 'react';
 import Scene from './Scene';
 import { range } from '../util/UtilArray';
 
-// import TWEEN from 'tween.js';
-// import Theme from '../render/Theme';
-// import TestRender from './TestRender';
-// import Button from './Button';
-// import Draft from '../viz/Draft';
-// import Projection from '../viz/Projection';
-
 import Sphere from './Sphere';
 import SphereConstruct from './SphereConstruct';
+import SphereSubStrate from './SphereSubStrate';
 
 const Page = (props) => {
-    const radius = 512;
-    const offset = radius + 32;
+    const radius = 300;
+    const offset = radius * 2;
+
+    const sphereConstruct = (count) => range(1, count).map(v => <SphereConstruct key={v} mode="A"/>);
+    const sphereSubStrate = (count) => range(1, count).map(v => <SphereSubStrate key={v} verta={v} />);
 
     return (
         <Scene>
-            <Sphere radius={radius} position-x={-offset}>{range(1, 5).map(v => <SphereConstruct key={v} mode="A"/>)}</Sphere>
-            <Sphere radius={radius} position-x={offset}>{range(1, 8).map(v => <SphereConstruct key={v} mode="A"/>)}</Sphere>
+            <Sphere radius={radius} position-x={-offset}>
+                {sphereConstruct(5)}
+                {sphereSubStrate(3)}
+            </Sphere>
+            <Sphere radius={radius} position-x={offset}>
+                {sphereConstruct(8)}
+                {sphereSubStrate(2)}
+            </Sphere>
         </Scene>
     );
 };
