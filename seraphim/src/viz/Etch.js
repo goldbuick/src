@@ -142,9 +142,9 @@ class Etch {
         return this;
     }
 
-    drawCircle({ x, y, z, steps, radius, front, back, drift, bump, color, alpha, filled = true } = {}) {
+    drawCircle({ x, y, z, steps, radius, front, back, drift, bump, color = Theme.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
-            points = GenPoints.arc({ x, y, z, steps, radius, front, back, drift, bump}),
+            points = GenPoints.arc({ x, y, z, steps, radius, front, back, drift, bump }),
             center = offset,
             base = center + 1;
 

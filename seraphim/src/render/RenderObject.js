@@ -1,7 +1,8 @@
 import React from 'react';
+import genUuid from 'uuid';
 import { flatten } from '../util/UtilArray';
 
-export default class RendererObject extends React.Component {
+export default class RenderObject extends React.Component {
 
     static defaultProps = {
         onRender3D: () => { },
@@ -20,9 +21,7 @@ export default class RendererObject extends React.Component {
 
         // filter by constructor & patch props with ctor
         if (isReact) {
-            props.ctor = ctor;
-            const _children = children.filter(c => c.type === ctor);
-            return RendererObject.clone(_children, props);
+            return RenderObject.clone(children.filter(c => c.type === ctor), {...props, ctor});
         }
 
         // filter by constructor 
@@ -31,6 +30,15 @@ export default class RendererObject extends React.Component {
 
     static clone(children, props) {
         return children.map(child => React.cloneElement(child, props));        
+    }
+
+    static uniqueKey(children) {
+        return children.map((child, i) => {
+            if (child.props.key === undefined) {
+                return React.cloneElement(child, { key: i });
+            }
+            return child;
+        });
     }
 
     static animate(children, animateState, fn) {
@@ -121,10 +129,7 @@ export default class RendererObject extends React.Component {
 
     render3D(children) {
         this.clear3D();
-        this.object3D = this.props.onRender3D(children) || new THREE.Object3D();
-        
-        // uuid created when component mounts and renders
-        if (!this.objectUuid) this.objectUuid = this.object3D.uuid;
+        this.object3D = this.props.onRender3D(this.uuid, children) || new THREE.Object3D();
 
         let parent = this.props.parent && this.props.parent.object3D;
         if (parent && this.object3D) {
@@ -133,7 +138,7 @@ export default class RendererObject extends React.Component {
 
             // standard values for object3D
             this.object3D.name = this.props.name;
-            this.object3D.userData.uuid = this.objectUuid;
+            this.object3D.userData.uuid = this.uuid;
             this.object3D.userData.renderObject = this.props.ctor;
             
             // standard props to apply
@@ -158,23 +163,27 @@ export default class RendererObject extends React.Component {
     }
 
     children3D() {
-        let children = React.Children.map(this.props.children, child => {
+        let children = React.Children.map(this.props.children || [], child => {
             return React.cloneElement(child, { parent: this });
         });
 
         if (this.props.onChildren3D) {
             children = this.props.onChildren3D(children);
-            // flatten array
-            children = flatten(children);
+            if (!Array.isArray(children)) children = [ children ];
+            children = RenderObject.uniqueKey(flatten(children));
         }
 
-        return children || null;
+        return React.Children.map(children, child => {
+            return React.cloneElement(child, { parent: this });
+        });
     }
 
     render() {
+        if (this.uuid === undefined) this.uuid = genUuid();
+        const name = this.props.name || 'RenderObject';
         const children = this.children3D();
         this.render3D(children);
-        return <div>{children}</div>;
+        return <div data-name={name}>{children}</div>;
     }
 
 }

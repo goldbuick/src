@@ -3,27 +3,23 @@ import Scene from './Scene';
 import { range } from '../util/UtilArray';
 
 import Sphere from './Sphere';
-import SphereHalo from './SphereHalo';
-import SphereConstruct from './SphereConstruct';
+import SphereBarrier from './SphereBarrier';
+import SphereMantleGem from './SphereMantleGem';
 import SphereSubStrate from './SphereSubStrate';
+import SphereBarrierGem from './SphereBarrierGem';
 
 const Page = (props) => {
-    const radius = 300;
-    const offset = radius * 2;
-
-    const sphereConstruct = (count) => range(1, count).map(v => <SphereConstruct key={v} mode="A"/>);
-    const sphereSubStrate = (count) => range(1, count).map(v => <SphereSubStrate key={v} verta={v} />);
+    const radius = 512;
+    const sphereMantleGem = (count) => range(1, count).map(v => <SphereMantleGem key={v} mode="A"/>);
+    const sphereSubStrate = (count) => range(1, count).map(v => <SphereSubStrate key={v} verta={v}/>);
+    const sphereBarrierGem = (count) => range(1, count).map(v => <SphereBarrierGem key={v} mode="A"/>);
 
     return (
         <Scene>
-            <Sphere radius={radius} position-x={-offset}>
-                {sphereConstruct(5)}
-                <SphereHalo />
-                {sphereSubStrate(3)}
-            </Sphere>
-            <Sphere radius={radius} position-x={offset}>
-                {sphereConstruct(8)}
-                {sphereSubStrate(2)}
+            <Sphere radius={radius}>
+                {sphereMantleGem(5)}
+                {sphereSubStrate(1)}
+                {sphereBarrierGem(2)}
             </Sphere>
         </Scene>
     );
