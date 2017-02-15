@@ -16,8 +16,9 @@ const SphereSubStrate = (props) => {
             if (props.onSubStrate) {
                 props.onSubStrate(draft);
             } else {
-                const thick = 3;
+                const thick = 4;
                 const radius = 256 + props.verta * 32;
+                draft.drawCircle({ x: 0, y: 0, z: 0, radius, steps: 64, filled: false });
                 draft.drawCircle({ x: 0, y: 0, z: thick, radius, steps: 64, filled: false });
                 draft.drawCircle({ x: 0, y: 0, z: -thick, radius, steps: 64, filled: false });
                 draft.drawFeatherArc({ x: 0, y: 0, z: 0, radius, count: 16, r: rng, width: 3, depth: 0, drift: 2 });
