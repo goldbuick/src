@@ -1,15 +1,18 @@
+import polylineNormals from 'polyline-normals';
+
 let pointMaterial = new THREE.PointsMaterial({
     size: 1,
     sizeAttenuation: false,
     vertexColors: THREE.VertexColors
 });
 
-let lineMaterial = new THREE.LineBasicMaterial({
+let fillMaterialBack = new THREE.MeshBasicMaterial({
+    side: THREE.BackSide,
     vertexColors: THREE.VertexColors
 });
 
-let fillMaterial = new THREE.MeshBasicMaterial({
-    side: THREE.DoubleSide,
+let fillMaterialFront = new THREE.MeshBasicMaterial({
+    side: THREE.FrontSide,
     vertexColors: THREE.VertexColors
 });
 
@@ -23,6 +26,7 @@ let alphaFillMaterialBack = new THREE.MeshBasicMaterial({
 let alphaFillMaterialFront = new THREE.MeshBasicMaterial({
     opacity: 0.08,
     transparent: true,
+    side: THREE.FrontSide,
     vertexColors: THREE.VertexColors
 });
 
@@ -235,6 +239,51 @@ class Glyph {
     build(transform) {
         let group = new THREE.Group();
 
+        if (this.lines.length) {
+            const verts = [];
+            const colors = [];
+            for (let i=0; i < this.lines.length; i+=2) {
+                const a = this.lines[i] * 3;
+                const b = this.lines[i+1] * 3;
+                const v1 = [ 
+                    this.positions[a], 
+                    this.positions[a+1], 
+                    this.positions[a+2]];
+                const v2 = [ 
+                    this.positions[b], 
+                    this.positions[b+1], 
+                    this.positions[b+2]];
+                const c1 = { 
+                    r: this.colors[a], 
+                    g: this.colors[a+1], 
+                    b: this.colors[a+2]};
+    
+                const lscale = 0.2;
+                const normals = polylineNormals([ v1, v2 ]);
+                const ipoints = [ v1, v2 ].map((v, i) => {
+                    const n = normals[i][0];
+                    let len = normals[i][1] * lscale;
+                    return [ v[0] + n[0] * len, v[1] + n[1] * len, v[2] ];
+                });
+                const opoints = [ v1, v2 ].map((v, i) => {
+                    const n = normals[i][0];
+                    const len = normals[i][1] * lscale;
+                    return [ v[0] + n[0] * -len, v[1] + n[1] * -len, v[2] ];
+                });
+
+                const offset = this.count;
+                ipoints.forEach(v => this.addVert(v[0], v[1], v[2], c1));
+                opoints.forEach(v => this.addVert(v[0], v[1], v[2], c1));
+
+                let base, len = ipoints.length;
+                for (let i=0; i < len-1; ++i) {
+                    base = offset + i;
+                    this.addFill(base + 1, base, base + len, false);
+                    this.addFill(base + 1, base + len, base + len + 1, false);
+                }
+            }
+        }
+
         let positions = [ ];
         for (let i=0; i<this.positions.length; i+=3) {
             let result = transform(
@@ -254,8 +303,8 @@ class Glyph {
                 new THREE.BufferAttribute(new Float32Array(this.colors), 3));
             fillGeometry.computeBoundingSphere();
 
-            let fillMesh = new THREE.Mesh(fillGeometry, fillMaterial);
-            group.add(fillMesh);
+            let fillMeshFront = new THREE.Mesh(fillGeometry, fillMaterialFront);
+            group.add(fillMeshFront);
         }
 
         if (this.alphaFills.length) {
@@ -291,22 +340,6 @@ class Glyph {
 
             let pointMesh = new THREE.Points(pointGeometry, pointMaterial);
             group.add(pointMesh);
-        }
-
-        if (this.lines.length) {
-            let lineGeometry = new THREE.BufferGeometry();
-            lineGeometry.setIndex(new THREE.BufferAttribute(new Uint16Array(this.lines), 1));
-            
-            let attrPositions = new THREE.BufferAttribute(new Float32Array(positions), 3);
-            attrPositions.setDynamic(true);
-            lineGeometry.addAttribute('position', attrPositions);
-
-            lineGeometry.addAttribute('color', 
-                new THREE.BufferAttribute(new Float32Array(this.colors), 3));
-            lineGeometry.computeBoundingSphere();
-
-            let lineMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
-            group.add(lineMesh);
         }
 
         return group;

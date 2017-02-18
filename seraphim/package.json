@@ -48,6 +48,7 @@
     "midimessage": "1.0.5",
     "moment": "2.17.1",
     "pathfinding": "0.4.18",
+    "polyline-normals": "^2.0.2",
     "react": "15.4.2",
     "react-dom": "15.4.2",
     "react-redux": "5.0.2",
