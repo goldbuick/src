@@ -12,16 +12,43 @@ export default function MRadialGraph(props, draft) {
     const data = range(0, 120).map(v => rng() * 200);
 
     const dataRange = radius * 0.8;
-    const dataAngle = PI2 / data.length;
+    let dataAngle = PI2 / data.length;
     const dataMax = Math.max.apply(Math, data);
-    const vec = (v, i) => ({ x: Math.cos(i * dataAngle) * v, y: Math.sin(i * dataAngle) * v, z: 0 });
+    const vec = (v, a, z=0) => ({ x: Math.cos(a) * v, y: Math.sin(a) * v, z });
 
-    const r1 = radius + 8;
+    const rgap = 8;
+    const r1 = radius + rgap;
     const rdata = data.map(v => Math.round((v / dataMax) * dataRange));
-    const ipoints = rdata.map((v, i) => vec(r1, i));
-    const opoints = rdata.map((v, i) => vec(r1 + v, i));
+    const ipoints = rdata.map((v, i) => vec(r1, i * dataAngle));
+    const opoints = rdata.map((v, i) => vec(r1 + v, i * dataAngle));
 
     draft.drawLinesWith({ ipoints, opoints });
+
+    // notches
+    const nt = 24;
+    const depth = -10;
+    const r2 = radius - rgap * 2;
+    const r3 = radius - rgap;
+    const r4 = r1 + dataRange + rgap * 2;
+    
+    let x, y, z;
+    dataAngle = PI2 / nt;
+    for (let i=0; i < nt; ++i) {
+        draft.drawLine([ vec(r2, i * dataAngle, depth), vec(r3, i * dataAngle, depth) ]);
+        ({x, y, z} = vec(r2 - rgap, i * dataAngle, depth));
+        if (rng() < 0.12) draft.drawTriangle({ x, y, z, radius: 3, angle: i * dataAngle });
+    }
+
+    // start arm
+    const pointer = 0.2;
+    ({x, y, z} = vec(r4, pointer, depth));
+    draft.drawLine([ vec(r2, 0, depth), vec(r4, 0, depth), {x, y, z} ]);
+    draft.drawSwipe({ x, y, z, steps: 6, radius: 6, width: 3 });
+
+    // mid arm
+    ({x, y, z} = vec(r4, Math.PI, depth));
+    draft.drawLine([ vec(r2, Math.PI, depth), {x, y, z} ]);
+    draft.drawSwipe({ x, y, z, steps: 6, radius: 6, width: 3 });
 
     return 'MRadialGraph';
 }

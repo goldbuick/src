@@ -24,6 +24,7 @@ const Mantle = (props) => {
         name="Mantle"
 
         onAnimate3D={(object3D, animateState, delta) => {
+            object3D.rotation.x += delta * 0.05;
             object3D.rotation.y += delta * -0.2;
 
             let faces;

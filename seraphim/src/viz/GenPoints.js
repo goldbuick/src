@@ -1,6 +1,23 @@
 
 class GenPoints {
 
+    vec({ x=0, y=0, z=0, radius, angle=0 }) {
+        return { 
+            x: x + Math.cos(angle) * radius,
+            y: y + Math.sin(angle) * radius,
+            z: z
+        };
+    }
+
+    triangle({ x=0, y=0, z=0, radius=32, angle=0 } = {}) {
+        const step = (Math.PI * 2) / 3;
+        const points = [];
+        for (let i=0; i < 3; ++i) {
+            points.push(this.vec({ x, y, z, radius, angle: angle + i * step }));
+        }
+        return points;
+    }
+
     rect({ x=0, y=0, z=0, w=32, h=32 } = {}) {
         let hw = w * 0.5,
             hh = h * 0.5;

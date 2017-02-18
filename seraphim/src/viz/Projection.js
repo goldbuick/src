@@ -17,7 +17,7 @@ class Projection {
         return (x, y, z) => {
             x *= scale;
             y *= scale;
-            const r = (x / range);
+            const r = x / range;
             x = r * PI2;
             y = y * PISCALE;
             const _radius = radius + z,

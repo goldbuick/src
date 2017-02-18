@@ -46,7 +46,7 @@ class Etch {
         return this;
     }
 
-    drawLoop({ x = 0, y = 0, z = 0, steps, radius, front, back, drift, bump, color, 
+    drawLoop({ x=0, y=0, z=0, steps, radius, front, back, drift, bump, color, 
         skip, r, threshold } = {}) {
 
         if (skip) {
@@ -64,7 +64,7 @@ class Etch {
         return this;
     }
 
-    drawLoopFn({ x = 0, y = 0, z = 0, steps, radius, front, back, drift, bump, color, fn } = {}) {
+    drawLoopFn({ x=0, y=0, z=0, steps, radius, front, back, drift, bump, color, fn } = {}) {
         let points = [ ],
             source = GenPoints.arc({ x, y, z, steps, radius, front, back, drift, bump});
 
@@ -83,8 +83,9 @@ class Etch {
         return this;
     }
 
-    drawTri({ points, color = Theme.color, alpha, filled = true }) {
+    drawTriangle({ x=0, y=0, z=0, radius, angle, color = Theme.color, alpha, filled = true }) {
         const offset = this.glyph.count;
+        const points = GenPoints.triangle({ x, y, z, radius, angle });
         points.forEach(vert => this.glyph.addVert(vert.x, vert.y, vert.z, color));
 
         if (filled) {
@@ -100,7 +101,7 @@ class Etch {
         return this;        
     }
 
-    drawRect({ x = 0, y = 0, w, h, z = 0, color = Theme.color, alpha, filled = true } = {}) {
+    drawRect({ x=0, y=0, z=0, w, h, color = Theme.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
             hw = w * 0.5,
             hh = h * 0.5;
@@ -121,7 +122,7 @@ class Etch {
         return this;
     }
 
-    drawDiamond({ x = 0, y = 0, w, h, z = 0, color = Theme.color, alpha, filled = true } = {}) {
+    drawDiamond({ x=0, y=0, z=0, w, h, color = Theme.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
             hw = w * 0.5,
             hh = h * 0.5;
@@ -142,7 +143,7 @@ class Etch {
         return this;
     }
 
-    drawCircle({ x = 0, y = 0, z = 0, steps, radius, front, back, drift, bump, color = Theme.color, alpha, filled = true } = {}) {
+    drawCircle({ x=0, y=0, z=0, steps, radius, front, back, drift, bump, color = Theme.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
             points = GenPoints.arc({ x, y, z, steps, radius, front, back, drift, bump }),
             center = offset,
@@ -185,7 +186,7 @@ class Etch {
         return this;
     }
 
-    drawSwipe({ x = 0, y = 0, z = 0, steps, radius, width, front, back, drift, bump, color, alpha } = {}) {
+    drawSwipe({ x=0, y=0, z=0, steps, radius, width, front, back, drift, bump, color, alpha } = {}) {
         let innerRadius = radius,
             outerRadius = radius + width,
             ipoints = GenPoints.arc({ x, y, z, steps, radius: innerRadius, front, back, drift, bump }),

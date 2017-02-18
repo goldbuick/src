@@ -17,7 +17,7 @@ const SubStrate = (props) => {
                 props.onSubStrate(draft);
             } else {
                 const thick = 4;
-                const radius = 256 + props.verta * 32;
+                const radius = 128 + props.verta * 100;
                 draft.drawCircle({ z: 0, radius, steps: 64, filled: false });
                 draft.drawCircle({ z: thick, radius, steps: 64, filled: false });
                 draft.drawCircle({ z: -thick, radius, steps: 64, filled: false });
@@ -27,6 +27,9 @@ const SubStrate = (props) => {
             return draft.build(Projection.plane(1));
         }}
 
+        onAnimate3D={(object3D, animateState, delta) => {
+            object3D.rotation.z += delta * 0.1;
+        }}
     />;
 };
 

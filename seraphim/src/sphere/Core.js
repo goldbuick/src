@@ -27,7 +27,7 @@ const Sphere = (props) => {
                 'tweenDuration2',
                 'tweenAlgo1',
                 'tweenAlgo2');
-            const childProps2 = {...childProps1, radius: childProps1.radius + props.barrierDist};
+            const childProps2 = {...childProps1, radius: childProps1.radius + 140};
 
             const mantleGems = RenderObject.byType(children, MantleGem, childProps1);
             const mantle = <Mantle>{mantleGems}</Mantle>;
@@ -44,19 +44,35 @@ const Sphere = (props) => {
 
         onAnimate3D={(object3D, animateState, delta) => {
 
-            const substrates = RenderObject.byType(object3D.children, SubStrate);
-            RenderObject.animate(substrates, animateState, (substrate, anim, index) => {
-                substrate.rotation.x = Math.PI * 0.5;
+            const barriers = RenderObject.byType(object3D.children, Barrier);
+            RenderObject.animate(barriers, animateState, (barrier, anim, index) => {
                 if (anim.scale === undefined) {
                     anim.scale = smallScale;
-                    anim.position = 1024;
-                    const targetPosition = props.radius + props.substrateDist + (index * props.substrateStep);
-                    new TWEEN.Tween(anim).to({ scale: 1 }, props.tweenDuration1).easing(props.tweenAlgo1).delay(props.tweenDelay).start();
-                    new TWEEN.Tween(anim).to({ position: targetPosition }, props.tweenDuration2).easing(props.tweenAlgo2).delay(props.tweenDelay).start();                    
+                    anim.position = -300;
+                    const targetPosition = 100;
+                    new TWEEN.Tween(anim).to({ scale: 1 }, props.tweenDuration1)
+                        .easing(props.tweenAlgo1).delay(props.tweenDelay).start();
+                    new TWEEN.Tween(anim).to({ position: targetPosition }, props.tweenDuration2)
+                        .easing(props.tweenAlgo2).delay(props.tweenDelay).start();                    
                 }
+                barrier.scale.setScalar(anim.scale);
+                barrier.position.y = -anim.position;
+            });
+
+            const substrates = RenderObject.byType(object3D.children, SubStrate);
+            RenderObject.animate(substrates, animateState, (substrate, anim, index) => {
+                if (anim.scale === undefined) {
+                    anim.scale = smallScale;
+                    anim.position = 400;
+                    const targetPosition = props.radius + props.substrateDist - (index * props.substrateStep);
+                    new TWEEN.Tween(anim).to({ scale: 1 }, props.tweenDuration1)
+                        .easing(props.tweenAlgo1).delay(props.tweenDelay).start();
+                    new TWEEN.Tween(anim).to({ position: targetPosition }, props.tweenDuration2)
+                        .easing(props.tweenAlgo2).delay(props.tweenDelay).start();                    
+                }
+                substrate.rotation.x = Math.PI * 0.5;
                 substrate.scale.setScalar(anim.scale);
                 substrate.position.y = -anim.position;
-                substrate.rotation.z += delta * (index % 2 === 0 ? 0.1 : -0.1);
             });
             
         }}
@@ -65,7 +81,6 @@ const Sphere = (props) => {
 
 Sphere.defaultProps = {
     radius: 512,
-    barrierDist: 128,
     substrateDist: 64,
     substrateStep: 32,
     // anim props

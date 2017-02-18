@@ -13,14 +13,14 @@ import MRadialGraph from './MRadialGraph';
 const Page = (props) => {
     const radius = 512;
     const sphereMantleGem = (count) => range(1, count).map(v => <SphereMantleGem key={v} onMantleGem={MRadialGraph}/>);
-    const sphereSubStrate = (count) => range(1, count).map(v => <SphereSubStrate key={v} verta={v}/>);
+    const sphereSubStrate = (count) => range(1, count).map(v => <SphereSubStrate key={v} verta={v*v*0.3}/>);
     const sphereBarrierGem = (count) => range(1, count).map(v => <SphereBarrierGem key={v} />);
 
     return (
         <Scene>
             <Sphere radius={radius}>
                 {sphereMantleGem(5)}
-                {sphereSubStrate(1)}
+                {sphereSubStrate(3)}
                 {sphereBarrierGem(2)}
             </Sphere>
         </Scene>
