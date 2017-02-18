@@ -9,7 +9,14 @@ export default function MRadialGraph(props, draft) {
     draft.drawSwipe({ radius, steps: 64, width: 2 });
     draft.drawFeatherArc({ radius, z: 8, count: 8, r: rng, width: 1, drift: 0.3, depth: 0.5 });
 
-    const data = range(0, 120).map(v => rng() * 200);
+    const lsize = 200;
+    let level = rng() * lsize;
+    const data = range(0, 144).map(v => {
+        level += 20 - rng() * 40;
+        if (level < 0) level = 0;
+        if (level > lsize) level = lsize;
+        return level;
+    });
 
     const dataRange = radius * 0.8;
     let dataAngle = PI2 / data.length;
