@@ -18,6 +18,7 @@ const SubStrate = (props) => {
             } else {
                 const thick = 4;
                 const radius = 128 + props.verta * 100;
+                draft.drawSwipe({ radius, steps: 64, width: 32, alpha: true });
                 draft.drawCircle({ z: 0, radius, steps: 64, filled: false });
                 draft.drawCircle({ z: thick, radius, steps: 64, filled: false });
                 draft.drawCircle({ z: -thick, radius, steps: 64, filled: false });

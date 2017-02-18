@@ -19,9 +19,9 @@ const Page = (props) => {
     return (
         <Scene>
             <Sphere radius={radius}>
-                {sphereMantleGem(5)}
-                {sphereSubStrate(3)}
-                {sphereBarrierGem(2)}
+                {sphereMantleGem(8)}
+                {sphereSubStrate(4)}
+                {sphereBarrierGem(5)}
             </Sphere>
         </Scene>
     );
