@@ -17,13 +17,13 @@ class Draft extends Etch {
         return this;
     }
 
-    drawFeatherArc({ x, y, z=0, radius, count, r, width, depth, drift, color, alpha } = {}) {
+    drawFeatherArc({ x, y, z=0, radius, count, r, width, depth=0, drift, color, alpha } = {}) {
         for (let i=0; i < count; ++i) {
             let _z = z + (i * -depth),
                 twist = Math.floor((r() - 0.5) * 32),
                 arc = 45 + Math.floor(r() * 20);
             this.drawSwipe({
-                x, y, _z, steps: 128, radius, width, 
+                x, y, z: _z, steps: 128, radius, width, 
                 front: arc - twist, back: arc + twist, 
                 drift: -drift, color, alpha });
             radius += width + 2;

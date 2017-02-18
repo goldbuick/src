@@ -2,17 +2,19 @@ import React from 'react';
 import Scene from './Scene';
 import { range } from '../util/UtilArray';
 
-import Sphere from './Sphere';
-import SphereBarrier from './SphereBarrier';
-import SphereMantleGem from './SphereMantleGem';
-import SphereSubStrate from './SphereSubStrate';
-import SphereBarrierGem from './SphereBarrierGem';
+import Sphere from '../sphere/Core';
+import SphereBarrier from '../sphere/Barrier';
+import SphereMantleGem from '../sphere/MantleGem';
+import SphereSubStrate from '../sphere/SubStrate';
+import SphereBarrierGem from '../sphere/BarrierGem';
+
+import MRadialGraph from './MRadialGraph';
 
 const Page = (props) => {
     const radius = 512;
-    const sphereMantleGem = (count) => range(1, count).map(v => <SphereMantleGem key={v} mode="A"/>);
+    const sphereMantleGem = (count) => range(1, count).map(v => <SphereMantleGem key={v} onMantleGem={MRadialGraph}/>);
     const sphereSubStrate = (count) => range(1, count).map(v => <SphereSubStrate key={v} verta={v}/>);
-    const sphereBarrierGem = (count) => range(1, count).map(v => <SphereBarrierGem key={v} mode="A"/>);
+    const sphereBarrierGem = (count) => range(1, count).map(v => <SphereBarrierGem key={v} />);
 
     return (
         <Scene>

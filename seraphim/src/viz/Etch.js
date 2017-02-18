@@ -46,7 +46,7 @@ class Etch {
         return this;
     }
 
-    drawLoop({ x, y, z, steps, radius, front, back, drift, bump, color, 
+    drawLoop({ x = 0, y = 0, z = 0, steps, radius, front, back, drift, bump, color, 
         skip, r, threshold } = {}) {
 
         if (skip) {
@@ -64,7 +64,7 @@ class Etch {
         return this;
     }
 
-    drawLoopFn({ x, y, z, steps, radius, front, back, drift, bump, color, fn } = {}) {
+    drawLoopFn({ x = 0, y = 0, z = 0, steps, radius, front, back, drift, bump, color, fn } = {}) {
         let points = [ ],
             source = GenPoints.arc({ x, y, z, steps, radius, front, back, drift, bump});
 
@@ -100,7 +100,7 @@ class Etch {
         return this;        
     }
 
-    drawRect({ x, y, w, h, z = 0, color = Theme.color, alpha, filled = true } = {}) {
+    drawRect({ x = 0, y = 0, w, h, z = 0, color = Theme.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
             hw = w * 0.5,
             hh = h * 0.5;
@@ -121,7 +121,7 @@ class Etch {
         return this;
     }
 
-    drawDiamond({ x, y, w, h, z = 0, color = Theme.color, alpha, filled = true } = {}) {
+    drawDiamond({ x = 0, y = 0, w, h, z = 0, color = Theme.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
             hw = w * 0.5,
             hh = h * 0.5;
@@ -142,7 +142,7 @@ class Etch {
         return this;
     }
 
-    drawCircle({ x, y, z, steps, radius, front, back, drift, bump, color = Theme.color, alpha, filled = true } = {}) {
+    drawCircle({ x = 0, y = 0, z = 0, steps, radius, front, back, drift, bump, color = Theme.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
             points = GenPoints.arc({ x, y, z, steps, radius, front, back, drift, bump }),
             center = offset,
@@ -185,7 +185,7 @@ class Etch {
         return this;
     }
 
-    drawSwipe({ x, y, z, steps, radius, width, front, back, drift, bump, color, alpha } = {}) {
+    drawSwipe({ x = 0, y = 0, z = 0, steps, radius, width, front, back, drift, bump, color, alpha } = {}) {
         let innerRadius = radius,
             outerRadius = radius + width,
             ipoints = GenPoints.arc({ x, y, z, steps, radius: innerRadius, front, back, drift, bump }),

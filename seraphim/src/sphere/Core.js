@@ -7,11 +7,11 @@ import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
 import { first, range, flatten } from '../util/UtilArray';
 
-import SphereMantle from './SphereMantle';
-import SphereBarrier from './SphereBarrier';
-import SphereMantleGem from './SphereMantleGem';
-import SphereSubStrate from './SphereSubStrate';
-import SphereBarrierGem from './SphereBarrierGem';
+import Mantle from './Mantle';
+import Barrier from './Barrier';
+import MantleGem from './MantleGem';
+import SubStrate from './SubStrate';
+import BarrierGem from './BarrierGem';
 
 const Sphere = (props) => {
     const smallScale = 0.00001;
@@ -27,24 +27,24 @@ const Sphere = (props) => {
                 'tweenDuration2',
                 'tweenAlgo1',
                 'tweenAlgo2');
-            const childProps2 = {...childProps1, radius: childProps1.radius + 64};
+            const childProps2 = {...childProps1, radius: childProps1.radius + props.barrierDist};
 
-            const mantleGems = RenderObject.byType(children, SphereMantleGem, childProps1);
-            const mantle = <SphereMantle>{mantleGems}</SphereMantle>;
+            const mantleGems = RenderObject.byType(children, MantleGem, childProps1);
+            const mantle = <Mantle>{mantleGems}</Mantle>;
 
-            const barrierGems = RenderObject.byType(children, SphereBarrierGem, childProps2);
-            const barrier = <SphereBarrier>{barrierGems}</SphereBarrier>;
+            const barrierGems = RenderObject.byType(children, BarrierGem, childProps2);
+            const barrier = <Barrier>{barrierGems}</Barrier>;
 
             return [
-                RenderObject.byType([mantle], SphereMantle, childProps1),
-                RenderObject.byType([barrier], SphereBarrier, childProps2),
-                RenderObject.byType(children, SphereSubStrate, childProps1),
+                RenderObject.byType([mantle], Mantle, childProps1),
+                RenderObject.byType([barrier], Barrier, childProps2),
+                RenderObject.byType(children, SubStrate, childProps1),
             ];
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
 
-            const substrates = RenderObject.byType(object3D.children, SphereSubStrate);
+            const substrates = RenderObject.byType(object3D.children, SubStrate);
             RenderObject.animate(substrates, animateState, (substrate, anim, index) => {
                 substrate.rotation.x = Math.PI * 0.5;
                 if (anim.scale === undefined) {
@@ -65,6 +65,7 @@ const Sphere = (props) => {
 
 Sphere.defaultProps = {
     radius: 512,
+    barrierDist: 128,
     substrateDist: 64,
     substrateStep: 32,
     // anim props

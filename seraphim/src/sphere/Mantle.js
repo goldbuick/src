@@ -8,9 +8,9 @@ import GenTransform from '../viz/GenTransform';
 import RenderObject from '../render/RenderObject';
 import { first, range, flatten } from '../util/UtilArray';
 
-import SphereMantleGem from './SphereMantleGem';
+import MantleGem from './MantleGem';
 
-const SphereMantle = (props) => {
+const Mantle = (props) => {
     const smallScale = 0.00001;
 
     const createFaces = (radius) => {
@@ -21,13 +21,13 @@ const SphereMantle = (props) => {
     };            
 
     return <RenderObject {...props} 
-        name="SphereMantle"
+        name="Mantle"
 
         onAnimate3D={(object3D, animateState, delta) => {
             object3D.rotation.y += delta * -0.2;
 
             let faces;
-            const mantleGems = RenderObject.byType(object3D.children, SphereMantleGem);
+            const mantleGems = RenderObject.byType(object3D.children, MantleGem);
             RenderObject.animate(mantleGems, animateState, (mantleGem, anim, index) => {
                 if (anim.toQuat === undefined) {
                     if (!faces) faces = createFaces(props.radius);
@@ -61,8 +61,8 @@ const SphereMantle = (props) => {
     />;
 };
 
-SphereMantle.defaultProps = {
+Mantle.defaultProps = {
     radius: 512,
 };
 
-export default SphereMantle;
+export default Mantle;

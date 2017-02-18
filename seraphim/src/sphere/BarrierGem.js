@@ -5,15 +5,16 @@ import Theme from '../render/Theme';
 import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
 
-const SphereBarrierGem = (props) => {
+const BarrierGem = (props) => {
     return <RenderObject {...props}
-        name="SphereBarrierGem"
+        name="BarrierGem"
 
         onRender3D={(uuid) => {
             const draft = new Draft();
 
+            let label = 'BarrierGem';
             if (props.onBarrierGem) {
-                props.onBarrierGem(draft);
+                label = props.onBarrierGem({...props, uuid}, draft);
             } else {
                 const radius = 32;
                 draft.drawHexPod({ x: props.radius, radius: radius, count: 4, step: radius * 0.1 });
@@ -25,7 +26,7 @@ const SphereBarrierGem = (props) => {
 
             base.add(Text.create({
                 font: 'TECHMONO',
-                text: uuid,
+                text: label || uuid,
                 ax: 0,
                 scale: 0.5,
                 position: {
@@ -40,8 +41,8 @@ const SphereBarrierGem = (props) => {
     />;
 };
 
-SphereBarrierGem.defaultProps = {
+BarrierGem.defaultProps = {
     radius: 512,
 };
 
-export default SphereBarrierGem;
+export default BarrierGem;

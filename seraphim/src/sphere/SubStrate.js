@@ -5,9 +5,9 @@ import GenAlgo from '../viz/GenAlgo';
 import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
 
-const SphereSubStrate = (props) => {
+const SubStrate = (props) => {
     return <RenderObject {...props}
-        name="SphereSubStrate"
+        name="SubStrate"
 
         onRender3D={(uuid) => {
             const draft = new Draft();
@@ -18,10 +18,10 @@ const SphereSubStrate = (props) => {
             } else {
                 const thick = 4;
                 const radius = 256 + props.verta * 32;
-                draft.drawCircle({ x: 0, y: 0, z: 0, radius, steps: 64, filled: false });
-                draft.drawCircle({ x: 0, y: 0, z: thick, radius, steps: 64, filled: false });
-                draft.drawCircle({ x: 0, y: 0, z: -thick, radius, steps: 64, filled: false });
-                draft.drawFeatherArc({ x: 0, y: 0, z: 0, radius, count: 16, r: rng, width: 3, depth: 0, drift: 2 });
+                draft.drawCircle({ z: 0, radius, steps: 64, filled: false });
+                draft.drawCircle({ z: thick, radius, steps: 64, filled: false });
+                draft.drawCircle({ z: -thick, radius, steps: 64, filled: false });
+                draft.drawFeatherArc({ radius, count: 8, r: rng, width: 2, drift: 1 });
             }
 
             return draft.build(Projection.plane(1));
@@ -30,8 +30,8 @@ const SphereSubStrate = (props) => {
     />;
 };
 
-SphereSubStrate.defaultProps = {
+SubStrate.defaultProps = {
     radius: 512,
 };
 
-export default SphereSubStrate;
+export default SubStrate;

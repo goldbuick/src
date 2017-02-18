@@ -4,11 +4,12 @@ import Theme from '../render/Theme';
 import GenAlgo from '../viz/GenAlgo';
 import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
-import SphereBarrierGem from './SphereBarrierGem';
 
-const SphereBarrier = (props) => {
+import BarrierGem from './BarrierGem';
+
+const Barrier = (props) => {
     return <RenderObject {...props}
-        name="SphereBarrier"
+        name="Barrier"
 
         onRender3D={(uuid) => {
             const columnScale = 3;
@@ -38,7 +39,7 @@ const SphereBarrier = (props) => {
             object3D.rotation.y += delta * 0.2;
             object3D.position.y = -64;
 
-            const barrierGems = RenderObject.byType(object3D.children, SphereBarrierGem);
+            const barrierGems = RenderObject.byType(object3D.children, BarrierGem);
             RenderObject.animate(barrierGems, animateState, (barrierGem, anim, index) => {
                 barrierGem.rotation.y = (index / barrierGems.length) * Math.PI * 2;
             });
@@ -47,8 +48,8 @@ const SphereBarrier = (props) => {
     />;
 };
 
-SphereBarrier.defaultProps = {
+Barrier.defaultProps = {
     radius: 512,
 };
 
-export default SphereBarrier;
+export default Barrier;
