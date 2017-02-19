@@ -1,5 +1,8 @@
 import polylineNormals from 'polyline-normals';
 
+const lscale = 0.2;
+const dim = 0x333333;
+
 let pointMaterial = new THREE.PointsMaterial({
     size: 1,
     sizeAttenuation: false,
@@ -7,6 +10,7 @@ let pointMaterial = new THREE.PointsMaterial({
 });
 
 let fillMaterialBack = new THREE.MeshBasicMaterial({
+    color: dim,
     side: THREE.BackSide,
     vertexColors: THREE.VertexColors
 });
@@ -17,6 +21,7 @@ let fillMaterialFront = new THREE.MeshBasicMaterial({
 });
 
 let alphaFillMaterialBack = new THREE.MeshBasicMaterial({
+    color: dim,
     opacity: 0.08,
     transparent: true,
     side: THREE.BackSide,
@@ -258,7 +263,6 @@ class Glyph {
                     g: this.colors[a+1], 
                     b: this.colors[a+2]};
     
-                const lscale = 0.2;
                 const normals = polylineNormals([ v1, v2 ]);
                 const ipoints = [ v1, v2 ].map((v, i) => {
                     const n = normals[i][0];
@@ -302,6 +306,9 @@ class Glyph {
             fillGeometry.addAttribute('color',
                 new THREE.BufferAttribute(new Float32Array(this.colors), 3));
             fillGeometry.computeBoundingSphere();
+
+            let fillMeshBack = new THREE.Mesh(fillGeometry, fillMaterialBack);
+            group.add(fillMeshBack);
 
             let fillMeshFront = new THREE.Mesh(fillGeometry, fillMaterialFront);
             group.add(fillMeshFront);

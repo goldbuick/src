@@ -27,7 +27,7 @@ const Sphere = (props) => {
                 'tweenDuration2',
                 'tweenAlgo1',
                 'tweenAlgo2');
-            const childProps2 = {...childProps1, radius: childProps1.radius + 140};
+            const childProps2 = {...childProps1, radius: childProps1.radius + 128};
 
             const mantleGems = RenderObject.byType(children, MantleGem, childProps1);
             const mantle = <Mantle>{mantleGems}</Mantle>;
@@ -70,7 +70,7 @@ const Sphere = (props) => {
                     new TWEEN.Tween(anim).to({ position: targetPosition }, props.tweenDuration2)
                         .easing(props.tweenAlgo2).delay(props.tweenDelay).start();                    
                 }
-                substrate.rotation.x = Math.PI * 0.5;
+                substrate.rotation.x = Math.PI * -0.5;
                 substrate.scale.setScalar(anim.scale);
                 substrate.position.y = -anim.position;
             });

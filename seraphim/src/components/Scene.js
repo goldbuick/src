@@ -5,6 +5,7 @@ import '../threejs/postprocessing/EffectComposer';
 
 import '../threejs/shaders/FilmShader';
 import '../threejs/shaders/CopyShader';
+import '../threejs/shaders/FXAAShader';
 import '../threejs/shaders/DigitalGlitch';
 import '../threejs/shaders/ConvolutionShader';
 import '../threejs/shaders/LuminosityHighPassShader';
@@ -41,11 +42,13 @@ export default class Scene extends React.Component {
         camera.position.z = 1024;
 
         const rez = 1024;
+        this.fxaaShader = new THREE.ShaderPass(THREE.FXAAShader);
         return [
             new THREE.RenderPass(scene, camera),
             new THREE.BloomBlendPass(2, 1.2, new THREE.Vector2(rez, rez)),
             new THREE.FilmPass(0.25, 0.5, height * 2, false),
             // new THREE.GlitchPass(64),
+            this.fxaaShader,
         ];
     }
 
@@ -55,6 +58,8 @@ export default class Scene extends React.Component {
     }
 
     handleResize = (renderer, composer, scene, camera, width, height) => {
+        const dpr = window.devicePixelRatio || 1;
+        this.fxaaShader.uniforms.resolution.value = new THREE.Vector2(1 / (width * dpr), 1 / (height * dpr));
         this.props.onResize(renderer, composer, scene, camera, width, height);
     }
 

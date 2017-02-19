@@ -174,8 +174,8 @@ class Etch {
         let base, len = ipoints.length;
         for (let i=0; i < len-1; ++i) {
             base = offset + i;
-            this.glyph.addFill(base, base + 1, base + len, alpha);
-            this.glyph.addFill(base + len, base + 1, base + len + 1, alpha);
+            this.glyph.addFill(base + 1, base, base + len, alpha);
+            this.glyph.addFill(base + 1, base + len, base + len + 1, alpha);
         }
         return this;
     }
