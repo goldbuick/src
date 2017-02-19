@@ -25,24 +25,30 @@ class Etch {
         return this;
     }
 
-    drawLine(points, color = Theme.color) {
+    drawLine(points, color = Theme.color, closed = false) {
         const offset = this.glyph.count;
         points.forEach(vert => this.glyph.addVert(vert.x, vert.y, vert.z, color));
-        for (let i=0; i < points.length-1; ++i) {
-            this.glyph.addLine(offset + i, offset + i + 1);
-        }
-        return this;
-    }
-
-    drawPoly(points, color = Theme.color) {
-        const offset = this.glyph.count;
-        points.forEach(vert => this.glyph.addVert(vert.x, vert.y, vert.z, color));
-
+        
         const count = points.length - 1;
         for (let i=0; i < count; ++i) {
             this.glyph.addLine(offset + i, offset + i + 1);
         }
-        this.glyph.addLine(offset + count, offset);
+        if (closed) this.glyph.addLine(offset + count, offset);
+
+        return this;
+    }
+
+    drawFill(points, color = Theme.color, alpha = false) {
+        const offset = this.glyph.count;
+        points.forEach(vert => this.glyph.addVert(vert.x, vert.y, vert.z, color));
+        
+        for (let i=0; i < points.length - 2; i += 3) {
+            this.glyph.addFill(
+                offset + i, 
+                offset + i + 1,
+                offset + i + 2, alpha);
+        }
+
         return this;
     }
 

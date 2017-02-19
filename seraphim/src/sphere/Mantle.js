@@ -13,8 +13,8 @@ import MantleGem from './MantleGem';
 const Mantle = (props) => {
     const smallScale = 0.00001;
 
-    const createFaces = (radius) => {
-        return GenFaces.createFromOctahedron({ radius, detail: 0 }).map(f => f.mid);
+    const createFaces = (detail, radius) => {
+        return GenFaces.createFromOctahedron({ radius, detail }).map(f => f.mid);
     };
     const faceIndex = (index, facesLength, mantleGemLength) => {
         return Math.round((index / (mantleGemLength-1)) * (facesLength-1));
@@ -31,7 +31,7 @@ const Mantle = (props) => {
             const mantleGems = RenderObject.byType(object3D.children, MantleGem);
             RenderObject.animate(mantleGems, animateState, (mantleGem, anim, index) => {
                 if (anim.toQuat === undefined) {
-                    if (!faces) faces = createFaces(props.radius);
+                    if (!faces) faces = createFaces(0, props.radius);
 
                     anim.index = faceIndex(index, faces.length, mantleGems.length);
                     const face = faces[anim.index];

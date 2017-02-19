@@ -1,6 +1,7 @@
 import polylineNormals from 'polyline-normals';
 
 const lscale = 0.2;
+const opacity = 0.1;
 const dim = 0x333333;
 
 let pointMaterial = new THREE.PointsMaterial({
@@ -22,14 +23,14 @@ let fillMaterialFront = new THREE.MeshBasicMaterial({
 
 let alphaFillMaterialBack = new THREE.MeshBasicMaterial({
     color: dim,
-    opacity: 0.08,
+    opacity: opacity,
     transparent: true,
     side: THREE.BackSide,
     vertexColors: THREE.VertexColors
 });
 
 let alphaFillMaterialFront = new THREE.MeshBasicMaterial({
-    opacity: 0.08,
+    opacity: opacity,
     transparent: true,
     side: THREE.FrontSide,
     vertexColors: THREE.VertexColors

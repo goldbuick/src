@@ -23,10 +23,11 @@ const Barrier = (props) => {
             draft = new Draft();
             const thick = 1;
             const dist = props.radius * Math.PI;
+            const hdist = dist - 10;
             range(-2, 2).forEach(v => {
                 const y = v * thick * 2; 
                 const a = rng() * dist;
-                const b = a + (rng() * dist);
+                const b = a + (rng() * hdist);
                 const ipoints = [{ x: a, y: y + thick, z: 0, },{ x: b, y: y + thick, z: 0, }];
                 const opoints = [{ x: a, y: y - thick, z: 0, },{ x: b, y: y - thick, z: 0, }];
                 draft.drawSwipeWith({ ipoints, opoints, alpha: true });
