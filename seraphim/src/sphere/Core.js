@@ -27,7 +27,7 @@ const Sphere = (props) => {
                 'tweenDuration2',
                 'tweenAlgo1',
                 'tweenAlgo2');
-            const childProps2 = {...childProps1, radius: childProps1.radius + 128};
+            const childProps2 = {...childProps1, radius: childProps1.radius + 200};
 
             const mantleGems = RenderObject.byType(children, MantleGem, childProps1);
             const mantle = <Mantle>{mantleGems}</Mantle>;
