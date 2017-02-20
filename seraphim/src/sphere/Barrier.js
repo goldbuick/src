@@ -3,7 +3,6 @@ import Draft from '../viz/Draft';
 import Theme from '../render/Theme';
 import GenAlgo from '../viz/GenAlgo';
 import GenPoints from '../viz/GenPoints';
-import { range } from '../util/UtilArray';
 import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
 
@@ -23,8 +22,8 @@ const Barrier = (props) => {
             draft = new Draft();
             const thick = 1;
             const dist = props.radius * Math.PI;
-            const hdist = dist - 10;
-            range(-2, 2).forEach(v => {
+            const hdist = props.radius;
+            GenAlgo.range({ from: -2, to: 2 }).forEach(v => {
                 const y = v * thick * 2; 
                 const a = rng() * dist;
                 const b = a + (rng() * hdist);
@@ -44,19 +43,20 @@ const Barrier = (props) => {
             const theight = tpoints[1].y - tpoints[0].y;
             const thw = twidth * 0.5;
             const thh = theight * 0.5;
-            const nx = 0.017;
-            const ny = 0.137;
-            const nplink = 0.5;
-            const nsparce = 0.3;
+            const nx = 0.01;
+            const ny = 0.21;
+            const nplink = 0.3;
+            const nsparce = 0.5;
+            const tangle2 = Math.PI * -0.5;
             for (let i=0; i < Math.round(dist / twidth); ++i) {
                 const a = noise.noise2D(i * nx, 0 * ny) < 0 && rng() < nsparce;
                 const b = noise.noise2D(i * nx, 1 * ny) < 0 && rng() < nsparce;
                 const c = noise.noise2D(i * nx, 2 * ny) < 0 && rng() < nsparce;
                 const d = noise.noise2D(i * nx, 3 * ny) < 0 && rng() < nsparce;
-                if (a) draft.drawTriangle({ x: i * twidth + thw, y: thh *  3, radius: tsize, angle: tangle, filled: rng() < nplink });
-                if (b) draft.drawTriangle({ x: i * twidth,       y: thh *  1, radius: tsize, angle: tangle, filled: rng() < nplink });
-                if (c) draft.drawTriangle({ x: i * twidth + thw, y: thh * -1, radius: tsize, angle: tangle, filled: rng() < nplink });
-                if (d) draft.drawTriangle({ x: i * twidth,       y: thh * -3, radius: tsize, angle: tangle, filled: rng() < nplink });
+                if (a) draft.drawTriangle({ x: i * twidth + thw, y: thh *  3, radius: tsize, angle: tangle2, filled: rng() < nplink });
+                if (b) draft.drawTriangle({ x: i * twidth,       y: thh *  1, radius: tsize, angle: tangle2, filled: rng() < nplink });
+                if (c) draft.drawTriangle({ x: i * twidth + thw, y: thh * -1, radius: tsize, angle: tangle,  filled: rng() < nplink });
+                if (d) draft.drawTriangle({ x: i * twidth,       y: thh * -3, radius: tsize, angle: tangle,  filled: rng() < nplink });
             }
             base.add(draft.
                 tessellate(tessellate).

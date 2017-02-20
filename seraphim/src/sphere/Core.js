@@ -5,7 +5,6 @@ import Theme from '../render/Theme';
 import { pick } from '../util/UtilObject';
 import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
-import { first, range, flatten } from '../util/UtilArray';
 
 import Mantle from './Mantle';
 import Barrier from './Barrier';

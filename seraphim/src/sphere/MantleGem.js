@@ -10,16 +10,8 @@ const MantleGem = (props) => {
         name="MantleGem"
 
         onRender3D={(uuid) => {
-            let label;
             const draft = new Draft();
-
-            if (props.onMantleGem) {
-                label = props.onMantleGem({...props, uuid}, draft);
-            } else {
-                const radius = props.radius * 0.15;
-                draft.drawHexPod({ radius: radius, count: 3, step: radius * 0.1 });
-            }
-
+            const label = props.onMantleGem({...props, uuid}, draft);
             const base = draft.tessellate(16).build(Projection.sphere(props.radius, 1));
 
             base.add(Text.create({
@@ -41,6 +33,7 @@ const MantleGem = (props) => {
 
 MantleGem.defaultProps = {
     radius: 512,
+    onMantleGem: () => {}
 };
 
 export default MantleGem;

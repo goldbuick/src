@@ -1,6 +1,6 @@
 import React from 'react';
 import Scene from './Scene';
-import { range } from '../util/UtilArray';
+import GenAlgo from '../viz/GenAlgo';
 
 import Sphere from '../sphere/Core';
 import SphereBarrier from '../sphere/Barrier';
@@ -12,9 +12,9 @@ import MRadialGraph from './MRadialGraph';
 
 const Page = (props) => {
     const radius = 512;
-    const sphereMantleGem = (count) => range(1, count).map(v => <SphereMantleGem key={v} onMantleGem={MRadialGraph}/>);
-    const sphereSubStrate = (count) => range(1, count).map(v => <SphereSubStrate key={v} verta={v*v*0.3}/>);
-    const sphereBarrierGem = (count) => range(1, count).map(v => <SphereBarrierGem key={v} />);
+    const sphereMantleGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereMantleGem key={v} onMantleGem={MRadialGraph}/>);
+    const sphereSubStrate = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereSubStrate key={v} verta={v*v*0.3}/>);
+    const sphereBarrierGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereBarrierGem key={v} />);
 
     return (
         <Scene>

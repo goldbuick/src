@@ -1,5 +1,4 @@
 import GenAlgo from '../viz/GenAlgo';
-import { range } from '../util/UtilArray';
 
 export default function MRadialGraph(props, draft) {
     const PI2 = Math.PI * 2;
@@ -11,7 +10,7 @@ export default function MRadialGraph(props, draft) {
 
     const lsize = 200;
     let level = rng() * lsize;
-    const data = range(0, 144).map(v => {
+    const data = GenAlgo.range({ from: 0, to: 144 }).map(v => {
         level += 20 - rng() * 40;
         if (level < 0) level = 0;
         if (level > lsize) level = lsize;

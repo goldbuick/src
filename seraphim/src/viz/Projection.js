@@ -12,6 +12,15 @@ class Projection {
         };
     }
 
+    planeNonUniform(xscale, yscale, zscale, zoffset) {
+        return (x, y, z) => {
+            const _x = x * xscale,
+                _y = y * yscale,
+                _z = (z + zoffset) * zscale;
+            return [ _x, _y, _z ];
+        };
+    }
+
     column(radius, scale) {
         const range = radius * Math.PI;
         return (x, y, z) => {

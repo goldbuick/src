@@ -287,6 +287,7 @@ class Glyph {
                     this.addFill(base + 1, base + len, base + len + 1, false);
                 }
             }
+            this.lines = [];
         }
 
         let positions = [ ];

@@ -6,7 +6,6 @@ import GenFaces from '../viz/GenFaces';
 import Projection from '../viz/Projection';
 import GenTransform from '../viz/GenTransform';
 import RenderObject from '../render/RenderObject';
-import { first, range, flatten } from '../util/UtilArray';
 
 import MantleGem from './MantleGem';
 
