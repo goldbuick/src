@@ -56,5 +56,5 @@ export default function MRadialGraph(props, draft) {
     draft.drawLine([ vec(r2, Math.PI, depth), {x, y, z} ]);
     draft.drawSwipe({ x, y, z, steps: 6, radius: 6, width: 3 });
 
-    return 'MRadialGraph';
+    return 'm-radial-graph';
 }

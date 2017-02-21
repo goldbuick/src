@@ -20,17 +20,8 @@ const Barrier = (props) => {
             const noise = GenAlgo.noise({ seed: uuid });
 
             draft = new Draft();
-            const thick = 1;
             const dist = props.radius * Math.PI;
-            const hdist = props.radius;
-            GenAlgo.range({ from: -2, to: 2 }).forEach(v => {
-                const y = v * thick * 2; 
-                const a = rng() * dist;
-                const b = a + (rng() * hdist);
-                const ipoints = [{ x: a, y: y + thick, z: 0, },{ x: b, y: y + thick, z: 0, }];
-                const opoints = [{ x: a, y: y - thick, z: 0, },{ x: b, y: y - thick, z: 0, }];
-                draft.drawSwipeWith({ ipoints, opoints, alpha: true });
-            });
+            draft.drawLine([{ x: 0, y: 0, z: 0 },{ x: dist, y: 0, z: 0 }])
             base.add(draft.
                 tessellate(tessellate).
                 build(Projection.column(props.radius, 1)));

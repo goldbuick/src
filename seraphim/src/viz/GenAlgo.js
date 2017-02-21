@@ -62,9 +62,8 @@ class GenAlgo {
         return points;
     }
 
-    tracers({ points, cols, rows } = {}) {
+    tracers({ points, cols, rows, goals } = {}) {
         let paths = [],
-            goals = Array.prototype.slice.call(arguments, 3),
             finder = new PF.AStarFinder({
                 heuristic: PF.Heuristic.chebyshev,
                 diagonalMovement: PF.DiagonalMovement.IfAtMostOneObstacle

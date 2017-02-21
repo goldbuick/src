@@ -173,7 +173,7 @@ class GenPoints {
         return this.createFromGeometry({ x, y, z, geometry });
     }
 
-    createFromTriSphere({ x=0, y=0, z=0, radius, detail } = {}) {
+    createFromIcosahedronGeometry({ x=0, y=0, z=0, radius, detail } = {}) {
         let geometry = new THREE.IcosahedronGeometry(radius, detail);
         return this.createFromGeometry({ x, y, z, geometry });
     }

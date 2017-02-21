@@ -3,6 +3,7 @@ import TWEEN from 'tween.js';
 import Draft from '../viz/Draft';
 import Theme from '../render/Theme';
 import GenFaces from '../viz/GenFaces';
+import GenPoints from '../viz/GenPoints';
 import Projection from '../viz/Projection';
 import GenTransform from '../viz/GenTransform';
 import RenderObject from '../render/RenderObject';
@@ -21,6 +22,12 @@ const Mantle = (props) => {
 
     return <RenderObject {...props} 
         name="Mantle"
+
+        onRender3D={(uuid) => {
+            const draft = new Draft();
+            draft.drawPoints(GenPoints.createFromIcosahedronGeometry({ radius: props.radius - 8, detail: 2 }));
+            return draft.build(Projection.plane(1));            
+        }}
 
         onAnimate3D={(object3D, animateState, delta) => {
             object3D.rotation.x += delta * 0.05;

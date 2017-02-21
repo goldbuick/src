@@ -11,24 +11,25 @@ const BarrierGem = (props) => {
 
         onRender3D={(uuid) => {
             const draft = new Draft();
-            const label = props.onBarrierGem({...props, uuid}, draft);
-
-            const radius = 32;
-            draft.drawHexPod({ x: props.radius, radius: radius * 0.5, count: 2, step: radius * 0.1, z: 10 });
-            draft.drawHexPod({ x: props.radius, radius: radius, count: 4, step: radius * 0.1 });
-            draft.drawHexPod({ x: props.radius, radius: radius * 0.5, count: 2, step: radius * 0.1, z: -10 });
-
             const base = new THREE.Object3D();
-            base.add(draft.build(Projection.planeNonUniform(1, 1, 1, 1)));
-            base.add(draft.build(Projection.planeNonUniform(1, -1, 1, -1)));
+            const label = props.onBarrierGem({...props, uuid}, draft);
+            
+            const side1 = draft.build(Projection.planeNonUniform(1, 1, 1, 1));
+            side1.position.x = props.radius;
+            base.add(side1);
+            
+            const side2 = draft.build(Projection.planeNonUniform(1, -1, 1, -1));
+            side2.position.x = props.radius;
+            base.add(side2);
+
             base.add(Text.create({
                 font: 'TECHMONO',
-                text: label || uuid,
+                text: label || 'barrier-gem',
                 ax: 0,
                 scale: 0.5,
                 position: {
-                    x: 64 + props.radius,
-                    y: 0,
+                    x: 48 + props.radius,
+                    y: 2.5,
                     z: 0
                 }
             }));

@@ -8,13 +8,14 @@ import SphereMantleGem from '../sphere/MantleGem';
 import SphereSubStrate from '../sphere/SubStrate';
 import SphereBarrierGem from '../sphere/BarrierGem';
 
+import BJunkGraph from './BJunkGraph';
 import MRadialGraph from './MRadialGraph';
 
 const Page = (props) => {
     const radius = 512;
     const sphereMantleGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereMantleGem key={v} onMantleGem={MRadialGraph}/>);
     const sphereSubStrate = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereSubStrate key={v} verta={v*v*0.3}/>);
-    const sphereBarrierGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereBarrierGem key={v} />);
+    const sphereBarrierGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereBarrierGem key={v} onBarrierGem={BJunkGraph}/>);
 
     return (
         <Scene>
