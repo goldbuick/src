@@ -5,6 +5,7 @@ import '../threejs/postprocessing/EffectComposer';
 
 import '../threejs/shaders/FilmShader';
 import '../threejs/shaders/CopyShader';
+import '../threejs/shaders/SMAAShader';
 import '../threejs/shaders/FXAAShader';
 import '../threejs/shaders/DigitalGlitch';
 import '../threejs/shaders/ConvolutionShader';
@@ -12,6 +13,7 @@ import '../threejs/shaders/LuminosityHighPassShader';
 
 import '../threejs/postprocessing/MaskPass';
 import '../threejs/postprocessing/FilmPass';
+import '../threejs/postprocessing/SMAAPass';
 import '../threejs/postprocessing/ShaderPass';
 import '../threejs/postprocessing/GlitchPass';
 import '../threejs/postprocessing/RenderPass';
@@ -45,10 +47,11 @@ export default class Scene extends React.Component {
         this.fxaaShader = new THREE.ShaderPass(THREE.FXAAShader);
         return [
             new THREE.RenderPass(scene, camera),
+            new THREE.SMAAPass(width, height),
             new THREE.BloomBlendPass(2, 1.2, new THREE.Vector2(rez, rez)),
             new THREE.FilmPass(0.25, 0.5, height * 2, false),
             // new THREE.GlitchPass(64),
-            this.fxaaShader,
+            // this.fxaaShader,
         ];
     }
 

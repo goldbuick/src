@@ -21,7 +21,7 @@ export default class Render extends React.Component {
             height = this.container.offsetHeight;
 
         this.renderer = new THREE.WebGLRenderer({
-            antialias: true,
+            antialias: false,
             preserveDrawingBuffer: true
         });
         this.renderer.setSize(width, height);
