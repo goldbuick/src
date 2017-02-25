@@ -1,11 +1,11 @@
 import polylineNormals from 'polyline-normals';
 
-const lscale = 0.2;
-const opacity = 0.1;
-const dim = 0x333333;
+const lscale = 0.22;
+const opacity = 0.33;
+const dim = 0x444444;
 
 let pointMaterial = new THREE.PointsMaterial({
-    size: 1,
+    size: 0.5,
     sizeAttenuation: false,
     vertexColors: THREE.VertexColors
 });
