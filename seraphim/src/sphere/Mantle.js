@@ -1,17 +1,14 @@
 import React from 'react';
-import TWEEN from 'tween.js';
 import Draft from '../viz/Draft';
-import Theme from '../render/Theme';
+import intro from '../anim/intro';
 import GenFaces from '../viz/GenFaces';
 import GenPoints from '../viz/GenPoints';
 import Projection from '../viz/Projection';
-import GenTransform from '../viz/GenTransform';
 import RenderObject from '../render/RenderObject';
 
 import MantleGem from './MantleGem';
 
 const Mantle = (props) => {
-    const smallScale = 0.00001;
 
     const createFaces = (detail, radius) => {
         return GenFaces.createFromOctahedron({ radius, detail }).map(f => f.mid);
@@ -24,19 +21,28 @@ const Mantle = (props) => {
         name="Mantle"
 
         onRender3D={(uuid) => {
+            const base = new THREE.Object3D();
+            
             const draft = new Draft();
             draft.drawPoints(GenPoints.createFromIcosahedronGeometry({ radius: props.radius - 8, detail: 2 }));
-            return draft.build(Projection.plane(1));            
+            const mantle = draft.build(Projection.plane(1));
+
+            base.add(mantle);
+            base.userData.mantle = mantle;
+            return base;
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
-            object3D.rotation.x += delta * 0.05;
-            object3D.rotation.y += delta * -0.2;
+            intro.primary(animateState, 'scale', intro.CONST.smallScale, 1);
+            intro.setScale(animateState, object3D.userData.mantle);
 
             let faces;
             const mantleGems = RenderObject.byType(object3D.children, MantleGem);
             RenderObject.animate(mantleGems, animateState, (mantleGem, anim, index) => {
-                if (anim.toQuat === undefined) {
+                intro.primary(anim, 'scale', intro.CONST.smallScale, 1);
+                intro.setScale(anim, mantleGem);
+
+                if (intro.secondary(anim, 'toQuatRatio', 0, 1)) {
                     if (!faces) faces = createFaces(0, props.radius);
 
                     anim.index = faceIndex(index, faces.length, mantleGems.length);
@@ -46,20 +52,12 @@ const Mantle = (props) => {
                     const normal = new THREE.Vector3(face.x, face.y, face.z).normalize();
                     anim.toQuat = new THREE.Quaternion();
                     anim.toQuat.setFromUnitVectors(forward, normal);
-                    anim.toQuatRatio = 0;
 
                     const from = new THREE.Vector3(0, 0, 0);
                     anim.fromQuat = new THREE.Quaternion(); 
                     anim.fromQuat.setFromUnitVectors(forward, from);
-
-                    anim.scale = smallScale;
-                    new TWEEN.Tween(anim).to({ scale: 1 }, props.tweenDuration1)
-                        .easing(props.tweenAlgo1).delay(props.tweenDelay).start();
-                    new TWEEN.Tween(anim).to({ toQuatRatio: 1 }, props.tweenDuration2)
-                        .easing(props.tweenAlgo2).delay(props.tweenDelay).start();
                 }
 
-                mantleGem.scale.setScalar(anim.scale);
                 mantleGem.quaternion.copy(anim.fromQuat);
                 mantleGem.quaternion.slerp(anim.toQuat, anim.toQuatRatio);
             });            

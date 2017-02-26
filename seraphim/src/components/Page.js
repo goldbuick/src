@@ -1,6 +1,6 @@
 import React from 'react';
 import Scene from './Scene';
-import GenAlgo from '../viz/GenAlgo';
+import debounce from '../util/debounce';
 
 import Sphere from '../sphere/Core';
 import SphereBarrier from '../sphere/Barrier';
@@ -8,27 +8,48 @@ import SphereMantleGem from '../sphere/MantleGem';
 import SphereSubStrate from '../sphere/SubStrate';
 import SphereBarrierGem from '../sphere/BarrierGem';
 
-import BJunkGraph from './BJunkGraph';
-import MRadialGraph from './MRadialGraph';
+import GenAlgo from '../viz/GenAlgo';
+import BJunkGraph from '../graphs/BJunkGraph';
+import MRadialGraph from '../graphs/MRadialGraph';
 
-const Page = (props) => {
-    const radius = 512;
-    const sphereMantleGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereMantleGem key={v} onMantleGem={MRadialGraph}/>);
-    const sphereSubStrate = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereSubStrate key={v} verta={v*v*0.3}/>);
-    const sphereBarrierGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereBarrierGem key={v} onBarrierGem={BJunkGraph}/>);
+export default class Page extends React.Component {
 
-    return (
-        <Scene>
-            <Sphere radius={radius}>
-                {sphereMantleGem(8)}
-                {sphereSubStrate(4)}
-                {sphereBarrierGem(5)}
-            </Sphere>
-        </Scene>
-    );
-};
+    constructor(...args) {
+        super(...args);
+        this.state = { showLayer: 1 };
+    }
 
-export default Page;
+    changeShowLayer(delta) {
+        const showLayer = Math.max(0, Math.min(3, this.state.showLayer + delta));
+        this.setState({ showLayer });
+    }
+
+    handleUp = debounce(() => this.changeShowLayer(-1), 200, true)
+    handleDown = debounce(() => this.changeShowLayer(1), 200, true)
+
+    handleWheel = (dx, dy) => {
+        if (dy < 0) this.handleUp();
+        if (dy > 0) this.handleDown();
+    }
+
+    render() {
+        const radius = 400;
+        const sphereMantleGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereMantleGem key={v} onMantleGem={MRadialGraph}/>);
+        const sphereSubStrate = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereSubStrate key={v} verta={v*v*0.3}/>);
+        const sphereBarrierGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereBarrierGem key={v} onBarrierGem={BJunkGraph}/>);
+
+        return (
+            <Scene onWheel={this.handleWheel}>
+                <Sphere radius={radius} showLayer={this.state.showLayer}>
+                    {sphereMantleGem(8)}
+                    {sphereSubStrate(4)}
+                    {sphereBarrierGem(5)}
+                </Sphere>
+            </Scene>
+        );
+    }
+
+}
 
 /*
             <Button name="TestButton"

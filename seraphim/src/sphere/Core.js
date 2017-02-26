@@ -1,9 +1,7 @@
 import React from 'react';
 import TWEEN from 'tween.js';
 import Draft from '../viz/Draft';
-import Theme from '../render/Theme';
-import { pick } from '../util/UtilObject';
-import Projection from '../viz/Projection';
+import intro from '../anim/intro';
 import RenderObject from '../render/RenderObject';
 
 import Mantle from './Mantle';
@@ -13,20 +11,13 @@ import SubStrate from './SubStrate';
 import BarrierGem from './BarrierGem';
 
 const Sphere = (props) => {
-    const smallScale = 0.00001;
 
     return <RenderObject {...props}
         name="Sphere"
         
         onChildren3D={(children) => {
-            const childProps1 = pick(props, 
-                'radius',
-                'tweenDelay',
-                'tweenDuration1',
-                'tweenDuration2',
-                'tweenAlgo1',
-                'tweenAlgo2');
-            const childProps2 = {...childProps1, radius: childProps1.radius + 200};
+            const childProps1 = { radius: props.radius };
+            const childProps2 = { radius: props.radius + props.barrierGap };
 
             const mantleGems = RenderObject.byType(children, MantleGem, childProps1);
             const mantle = <Mantle>{mantleGems}</Mantle>;
@@ -42,52 +33,83 @@ const Sphere = (props) => {
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
+            // core should only manage basic position 
+
+            let targetY = {};
+            switch (props.showLayer) {
+                case 0:
+                    targetY.mantleY = 0;
+                    targetY.barrierY = props.radius * -0.5;
+                    targetY.substrateY = props.radius * -0.25;
+                    break;
+                case 1:
+                    targetY.mantleY = 0;
+                    targetY.barrierY = 0;
+                    targetY.substrateY = 0;
+                    break;
+                case 2:
+                    targetY.mantleY = props.radius * 1.5;
+                    targetY.barrierY = props.barrierDist * 0.5;
+                    targetY.substrateY = 0;
+                    break;
+                case 3:
+                    targetY.mantleY = props.radius * 2;
+                    targetY.barrierY = props.barrierDist + 200;
+                    targetY.substrateY = props.radius - props.barrierDist;
+                    break;
+            }
+
+            if (animateState.showLayer !== props.showLayer) {
+                // only trigger tween when showLayer changes
+                animateState.showLayer = props.showLayer;
+                // make sure we have starting values
+                ['mantleY', 'barrierY', 'substrateY'].forEach(attr => {
+                    if (animateState[attr] === undefined) animateState[attr] = targetY[attr];
+                });
+                // trigger tween
+                new TWEEN
+                    .Tween(animateState)
+                    .to({
+                        mantleY: targetY.mantleY,
+                        barrierY: targetY.barrierY,
+                        substrateY: targetY.substrateY,
+                    }, 400)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
+            }
+
+            const mantle = RenderObject.byType(object3D.children, Mantle)[0];
+            mantle.position.y = animateState.mantleY;
 
             const barriers = RenderObject.byType(object3D.children, Barrier);
             RenderObject.animate(barriers, animateState, (barrier, anim, index) => {
-                if (anim.scale === undefined) {
-                    anim.scale = smallScale;
-                    anim.position = -300;
-                    const targetPosition = 100;
-                    new TWEEN.Tween(anim).to({ scale: 1 }, props.tweenDuration1)
-                        .easing(props.tweenAlgo1).delay(props.tweenDelay).start();
-                    new TWEEN.Tween(anim).to({ position: targetPosition }, props.tweenDuration2)
-                        .easing(props.tweenAlgo2).delay(props.tweenDelay).start();                    
-                }
-                barrier.scale.setScalar(anim.scale);
+                intro.secondary(anim, 'position', 400, () => {
+                    return props.barrierDist + (index * props.barrierStep);
+                });
                 barrier.position.y = -anim.position;
+                barrier.position.y += animateState.barrierY;
             });
 
             const substrates = RenderObject.byType(object3D.children, SubStrate);
             RenderObject.animate(substrates, animateState, (substrate, anim, index) => {
-                if (anim.scale === undefined) {
-                    anim.scale = smallScale;
-                    anim.position = 400;
-                    const targetPosition = props.radius + props.substrateDist - (index * props.substrateStep);
-                    new TWEEN.Tween(anim).to({ scale: 1 }, props.tweenDuration1)
-                        .easing(props.tweenAlgo1).delay(props.tweenDelay).start();
-                    new TWEEN.Tween(anim).to({ position: targetPosition }, props.tweenDuration2)
-                        .easing(props.tweenAlgo2).delay(props.tweenDelay).start();                    
-                }
-                substrate.rotation.x = Math.PI * -0.5;
-                substrate.scale.setScalar(anim.scale);
+                intro.secondary(anim, 'position', 400, () => {
+                    return props.radius + props.substrateDist - (index * props.substrateStep);
+                });
                 substrate.position.y = -anim.position;
-            });
-            
+                substrate.position.y += animateState.substrateY;
+            });            
         }}
     />;
 };
 
 Sphere.defaultProps = {
     radius: 512,
+    showLayer: 0,
+    barrierGap: 200,
+    barrierStep: 64,
+    barrierDist: 128,
     substrateDist: 64,
     substrateStep: 32,
-    // anim props
-    tweenDelay: 256,
-    tweenDuration1: 400,
-    tweenDuration2: 1400,
-    tweenAlgo1: TWEEN.Easing.Back.Out,
-    tweenAlgo2: TWEEN.Easing.Elastic.Out,
 };
 
 export default Sphere;

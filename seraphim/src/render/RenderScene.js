@@ -1,6 +1,7 @@
 import React from 'react';
 import Screen from './Screen';
 import RenderFX from './RenderFX';
+import debounce from '../util/debounce';
 import RenderObject from './RenderObject';
 
 export default class RenderScene extends React.Component {
@@ -12,7 +13,7 @@ export default class RenderScene extends React.Component {
         onResize: () => { },
     }
 
-    animate3D = [ ]
+    animate3D = []
 
     get scene() {
         return (this._scene = this._scene || new THREE.Scene());
@@ -28,14 +29,12 @@ export default class RenderScene extends React.Component {
             rayCoords: new THREE.Vector2(),
         };
 
-        return this.props.onCreate(renderer, composer, 
-            this.scene, this.camera, width, height);
+        return this.props.onCreate(renderer, composer, this.scene, this.camera, width, height);
     }
 
     handleUpdate = (renderer, composer, delta) => {
-        this.animate3D.forEach(item => item.animate3D(delta));
-        this.props.onUpdate(renderer, composer, 
-            this.scene, this.camera, delta);
+        // this.animate3D.forEach(item => item.animate3D(delta));
+        this.props.onUpdate(renderer, composer, this.scene, this.camera, delta);
     }
 
     handleResize = (renderer, composer, width, height) => {
@@ -61,12 +60,11 @@ export default class RenderScene extends React.Component {
         const centerY = center.y * Screen.halfHeight + Screen.halfHeight;
         Screen.ratioY = length / (topY - centerY);
 
-        this.props.onResize(renderer, composer, 
-            this.scene, this.camera, width, height);
+        this.props.onResize(renderer, composer, this.scene, this.camera, width, height);
     }
 
-    handleRender3D = () => {
-        return this.scene;
+    handlePreRender = (delta) => {
+        this.animate3D.forEach(item => item.animate3D(delta));
     }
 
     startAnimate3D(obj) {
@@ -165,12 +163,17 @@ export default class RenderScene extends React.Component {
         this.handlePointer(e, -1, false, e.clientX, e.clientY);
     }
 
+    handleRender3D = () => {
+        return this.scene;
+    }
+
     render() {
         return <RenderFX 
             {...this.props}
             onCreate={this.handleCreate}
             onUpdate={this.handleUpdate}
             onResize={this.handleResize}
+            onPreRender={this.handlePreRender}
             onWheel={this.handleWheel}
             onTouchStart={this.handleTouchStart}
             onTouchMove={this.handleTouchMove}

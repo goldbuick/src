@@ -1,6 +1,6 @@
 import polylineNormals from 'polyline-normals';
 
-const lscale = 0.22;
+const lscale = 0.12;
 const opacity = 0.33;
 const dim = 0x444444;
 

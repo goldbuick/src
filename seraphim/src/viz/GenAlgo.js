@@ -1,7 +1,7 @@
 import Alea from 'alea';
 import PF from 'pathfinding';
+import { range } from '../util/array';
 import SimplexNoise from 'simplex-noise';
-import { range } from '../util/UtilArray';
 
 class GenAlgo {
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import UtilDebounce from '../util/UtilDebounce';
+import debounce from '../util/debounce';
 
 export default class Render extends React.Component {
 
@@ -41,7 +41,7 @@ export default class Render extends React.Component {
         window.removeEventListener('resize', this.handleResize);
     }
 
-    handleResize = UtilDebounce(() => this.updateSize(), 250)
+    handleResize = debounce(() => this.updateSize(), 250)
 
     handleUpdate = (now) => {
         let diff = this.last ? now - this.last : (1.0 / 60.0),

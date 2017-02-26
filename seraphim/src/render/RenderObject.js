@@ -1,6 +1,6 @@
 import React from 'react';
 import genUuid from 'uuid';
-import { flatten } from '../util/UtilArray';
+import { flatten } from '../util/array';
 
 export default class RenderObject extends React.Component {
 
@@ -96,6 +96,7 @@ export default class RenderObject extends React.Component {
     }
 
     componentDidMount() {
+        console.log('componentDidMount');
         let root = this.findRoot(this);
         if (root) root.startAnimate3D(this);
     }

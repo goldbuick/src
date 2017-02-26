@@ -8,6 +8,7 @@ export default class RenderFX extends React.Component {
         onCreate: () => [ ],
         onUpdate: () => { },
         onResize: () => { },
+        onPreRender: () => { },
         onWheel: () => { },
         onTouchStart: () => { },
         onTouchMove: () => { },
@@ -33,6 +34,7 @@ export default class RenderFX extends React.Component {
     }
 
     handleUpdate = (renderer, delta) => {
+        this.props.onPreRender(delta);
         renderer.clear();
         this.composer.render(delta);
         this.props.onUpdate(renderer, this.composer, delta);

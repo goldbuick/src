@@ -1,6 +1,6 @@
 import React from 'react';
 import Draft from '../viz/Draft';
-import Theme from '../render/Theme';
+import intro from '../anim/intro';
 import GenAlgo from '../viz/GenAlgo';
 import GenPoints from '../viz/GenPoints';
 import Projection from '../viz/Projection';
@@ -13,18 +13,19 @@ const Barrier = (props) => {
         name="Barrier"
 
         onRender3D={(uuid) => {
+            const base = new THREE.Object3D();
+
             let draft;
             const tessellate = 32;
-            const base = new THREE.Object3D();
             const rng = GenAlgo.rng({ seed: uuid });
             const noise = GenAlgo.noise({ seed: uuid });
 
             draft = new Draft();
             const dist = props.radius * Math.PI;
             draft.drawLine([{ x: 0, y: 0, z: 0 },{ x: dist, y: 0, z: 0 }])
-            base.add(draft.
-                tessellate(tessellate).
-                build(Projection.column(props.radius, 1)));
+            const barrierLine = draft.tessellate(tessellate).build(Projection.column(props.radius, 1));
+            base.add(barrierLine);
+            base.userData.barrierLine = barrierLine;
 
             draft = new Draft();
             const tsize = 1.5;
@@ -49,17 +50,23 @@ const Barrier = (props) => {
                 if (c) draft.drawTriangle({ x: i * twidth + thw, y: thh * -1, radius: tsize, angle: tangle,  filled: rng() < nplink });
                 if (d) draft.drawTriangle({ x: i * twidth,       y: thh * -3, radius: tsize, angle: tangle,  filled: rng() < nplink });
             }
-            base.add(draft.
-                tessellate(tessellate).
-                build(Projection.column(props.radius, 1)));
+
+            const barrier = draft.tessellate(tessellate).build(Projection.column(props.radius, 1));
+            base.add(barrier);
+            base.userData.barrier = barrier;
 
             return base;
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
-            object3D.rotation.y += delta * 0.1;
+            intro.primary(animateState, 'scale', intro.CONST.smallScale, 1);
+            intro.setScale(animateState, object3D.userData.barrier);
+            intro.setScale(animateState, object3D.userData.barrierLine);
+            
             const barrierGems = RenderObject.byType(object3D.children, BarrierGem);
             RenderObject.animate(barrierGems, animateState, (barrierGem, anim, index) => {
+                intro.secondary(anim, 'scale', intro.CONST.smallScale, 1);
+                intro.setScale(anim, barrierGem);
                 barrierGem.rotation.y = (index / barrierGems.length) * Math.PI * 2;
             });
         }}

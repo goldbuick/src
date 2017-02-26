@@ -31,17 +31,20 @@ export default class Scene extends React.Component {
 
         camera.position.z = 1024;
 
-        // default lights
-        // let tilt = 32;
-        // [ -tilt, tilt ].map(tilt => {
-        //     let light = new THREE.DirectionalLight(0xffffff, 0.2);
-        //     light.position.set(tilt, 0, 8);
-        //     return light;
-        // }).forEach(light => scene.add(light));
+        let tilt = 32;
+        [ -tilt, tilt ].map(tilt => {
+            let light = new THREE.DirectionalLight(0xffffff, 0.2);
+            light.position.set(tilt, 0, 8);
+            return light;
+        }).forEach(light => scene.add(light));
 
         const rez = 1024;
         return [
+            /*/
+            new THREE.RenderPass(scene, camera),
+            /*/
             new THREE.TAARenderPass(scene, camera),
+            //*/
             new THREE.BloomBlendPass(2, 1.2, new THREE.Vector2(rez, rez)),
             new THREE.FilmPass(0.25, 0.5, height * 2, false),
             // new THREE.GlitchPass(64),
