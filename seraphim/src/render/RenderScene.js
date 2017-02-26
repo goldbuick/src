@@ -11,6 +11,7 @@ export default class RenderScene extends React.Component {
         onCreate: () => { },
         onUpdate: () => { },
         onResize: () => { },
+        onPointer: () => { },
     }
 
     animate3D = []
@@ -85,6 +86,7 @@ export default class RenderScene extends React.Component {
 
     handlePointer(e, id, pressed, x, y) {
         if (!this.scene) return;
+        this.props.onPointer(e, id, pressed, x, y);
         const { ray, rayCoords, objectByPointer } = this.input;
 
         let current;

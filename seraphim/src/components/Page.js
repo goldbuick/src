@@ -16,20 +16,42 @@ export default class Page extends React.Component {
 
     constructor(...args) {
         super(...args);
-        this.state = { showLayer: 1 };
+        this.pointers = {};
+        this.view = {
+            layer: 1,
+            spin: { x: 0, y: 0}
+        };
         this.mousewheel = new MouseWheel({
-            onSwipeUp: this.changeShowLayerUp,
-            onSwipeDown: this.changeShowLayerDown
+            onSwipeUp: () => this.changeShowLayer(-1),
+            onSwipeDown: () => this.changeShowLayer(1)
         });
     }
 
     changeShowLayer(delta) {
-        const showLayer = Math.max(0, Math.min(3, this.state.showLayer + delta));
-        this.setState({ showLayer });
+        this.view.layer = Math.max(0, Math.min(3, this.view.layer + delta));
     }
 
-    changeShowLayerUp = () => this.changeShowLayer(-1)
-    changeShowLayerDown = () => this.changeShowLayer(1)
+    pointerDelta(id, pressed, x, y) {
+        let pointer = this.pointers[id];
+        if (pointer === undefined) {
+            pointer = { x, y };
+            this.pointers[id] = pointer;
+        }
+        const dx = pointer.x - x;
+        const dy = pointer.y - y;
+        pointer.x = x;
+        pointer.y = y;
+        if (pressed === false) {
+            delete this.pointers[id];
+        }
+        return { dx, dy };
+    }
+
+    handlePointer = (e, id, pressed, x, y) => {
+        const { dx, dy } = this.pointerDelta(id, pressed, x, y);
+        this.view.spin.x += dx * 0.01;
+        this.view.spin.y += dy * 0.01;
+    }
 
     render() {
         const radius = 512;
@@ -38,8 +60,8 @@ export default class Page extends React.Component {
         const sphereBarrierGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereBarrierGem key={v} onBarrierGem={BJunkGraph}/>);
 
         return (
-            <Scene onWheel={this.mousewheel.onWheel}>
-                <Sphere radius={radius} showLayer={this.state.showLayer}>
+            <Scene onWheel={this.mousewheel.onWheel} onPointer={this.handlePointer}>
+                <Sphere radius={radius} view={this.view}>
                     {sphereMantleGem(8)}
                     {sphereSubStrate(4)}
                     {sphereBarrierGem(5)}

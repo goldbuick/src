@@ -33,46 +33,49 @@ const Sphere = (props) => {
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
-            // core should only manage basic position 
-
-            let targetY = {};
-            switch (props.showLayer) {
+            let target = {};
+            switch (props.view.layer) {
                 case 0:
-                    targetY.mantleY = 0;
-                    targetY.barrierY = props.radius * -0.5;
-                    targetY.substrateY = props.radius * -0.25;
+                    target.mantleY = 0;
+                    target.barrierY = props.radius * -0.5;
+                    target.substrateY = props.radius * -0.25;
+                    target.mantleScale = 1.2;
                     break;
                 case 1:
-                    targetY.mantleY = 0;
-                    targetY.barrierY = 0;
-                    targetY.substrateY = 0;
+                    target.mantleY = 0;
+                    target.barrierY = 0;
+                    target.substrateY = 0;
+                    target.mantleScale = 1;
                     break;
                 case 2:
-                    targetY.mantleY = props.radius * 1.5;
-                    targetY.barrierY = props.barrierDist * 0.5;
-                    targetY.substrateY = 0;
+                    target.mantleY = props.radius * 1.5;
+                    target.barrierY = props.barrierDist * 0.5;
+                    target.substrateY = 0;
+                    target.mantleScale = 1;
                     break;
                 case 3:
-                    targetY.mantleY = props.radius * 2;
-                    targetY.barrierY = props.barrierDist + 200;
-                    targetY.substrateY = props.radius - props.barrierDist;
+                    target.mantleY = props.radius * 2;
+                    target.barrierY = props.barrierDist + 200;
+                    target.substrateY = props.radius - props.barrierDist;
+                    target.mantleScale = 1;
                     break;
             }
 
-            if (animateState.showLayer !== props.showLayer) {
-                // only trigger tween when showLayer changes
-                animateState.showLayer = props.showLayer;
+            if (animateState.layer !== props.view.layer) {
+                // only trigger tween when view.layer changes
+                animateState.layer = props.view.layer;
                 // make sure we have starting values
-                ['mantleY', 'barrierY', 'substrateY'].forEach(attr => {
-                    if (animateState[attr] === undefined) animateState[attr] = targetY[attr];
+                ['mantleY', 'barrierY', 'substrateY', 'mantleScale'].forEach(attr => {
+                    if (animateState[attr] === undefined) animateState[attr] = target[attr];
                 });
                 // trigger tween
                 new TWEEN
                     .Tween(animateState)
                     .to({
-                        mantleY: targetY.mantleY,
-                        barrierY: targetY.barrierY,
-                        substrateY: targetY.substrateY,
+                        mantleY: target.mantleY,
+                        barrierY: target.barrierY,
+                        substrateY: target.substrateY,
+                        mantleScale: target.mantleScale,
                     }, 400)
                     .easing(TWEEN.Easing.Exponential.InOut)
                     .start();
@@ -80,6 +83,15 @@ const Sphere = (props) => {
 
             const mantle = RenderObject.byType(object3D.children, Mantle)[0];
             mantle.position.y = animateState.mantleY;
+            mantle.scale.setScalar(animateState.mantleScale);
+
+            if (animateState.spin === undefined) {
+                animateState.spin = {...props.view.spin};
+            }
+            animateState.spin.x += (props.view.spin.x - animateState.spin.x) * delta;
+            animateState.spin.y += (props.view.spin.y - animateState.spin.y) * delta;
+            mantle.rotation.x = -animateState.spin.y;
+            mantle.rotation.y = -animateState.spin.x;
 
             const barriers = RenderObject.byType(object3D.children, Barrier);
             RenderObject.animate(barriers, animateState, (barrier, anim, index) => {
@@ -103,8 +115,11 @@ const Sphere = (props) => {
 };
 
 Sphere.defaultProps = {
+    view: {
+        layer: 1,
+        spin: { x: 0, y: 0 }
+    },
     radius: 512,
-    showLayer: 0,
     barrierGap: 200,
     barrierStep: 64,
     barrierDist: 128,

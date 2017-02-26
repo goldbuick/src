@@ -183,6 +183,7 @@ export default class RenderObject extends React.Component {
         const name = this.props.name || 'RenderObject';
         const children = this.children3D();
         this.render3D(children);
+        console.log('render', name);
         return <div data-name={name}>{children}</div>;
     }
 
