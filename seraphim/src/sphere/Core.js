@@ -85,13 +85,28 @@ const Sphere = (props) => {
             mantle.position.y = animateState.mantleY;
             mantle.scale.setScalar(animateState.mantleScale);
 
+            const spinScale = -0.0001;
             if (animateState.spin === undefined) {
-                animateState.spin = {...props.view.spin};
+                animateState.spin = new THREE.Quaternion();
             }
-            animateState.spin.x += (props.view.spin.x - animateState.spin.x) * delta;
-            animateState.spin.y += (props.view.spin.y - animateState.spin.y) * delta;
-            mantle.rotation.x = -animateState.spin.y;
-            mantle.rotation.y = -animateState.spin.x;
+            if (props.view.spin.x) {
+                const euler = new THREE.Euler(0, props.view.spin.x * spinScale, 0);
+                animateState.spin = new THREE.Quaternion().multiplyQuaternions(
+                    new THREE.Quaternion().setFromEuler(euler),
+                    animateState.spin,
+                );
+            }
+            if (props.view.spin.y) {
+                const euler = new THREE.Euler(props.view.spin.y * spinScale, 0, 0);
+                animateState.spin = new THREE.Quaternion().multiplyQuaternions(
+                    new THREE.Quaternion().setFromEuler(euler),
+                    animateState.spin,
+                );
+            }
+
+            props.view.spin.x -= props.view.spin.x * delta;
+            props.view.spin.y -= props.view.spin.y * delta;
+            mantle.quaternion.copy(animateState.spin);
 
             const barriers = RenderObject.byType(object3D.children, Barrier);
             RenderObject.animate(barriers, animateState, (barrier, anim, index) => {

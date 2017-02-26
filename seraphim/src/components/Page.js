@@ -19,7 +19,7 @@ export default class Page extends React.Component {
         this.pointers = {};
         this.view = {
             layer: 1,
-            spin: { x: 0, y: 0}
+            spin: { x: 0, y: 0 }
         };
         this.mousewheel = new MouseWheel({
             onSwipeUp: () => this.changeShowLayer(-1),
@@ -43,14 +43,21 @@ export default class Page extends React.Component {
         pointer.y = y;
         if (pressed === false) {
             delete this.pointers[id];
-        }
+        }        
         return { dx, dy };
     }
 
     handlePointer = (e, id, pressed, x, y) => {
         const { dx, dy } = this.pointerDelta(id, pressed, x, y);
-        this.view.spin.x += dx * 0.01;
-        this.view.spin.y += dy * 0.01;
+        if (this.view.layer <= 1) {
+            if (pressed && !this.view.pressed) {
+                this.view.spin.x = 0;
+                this.view.spin.y = 0;
+            }
+            this.view.spin.x += dx;
+            this.view.spin.y += dy;
+            this.view.pressed = pressed;
+        }
     }
 
     render() {
