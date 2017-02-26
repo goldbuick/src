@@ -1,7 +1,7 @@
 import React from 'react';
 import Screen from './Screen';
 import RenderFX from './RenderFX';
-import debounce from '../util/debounce';
+import { debounce } from '../util/timing';
 import RenderObject from './RenderObject';
 
 export default class RenderScene extends React.Component {

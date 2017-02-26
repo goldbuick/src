@@ -5,7 +5,7 @@ const opacity = 0.33;
 const dim = 0x444444;
 
 let pointMaterial = new THREE.PointsMaterial({
-    size: 0.5,
+    size: 1 / window.devicePixelRatio,
     sizeAttenuation: false,
     vertexColors: THREE.VertexColors
 });

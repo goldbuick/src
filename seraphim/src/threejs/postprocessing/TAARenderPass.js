@@ -22,7 +22,7 @@ THREE.TAARenderPass = function ( scene, camera, params ) {
 
 	THREE.SSAARenderPass.call( this, scene, camera, params );
 
-	this.sampleLevel = 3;
+	this.sampleLevel = 2;
 	this.accumulate = false;
 
 };

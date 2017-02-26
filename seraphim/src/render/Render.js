@@ -1,5 +1,5 @@
 import React from 'react';
-import debounce from '../util/debounce';
+import { debounce } from '../util/timing';
 
 export default class Render extends React.Component {
 

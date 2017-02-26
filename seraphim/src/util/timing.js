@@ -1,5 +1,5 @@
 
-export default (func, wait, immediate) => {
+export function debounce(func, wait, immediate) {
     let timeout;
     return () => {
         let args = arguments;
@@ -13,5 +13,14 @@ export default (func, wait, immediate) => {
         timeout = setTimeout(later, wait);
         if (callNow) func.apply(this, args);
     };
-};
+}
+
+export function throttle(func, wait) {
+    let timeout;
+    return () => {
+        if (timeout) return;
+        func.apply(this, arguments);
+        timeout = setTimeout(() => (timeout = undefined), wait);
+    }
+}
 
