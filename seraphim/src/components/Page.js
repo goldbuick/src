@@ -19,12 +19,18 @@ export default class Page extends React.Component {
         this.pointers = {};
         this.view = {
             layer: 1,
-            spin: { x: 0, y: 0 }
+            holding: 0,
+            spin: { dx: 0, dy: 0, dz: 0 }
         };
         this.mousewheel = new MouseWheel({
             onSwipeUp: () => this.changeShowLayer(-1),
             onSwipeDown: () => this.changeShowLayer(1)
         });
+    }
+
+    handleResize = (renderer, composer, scene, camera, width, height) => {
+        this.view.width = width;
+        this.view.height = height;
     }
 
     changeShowLayer(delta) {
@@ -48,16 +54,21 @@ export default class Page extends React.Component {
     }
 
     handlePointer = (e, id, pressed, x, y) => {
+        e.preventDefault();
         const { dx, dy } = this.pointerDelta(id, pressed, x, y);
-        if (this.view.layer <= 1) {
-            if (pressed && !this.view.pressed) {
-                this.view.spin.x = 0;
-                this.view.spin.y = 0;
-            }
-            this.view.spin.x += dx;
-            this.view.spin.y += dy;
-            this.view.pressed = pressed;
+
+        if (pressed && !this.view.pressed) {
+            this.view.holding = 1;
+            this.view.spin.dz = (x < this.view.width * 0.5) ? -1 : 1;
         }
+        if (!pressed || dx > 3 || dy > 3) {
+            this.view.holding = 0;
+            this.view.spin.dz = 0;
+        }
+        
+        this.view.spin.dx = dy;
+        this.view.spin.dy = dx;
+        this.view.pressed = pressed;
     }
 
     render() {
@@ -66,8 +77,14 @@ export default class Page extends React.Component {
         const sphereSubStrate = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereSubStrate key={v} verta={v*v*0.3}/>);
         const sphereBarrierGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereBarrierGem key={v} onBarrierGem={BJunkGraph}/>);
 
+        const sceneProps = {
+            onResize: this.handleResize,
+            onPointer: this.handlePointer,
+            onWheel: this.mousewheel.onWheel,
+        };
+
         return (
-            <Scene onWheel={this.mousewheel.onWheel} onPointer={this.handlePointer}>
+            <Scene {...sceneProps}>
                 <Sphere radius={radius} view={this.view}>
                     {sphereMantleGem(8)}
                     {sphereSubStrate(4)}

@@ -2,6 +2,7 @@ import React from 'react';
 import TWEEN from 'tween.js';
 import Draft from '../viz/Draft';
 import intro from '../anim/intro';
+import { inertiaRotation } from '../anim/quat';
 import RenderObject from '../render/RenderObject';
 
 import Mantle from './Mantle';
@@ -85,28 +86,15 @@ const Sphere = (props) => {
             mantle.position.y = animateState.mantleY;
             mantle.scale.setScalar(animateState.mantleScale);
 
-            const spinScale = -0.0001;
-            if (animateState.spin === undefined) {
-                animateState.spin = new THREE.Quaternion();
-            }
-            if (props.view.spin.x) {
-                const euler = new THREE.Euler(0, props.view.spin.x * spinScale, 0);
-                animateState.spin = new THREE.Quaternion().multiplyQuaternions(
-                    new THREE.Quaternion().setFromEuler(euler),
-                    animateState.spin,
-                );
-            }
-            if (props.view.spin.y) {
-                const euler = new THREE.Euler(props.view.spin.y * spinScale, 0, 0);
-                animateState.spin = new THREE.Quaternion().multiplyQuaternions(
-                    new THREE.Quaternion().setFromEuler(euler),
-                    animateState.spin,
-                );
-            }
+            if (props.view.holding) props.view.holding = Math.min(props.view.holding * 2, 512);
 
-            props.view.spin.x -= props.view.spin.x * delta;
-            props.view.spin.y -= props.view.spin.y * delta;
-            mantle.quaternion.copy(animateState.spin);
+            const { layer, holding } = props.view;
+            const { dx, dy, dz } = props.view.spin;
+            const damp = holding * 0.01 + 1;
+
+            animateState.mantle = inertiaRotation(animateState.mantle, 
+                layer <= 1 ? dx : 0, layer <= 1 ? dy : 0, layer <= 1 ? dz : 0, delta, damp, damp + 3);
+            mantle.quaternion.copy(animateState.mantle.rotation);
 
             const barriers = RenderObject.byType(object3D.children, Barrier);
             RenderObject.animate(barriers, animateState, (barrier, anim, index) => {
@@ -115,6 +103,10 @@ const Sphere = (props) => {
                 });
                 barrier.position.y = -anim.position;
                 barrier.position.y += animateState.barrierY;
+
+                anim.barrier = inertiaRotation(anim.barrier, 
+                    0, layer === 2 ? dy : 0, 0, delta, damp, damp + 3);
+                barrier.quaternion.copy(anim.barrier.rotation);
             });
 
             const substrates = RenderObject.byType(object3D.children, SubStrate);
@@ -124,6 +116,10 @@ const Sphere = (props) => {
                 });
                 substrate.position.y = -anim.position;
                 substrate.position.y += animateState.substrateY;
+
+                anim.substrate = inertiaRotation(anim.substrate, 
+                    0, layer === 3 ? dy : 0, 0, delta, damp, damp + 3);
+                substrate.quaternion.copy(anim.substrate.rotation);
             });            
         }}
     />;

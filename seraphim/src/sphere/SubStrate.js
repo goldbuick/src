@@ -12,6 +12,7 @@ const SubStrate = (props) => {
         name="SubStrate"
 
         onRender3D={(uuid) => {
+            const base = new THREE.Object3D();
             const draft = new Draft();
             const rng = GenAlgo.rng({ seed: uuid });
 
@@ -27,9 +28,11 @@ const SubStrate = (props) => {
                 draft.drawFeatherArc({ radius, count: 8, r: rng, width: 2, drift: 1 });
             }
 
-            const object3D = draft.build(Projection.plane(1));
-            object3D.rotation.x = Math.PI * -0.5;
-            return object3D;
+            const substrate = draft.build(Projection.plane(1));
+            substrate.rotation.x = Math.PI * -0.5;
+            base.add(substrate);
+
+            return base;
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {

@@ -124,7 +124,7 @@ export default class RenderScene extends React.Component {
     }
 
     handleTouchStart = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         for (let i=0; i<e.changedTouches.length; ++i) {
             let touch = e.changedTouches[i];
             this.handlePointer(e, touch.identifier, true, touch.clientX, touch.clientY);
@@ -132,7 +132,7 @@ export default class RenderScene extends React.Component {
     }
 
     handleTouchMove = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         for (let i=0; i<e.changedTouches.length; ++i) {
             let touch = e.changedTouches[i];
             this.handlePointer(e, touch.identifier, true, touch.clientX, touch.clientY);
@@ -140,27 +140,26 @@ export default class RenderScene extends React.Component {
     }
 
     handleTouchEnd = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         for (let i=0; i<e.changedTouches.length; ++i) {
             let touch = e.changedTouches[i];
             this.handlePointer(e, touch.identifier, false, touch.clientX, touch.clientY);
-            this.handlePointer(e, touch.identifier);
         }
     }
 
     handleMouseDown = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         this.input.pressed = true;
         this.handlePointer(e, -1, true, e.clientX, e.clientY);
     }
 
     handleMouseMove = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         if (this.input.pressed) this.handlePointer(e, -1, this.input.pressed, e.clientX, e.clientY);
     }
 
     handleMouseUp = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         this.input.pressed = false;
         this.handlePointer(e, -1, false, e.clientX, e.clientY);
     }
