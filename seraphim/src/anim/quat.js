@@ -1,8 +1,7 @@
 
 export function applyRotation(quaternion, x, y, z) {
-    const rotation = new THREE.Quaternion();
-    rotation.setFromEuler(new THREE.Euler(x, y, z));
-    return new THREE.Quaternion().multiplyQuaternions(rotation, quaternion);
+    const rotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z));
+    return quaternion.premultiply(rotation);
 }
 
 export function inertiaRotation(anim, dx, dy, dz, delta, damp1, damp2) {

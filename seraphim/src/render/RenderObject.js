@@ -11,6 +11,17 @@ export default class RenderObject extends React.Component {
         // onChildren3D, add this to customize props, children of this component 
     }
 
+    static renderRoot
+    static renderStack = []
+
+    static parentRender() {
+        return RenderObject.renderStack.pop();
+    }
+
+    static pushRender(object) {
+        RenderObject.renderStack.push(object);
+    }
+
     static byType(children, ctor, props = {}) {
         // react children ?
         const isReact = (
@@ -49,21 +60,16 @@ export default class RenderObject extends React.Component {
         });
     }
 
-    findRoot(parent) {
-        // this is the root
-        if (parent && parent.startAnimate3D) {
-            return parent;
-        }
-        
-        // this is not the root, but there are still
-        // parent components
-        if (parent.props && parent.props.parent) {
-            return this.findRoot(parent.props.parent);
-        }
-
-        // did not find root
-        return undefined;
+    constructor(props) {
+        super(props);
+        this._uuid = genUuid();
+        this._name = props.name || 'RenderObject';
+        this._root = (RenderObject.renderRoot = props.root || RenderObject.renderRoot);
     }
+
+    get uuid() { return this._uuid; }
+    get name() { return this._name; }
+    get root() { return this._root; }
 
     applyProps3D() {
         if (this.object3D === undefined) return;
@@ -96,18 +102,18 @@ export default class RenderObject extends React.Component {
     }
 
     componentDidMount() {
-        let root = this.findRoot(this);
-        if (root) root.startAnimate3D(this);
+        const root = this.root;
+        if (root.startAnimate3D) root.startAnimate3D(this);
     }
 
     componentDidUpdate() {
-        let root = this.findRoot(this);
-        if (root) root.startAnimate3D(this);
+        const root = this.root;
+        if (root.startAnimate3D) root.startAnimate3D(this);
     }
 
     componentWillUnmount() {
         this.clear3D();
-        let root = this.findRoot(this);
+        const root = this.root;
         if (root.stopAnimate3D) root.stopAnimate3D(this);
     }
 
@@ -128,16 +134,21 @@ export default class RenderObject extends React.Component {
     }
 
     render3D(children) {
+        const name = this.name;
+
         this.clear3D();
         this.object3D = this.props.onRender3D(this.uuid, children) || new THREE.Object3D();
 
-        let parent = this.props.parent && this.props.parent.object3D;
+        // how we build our scenegraph
+        let parent = RenderObject.parentRender();
+        children.forEach(child => RenderObject.pushRender(this.object3D));
+
         if (parent && this.object3D) {
             // make sure to build a proper 3D tree
             parent.add(this.object3D);
 
             // standard values for object3D
-            this.object3D.name = this.props.name;
+            this.object3D.name = name;
             this.object3D.userData.uuid = this.uuid;
             this.object3D.userData.renderObject = this.props.ctor;
             
@@ -160,12 +171,16 @@ export default class RenderObject extends React.Component {
                 });
             }
         }
+
+        return children;
+    }
+
+    mapChildren(children) {
+        return React.Children.map(children || [], child => child);
     }
 
     children3D() {
-        let children = React.Children.map(this.props.children || [], child => {
-            return React.cloneElement(child, { parent: this });
-        });
+        let children = this.mapChildren(this.props.children);
 
         if (this.props.onChildren3D) {
             children = this.props.onChildren3D(children);
@@ -173,16 +188,13 @@ export default class RenderObject extends React.Component {
             children = RenderObject.uniqueKey(flatten(children));
         }
 
-        return React.Children.map(children, child => {
-            return React.cloneElement(child, { parent: this });
-        });
+        return this.mapChildren(children, true);
     }
 
     render() {
-        if (this.uuid === undefined) this.uuid = genUuid();
-        const name = this.props.name || 'RenderObject';
-        const children = this.children3D();
-        this.render3D(children);
+        const name = this.name;
+        const children = this.render3D(this.children3D());
+        console.log('render', name, children.length);
         return <div data-name={name}>{children}</div>;
     }
 
