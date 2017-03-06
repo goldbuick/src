@@ -16,7 +16,7 @@ export default class RenderScene extends React.Component {
 
     animate3D = []
 
-    getScene() {
+    get scene() {
         return (this._scene = this._scene || new THREE.Scene());
     }
 
@@ -30,12 +30,12 @@ export default class RenderScene extends React.Component {
             rayCoords: new THREE.Vector2(),
         };
 
-        return this.props.onCreate(renderer, composer, this.getScene(), this.camera, width, height);
+        return this.props.onCreate(renderer, composer, this.scene, this.camera, width, height);
     }
 
     handleUpdate = (renderer, composer, delta) => {
         // this.animate3D.forEach(item => item.animate3D(delta));
-        this.props.onUpdate(renderer, composer, this.getScene(), this.camera, delta);
+        this.props.onUpdate(renderer, composer, this.scene, this.camera, delta);
     }
 
     handleResize = (renderer, composer, width, height) => {
@@ -61,7 +61,7 @@ export default class RenderScene extends React.Component {
         const centerY = center.y * Screen.halfHeight + Screen.halfHeight;
         Screen.ratioY = length / (topY - centerY);
 
-        this.props.onResize(renderer, composer, this.getScene(), this.camera, width, height);
+        this.props.onResize(renderer, composer, this.scene, this.camera, width, height);
     }
 
     handlePreRender = (delta) => {
@@ -85,7 +85,7 @@ export default class RenderScene extends React.Component {
     }
 
     handlePointer(e, id, pressed, x, y) {
-        if (!this.getScene()) return;
+        if (!this.scene) return;
         this.props.onPointer(e, id, pressed, x, y);
         const { ray, rayCoords, objectByPointer } = this.input;
 
@@ -95,7 +95,7 @@ export default class RenderScene extends React.Component {
             rayCoords.y = -(y / Screen.height) * 2 + 1;
             ray.setFromCamera(rayCoords, this.camera);
 
-            let intersects = ray.intersectObjects(this.getScene().children, true);
+            let intersects = ray.intersectObjects(this.scene.children, true);
             for (let i=0; i<intersects.length; ++i) {
                 let obj = intersects[i].object;
                 if (obj && obj.userData && obj.userData.onPointer) {
@@ -165,7 +165,7 @@ export default class RenderScene extends React.Component {
     }
 
     handleRender3D = () => {
-        return this.getScene();
+        return this.scene;
     }
 
     render() {

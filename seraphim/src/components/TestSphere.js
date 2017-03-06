@@ -18,7 +18,7 @@ const TestSphere = (props) => {
     const sphereBarrierGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereBarrierGem key={v} onBarrierGem={BJunkGraph}/>);
 
     return (
-        <Sphere radius={radius} view={props.view}>
+        <Sphere {...props} radius={radius}>
             {sphereMantleGem(8)}
             {sphereSubStrate(4)}
             {sphereBarrierGem(5)}

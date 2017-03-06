@@ -11,15 +11,18 @@ export default class RenderObject extends React.Component {
         // onChildren3D, add this to customize props, children of this component 
     }
 
-    static renderRoot
-    static renderStack = []
+    static renderNodes = {}
 
-    static parentRender() {
-        return RenderObject.renderStack.pop();
+    static findNode(uuid) {
+        return RenderObject.renderNodes[uuid];
     }
 
-    static pushRender(object) {
-        RenderObject.renderStack.push(object);
+    static addNode(uuid, object) {
+        RenderObject.renderNodes[uuid] = object;
+    }
+
+    static removeNode(uuid) {
+        delete RenderObject.renderNodes[uuid];
     }
 
     static byType(children, ctor, props = {}) {
@@ -60,16 +63,17 @@ export default class RenderObject extends React.Component {
         });
     }
 
-    constructor(props) {
-        super(props);
-        this._uuid = genUuid();
-        this._name = props.name || 'RenderObject';
-        this._root = (RenderObject.renderRoot = props.root || RenderObject.renderRoot);
+    get root() { 
+        return (this.props.root || { }); 
     }
 
-    get uuid() { return this._uuid; }
-    get name() { return this._name; }
-    get root() { return this._root; }
+    get name() { 
+        return (this.props.name || 'RenderObject'); 
+    }
+
+    get uuid() { 
+        return (this._uuid = this._uuid || genUuid()); 
+    }
 
     applyProps3D() {
         if (this.object3D === undefined) return;
@@ -97,6 +101,7 @@ export default class RenderObject extends React.Component {
 
     clear3D() {
         if (!this.object3D || !this.object3D.parent) return;
+        RenderObject.removeNode(this.uuid);
         this.object3D.parent.remove(this.object3D);
         this.object3D = undefined;
     }
@@ -139,10 +144,13 @@ export default class RenderObject extends React.Component {
         this.clear3D();
         this.object3D = this.props.onRender3D(this.uuid, children) || new THREE.Object3D();
 
-        // how we build our scenegraph
-        let parent = RenderObject.parentRender();
-        children.forEach(child => RenderObject.pushRender(this.object3D));
+        // cache node
+        RenderObject.addNode(this.uuid, this.object3D);
 
+        // how we build our scenegraph
+        const parent = RenderObject.findNode(this.props.parent);
+
+        // we have a parent & object3D
         if (parent && this.object3D) {
             // make sure to build a proper 3D tree
             parent.add(this.object3D);
@@ -176,7 +184,12 @@ export default class RenderObject extends React.Component {
     }
 
     mapChildren(children) {
-        return React.Children.map(children || [], child => child);
+        return React.Children.map(children || [], child => {
+            return React.cloneElement(child, { 
+                parent: this.uuid,
+                root: this.props.root
+            });
+        });
     }
 
     children3D() {
@@ -188,13 +201,12 @@ export default class RenderObject extends React.Component {
             children = RenderObject.uniqueKey(flatten(children));
         }
 
-        return this.mapChildren(children, true);
+        return this.mapChildren(children);
     }
 
     render() {
         const name = this.name;
         const children = this.render3D(this.children3D());
-        console.log('render', name, children.length);
         return <div data-name={name}>{children}</div>;
     }
 
