@@ -1,4 +1,5 @@
 import React from 'react';
+import * as THREE from 'three';
 import Text from '../viz/Text';
 import Draft from '../viz/Draft';
 import Theme from '../render/Theme';

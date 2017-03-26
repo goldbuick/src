@@ -1,4 +1,5 @@
 import React from 'react';
+import * as THREE from 'three';
 import { debounce } from '../util/timing';
 
 export default class Render extends React.Component {

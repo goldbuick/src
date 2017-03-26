@@ -1,4 +1,5 @@
 import Font from './Font';
+import * as THREE from 'three';
 import Theme from '../render/Theme';
 import createGeometry from 'three-bmfont-text';
 import SDFShader from 'three-bmfont-text/shaders/sdf';

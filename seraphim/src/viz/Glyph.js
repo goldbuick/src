@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import polylineNormals from 'polyline-normals';
 
 const lscale = 0.12;

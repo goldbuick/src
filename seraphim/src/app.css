@@ -3,7 +3,7 @@ html, body {
     background-color: #000;
 }
 
-html, body, #exculta, .renderer {
+html, body, #root, .renderer {
     margin: 0;
     padding: 0;
     height: 100%;

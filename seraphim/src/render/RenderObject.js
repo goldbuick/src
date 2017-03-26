@@ -1,5 +1,6 @@
 import React from 'react';
 import genUuid from 'uuid';
+import * as THREE from 'three';
 import { flatten } from '../util/array';
 
 export default class RenderObject extends React.Component {

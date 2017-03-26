@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 /**
  *
  * Temporal Anti-Aliasing Render Pass

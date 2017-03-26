@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 
 export function applyRotation(quaternion, x, y, z) {
     const rotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z));

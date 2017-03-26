@@ -1,47 +1,7 @@
 {
-  "name": "exo-cortex-seraphim",
-  "version": "1.0.0",
+  "name": "seraphim",
+  "version": "0.1.0",
   "description": "find me in the net",
-  "main": "index.js",
-  "bin": {
-    "webpack": "./node_modules/.bin/webpack",
-    "webpack-dev-server": "./node_modules/.bin/webpack-dev-server"
-  },
-  "scripts": {
-    "dev": "webpack-dev-server",
-    "build": "cross-env NODE_ENV=production webpack --progress",
-    "prod": "cross-env NODE_ENV=production webpack-dev-server --progress"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://goldbuick@github.com/goldbuick/src.git"
-  },
-  "keywords": [
-    "find",
-    "me",
-    "in",
-    "the",
-    "net"
-  ],
-  "author": "goldbuick",
-  "bugs": {
-    "url": "https://github.com/goldbuick/src/issues"
-  },
-  "homepage": "https://github.com/goldbuick/src#readme",
-  "devDependencies": {
-    "babel-core": "6.22.1",
-    "babel-eslint": "7.1.1",
-    "babel-loader": "6.2.10",
-    "babel-plugin-transform-runtime": "6.22.0",
-    "babel-preset-es2015": "6.22.0",
-    "babel-preset-react": "6.22.0",
-    "babel-preset-stage-0": "6.22.0",
-    "cross-env": "3.1.4",
-    "css-loader": "0.26.1",
-    "style-loader": "0.13.1",
-    "webpack": "2.2.1",
-    "webpack-dev-server": "2.2.1"
-  },
   "dependencies": {
     "alea": "0.0.9",
     "load-bmfont": "1.2.5",
@@ -62,5 +22,14 @@
     "tween.js": "16.3.5",
     "uuid": "^3.0.1",
     "voronoi": "1.0.0"
+  },
+  "devDependencies": {
+    "@gborg/react-scripts": "0.9.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   }
 }

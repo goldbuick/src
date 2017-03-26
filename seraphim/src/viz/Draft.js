@@ -1,4 +1,5 @@
 import Etch from './Etch';
+import * as THREE from 'three';
 import GenAlgo from './GenAlgo';
 import GenPoints from './GenPoints';
 

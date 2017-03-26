@@ -1,5 +1,6 @@
 import React from 'react';
 import TWEEN from 'tween.js';
+import * as THREE from 'three';
 import RenderScene from '../render/RenderScene';
 import '../threejs/postprocessing/EffectComposer';
 

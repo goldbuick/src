@@ -1,4 +1,5 @@
 import React from 'react';
+import * as THREE from 'three';
 import Draft from '../viz/Draft';
 import intro from '../anim/intro';
 import GenFaces from '../viz/GenFaces';

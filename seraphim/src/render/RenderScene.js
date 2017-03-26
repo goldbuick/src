@@ -1,5 +1,6 @@
 import React from 'react';
 import Screen from './Screen';
+import * as THREE from 'three';
 import RenderFX from './RenderFX';
 import { debounce } from '../util/timing';
 import RenderObject from './RenderObject';
@@ -12,12 +13,20 @@ export default class RenderScene extends React.Component {
         onUpdate: () => { },
         onResize: () => { },
         onPointer: () => { },
-    }
+    };
 
-    animate3D = []
+    static childContextTypes = {
+
+    };
+
+    animate3D = [];
 
     get scene() {
         return (this._scene = this._scene || new THREE.Scene());
+    }
+
+    getChildContext() {
+
     }
 
     handleCreate = (renderer, composer, width, height) => { 

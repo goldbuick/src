@@ -1,5 +1,6 @@
 import React from 'react';
 import Render from './Render';
+import * as THREE from 'three';
 import '../threejs/postprocessing/EffectComposer';
 
 export default class RenderFX extends React.Component {

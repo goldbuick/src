@@ -1,5 +1,6 @@
 import Alea from 'alea';
 import PF from 'pathfinding';
+import * as THREE from 'three';
 import { range } from '../util/array';
 import SimplexNoise from 'simplex-noise';
 

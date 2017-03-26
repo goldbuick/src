@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 /**
  * @author mattatz / http://mattatz.github.io/
  */
