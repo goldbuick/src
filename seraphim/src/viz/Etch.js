@@ -1,4 +1,3 @@
-import Font from './Font';
 import Glyph from './Glyph';
 import Theme from '../render/Theme';
 import GenPoints from './GenPoints';

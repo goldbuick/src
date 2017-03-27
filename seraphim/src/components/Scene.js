@@ -58,7 +58,7 @@ export default class Scene extends React.Component {
     }
 
     handleResize = (renderer, composer, scene, camera, width, height) => {
-        const dpr = window.devicePixelRatio || 1;
+        // const dpr = window.devicePixelRatio || 1;
         this.props.onResize(renderer, composer, scene, camera, width, height);
     }
 

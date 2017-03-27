@@ -1,6 +1,5 @@
 import React from 'react';
 import TWEEN from 'tween.js';
-import Draft from '../viz/Draft';
 import intro from '../anim/intro';
 import { inertiaRotation } from '../anim/quat';
 import RenderObject from '../render/RenderObject';
@@ -43,6 +42,7 @@ const Sphere = (props) => {
                     target.mantleScale = 1.2;
                     break;
                 case 1:
+                default:
                     target.mantleY = 0;
                     target.barrierY = 0;
                     target.substrateY = 0;

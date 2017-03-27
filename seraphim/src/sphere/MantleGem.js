@@ -1,7 +1,6 @@
 import React from 'react';
 import Text from '../viz/Text';
 import Draft from '../viz/Draft';
-import Theme from '../render/Theme';
 import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
 

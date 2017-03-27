@@ -4,6 +4,7 @@ export function first(a, count) {
 }
 
 export function flatten(a) {
+    if (!Array.isArray(a)) return [ a ];
     return [].concat.apply([], a);
 }
 

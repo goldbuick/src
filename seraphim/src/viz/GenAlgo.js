@@ -75,8 +75,11 @@ class GenAlgo {
             let result = [ ];
 
             let a, b = [ coords.shift(), coords.shift() ];
+            const _pt = pt => grid.setWalkableAt(pt[0], pt[1], false);
+            const _pts = pts => pts.forEach(_pt);
+
             do {
-                a = b,
+                a = b;
                 b = [ coords.shift(), coords.shift() ];
                 let path = finder.findPath(a[0], a[1], b[0], b[1], grid);
                 paths.push(path);
@@ -85,11 +88,7 @@ class GenAlgo {
 
                 // gen grid for next path
                 grid = new PF.Grid(cols, rows);
-                paths.forEach(pts => {
-                    pts.forEach(pt => {
-                        grid.setWalkableAt(pt[0], pt[1], false);
-                    });
-                });
+                paths.forEach(_pts);
             } while (coords.length);
 
             return result.map(pt => {

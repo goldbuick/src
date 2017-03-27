@@ -1,8 +1,8 @@
 import React from 'react';
-import RenderObject from '../render/RenderObject';
+// import RenderObject from '../render/RenderObject';
 
 import Sphere from '../sphere/Core';
-import SphereBarrier from '../sphere/Barrier';
+// import SphereBarrier from '../sphere/Barrier';
 import SphereMantleGem from '../sphere/MantleGem';
 import SphereSubStrate from '../sphere/SubStrate';
 import SphereBarrierGem from '../sphere/BarrierGem';

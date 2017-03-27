@@ -6,9 +6,7 @@ import GenAlgo from '../viz/GenAlgo';
 import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
 
-const SubStrate = (props) => {
-    const smallScale = 0.00001;
-    
+const SubStrate = (props) => {    
     return <RenderObject {...props}
         name="SubStrate"
 

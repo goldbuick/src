@@ -12,7 +12,7 @@ THREE.GlitchPass = function ( dt_size ) {
 	var shader = THREE.DigitalGlitch;
 	this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-	if ( dt_size == undefined ) dt_size = 64;
+	if ( dt_size === undefined ) dt_size = 64;
 
 
 	this.uniforms[ "tDisp" ].value = this.generateHeightmap( dt_size );
@@ -46,7 +46,7 @@ THREE.GlitchPass.prototype = Object.assign( Object.create( THREE.Pass.prototype 
 		this.uniforms[ 'seed' ].value = Math.random();//default seeding
 		this.uniforms[ 'byp' ].value = 0;
 
-		if ( this.curF % this.randX == 0 || this.goWild == true ) {
+		if ( this.curF % this.randX === 0 || this.goWild === true ) {
 
 			this.uniforms[ 'amount' ].value = Math.random() / 30;
 			this.uniforms[ 'angle' ].value = THREE.Math.randFloat( - Math.PI, Math.PI );
@@ -66,7 +66,7 @@ THREE.GlitchPass.prototype = Object.assign( Object.create( THREE.Pass.prototype 
 			this.uniforms[ 'seed_x' ].value = THREE.Math.randFloat( - 0.3, 0.3 );
 			this.uniforms[ 'seed_y' ].value = THREE.Math.randFloat( - 0.3, 0.3 );
 
-		} else if ( this.goWild == false ) {
+		} else if ( this.goWild === false ) {
 
 			this.uniforms[ 'byp' ].value = 1;
 

@@ -38,7 +38,7 @@ class Draft extends Etch {
     }
 
     drawDashesWith({ points, gap, color } = {}) {
-        let pt, a, b, len, c = new THREE.Vector3();
+        let pt, a, b, c = new THREE.Vector3();
         for (let i=0; i < points.length - 1; ++i) {
             pt = points[i];
             a = new THREE.Vector3(pt.x, pt.y, pt.z);
@@ -169,7 +169,6 @@ class Draft extends Etch {
             hh = h * 0.5,
             ipoints = [ ],
             opoints = [ ],
-            hww = hw * 0.5,
             segments = Math.ceil(h / hw),
             last = segments - 1,
             ystep = h / segments;

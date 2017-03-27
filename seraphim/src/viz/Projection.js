@@ -28,7 +28,7 @@ class Projection {
             y *= scale;
             const r = x / range;
             x = r * PI2;
-            y = y * PISCALE;
+            y *= PISCALE;
             const _radius = radius + z,
                 _x = Math.sin(x) * _radius,
                 _y = y,

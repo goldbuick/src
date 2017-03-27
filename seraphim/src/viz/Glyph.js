@@ -247,8 +247,6 @@ class Glyph {
         let group = new THREE.Group();
 
         if (this.lines.length) {
-            const verts = [];
-            const colors = [];
             for (let i=0; i < this.lines.length; i+=2) {
                 const a = this.lines[i] * 3;
                 const b = this.lines[i+1] * 3;
