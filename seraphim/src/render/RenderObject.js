@@ -2,8 +2,25 @@ import React from 'react';
 import genUuid from 'uuid';
 import * as THREE from 'three';
 import { flatten } from '../util/array';
+import { shouldUpdate } from 'recompose';
+
+const Pure = shouldUpdate((props, nextProps) => {
+    const ignoreView = key => key !== 'view';
+    const compare = key => return propsKeys[key] === nextPropsKeys[key];
+    
+    const propsKeys = Object.keys(props).filter(ignoreView);
+    const nextPropsKeys = Object.keys(props).filter(ignoreView);
+
+    if (propsKeys.length !== nextPropsKeys.length) return true;
+    if (propsKeys.filter(compare).length !== propsKeys.length) return true;
+    if (nextPropsKeys.filter(compare).length !== nextPropsKeys.length) return true;
+
+    return false;
+});
 
 export default class RenderObject extends React.Component {
+
+    static Pure = Pure;
 
     static byType(children, ctor, props = {}) {
         // react children ?
