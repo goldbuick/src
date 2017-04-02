@@ -1,5 +1,6 @@
 import React from 'react';
 import TWEEN from 'tween.js';
+import * as THREE from 'three';
 import intro from '../anim/intro';
 import { inertiaRotation } from '../anim/quat';
 import RenderObject from '../render/RenderObject';
@@ -40,12 +41,14 @@ const Sphere = RenderObject.Pure((props) => {
                     target.barrierY = props.radius * -0.5;
                     target.substrateY = props.radius * -0.25;
                     target.mantleScale = 1.2;
+                    target.mantleTilt = Mantle.TILT_AMOUNT;
                     break;
                 case 1:
                     target.mantleY = 0;
                     target.barrierY = props.radius * -0.5;
                     target.substrateY = props.radius * -0.25;
                     target.mantleScale = 1.2;
+                    target.mantleTilt = -Mantle.TILT_AMOUNT;
                     break;
                 case 2:
                 default:
@@ -53,18 +56,21 @@ const Sphere = RenderObject.Pure((props) => {
                     target.barrierY = 0;
                     target.substrateY = 0;
                     target.mantleScale = 1;
+                    target.mantleTilt = 0;
                     break;
                 case 3:
                     target.mantleY = props.radius * 1.5;
                     target.barrierY = props.barrierDist * 0.5;
                     target.substrateY = 0;
                     target.mantleScale = 1;
+                    target.mantleTilt = 0;
                     break;
                 case 4:
                     target.mantleY = props.radius * 2;
                     target.barrierY = props.barrierDist + 200;
                     target.substrateY = props.radius - props.barrierDist;
                     target.mantleScale = 1;
+                    target.mantleTilt = 0;
                     break;
             }
 
@@ -72,7 +78,7 @@ const Sphere = RenderObject.Pure((props) => {
                 // only trigger tween when view.layer changes
                 animateState.layer = props.view.layer;
                 // make sure we have starting values
-                ['mantleY', 'barrierY', 'substrateY', 'mantleScale'].forEach(attr => {
+                ['mantleY', 'barrierY', 'substrateY', 'mantleScale', 'mantleTilt'].forEach(attr => {
                     if (animateState[attr] === undefined) animateState[attr] = target[attr];
                 });
                 // trigger tween
@@ -83,6 +89,7 @@ const Sphere = RenderObject.Pure((props) => {
                         barrierY: target.barrierY,
                         substrateY: target.substrateY,
                         mantleScale: target.mantleScale,
+                        mantleTilt: target.mantleTilt,
                     }, 400)
                     .easing(TWEEN.Easing.Exponential.InOut)
                     .start();
@@ -99,7 +106,11 @@ const Sphere = RenderObject.Pure((props) => {
 
             animateState.mantle = inertiaRotation(animateState.mantle, 
                 0, layer <= 2 ? spin : 0, 0, delta, damp, damp + 3);
-            mantle.quaternion.copy(animateState.mantle.rotation);
+            const mantleTilt = new THREE.Quaternion()
+                .setFromEuler(new THREE.Euler(animateState.mantleTilt, 0, 0));
+            const animRotation = new THREE.Quaternion()
+                .multiplyQuaternions(mantleTilt, animateState.mantle.rotation);
+            mantle.quaternion.copy(animRotation);
 
             const barriers = RenderObject.byType(object3D.children, Barrier);
             RenderObject.animate(barriers, animateState, (barrier, anim, index) => {

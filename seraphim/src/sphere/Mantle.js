@@ -8,7 +8,7 @@ import RenderObject from '../render/RenderObject';
 
 import MantleGem from './MantleGem';
 
-const Mantle = (props) => {
+const Mantle = RenderObject.Pure((props) => {
 
     return <RenderObject {...props} 
         name="Mantle"
@@ -35,26 +35,27 @@ const Mantle = (props) => {
                 intro.setScale(anim, mantleGem);
 
                 if (intro.secondary(anim, 'toQuatRatio', 0, 1)) {
-                    const forward = new THREE.Vector3(0, 0, 1);
+                    const eachRow = Mantle.EACH_ROW;
+                    const tiltAmount = Mantle.TILT_AMOUNT;
 
-                    const eachRow = 5;
-                    const tiltAmount = 0.4;
                     const offset = index % eachRow;
                     const ratio = offset / eachRow;
                     const row = Math.floor(index / eachRow);
                     const singleRow = mantleGems.length <= eachRow;
+                    const angleStep = (Math.PI * 2) / eachRow;
 
                     const tiltAngle = singleRow ? 0 : (row ? -tiltAmount : tiltAmount);
                     const tilt = new THREE.Quaternion();
                     tilt.setFromEuler(new THREE.Euler(tiltAngle, 0, 0, 'XYZ'));
 
-                    const spinAngle = ratio * Math.PI * 2 + (singleRow ? 0 : row ? 0 : Math.PI);
+                    const spinAngle = ratio * Math.PI * 2 + (singleRow ? 0 : row ? 0 : angleStep * 0.5);
                     const spin = new THREE.Quaternion();
                     spin.setFromEuler(new THREE.Euler(0, spinAngle, 0, 'XYZ'));
 
                     anim.toQuat = new THREE.Quaternion();
                     anim.toQuat.multiplyQuaternions(spin, tilt);
 
+                    const forward = new THREE.Vector3(0, 0, 1);
                     const from = new THREE.Vector3(0, 0, 0);
                     anim.fromQuat = new THREE.Quaternion(); 
                     anim.fromQuat.setFromUnitVectors(forward, from);
@@ -66,7 +67,10 @@ const Mantle = (props) => {
         }}
 
     />;
-};
+});
+
+Mantle.EACH_ROW = 4;
+Mantle.TILT_AMOUNT = 0.5;
 
 Mantle.defaultProps = {
     radius: 512,
