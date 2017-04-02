@@ -10,7 +10,7 @@ import MantleGem from './MantleGem';
 import SubStrate from './SubStrate';
 import BarrierGem from './BarrierGem';
 
-const Sphere = (props) => {
+const Sphere = RenderObject.Pure((props) => {
 
     return <RenderObject {...props}
         name="Sphere"
@@ -94,12 +94,11 @@ const Sphere = (props) => {
 
             if (props.view.holding) props.view.holding = Math.min(props.view.holding * 2, 512);
 
-            const { layer, holding } = props.view;
-            const { dx, dy } = props.view.spin;
+            const { spin, layer, holding } = props.view;
             const damp = holding * 0.01 + 1;
 
             animateState.mantle = inertiaRotation(animateState.mantle, 
-                0, layer <= 1 ? dy : 0, 0, delta, damp, damp + 3);
+                0, layer <= 2 ? spin : 0, 0, delta, damp, damp + 3);
             mantle.quaternion.copy(animateState.mantle.rotation);
 
             const barriers = RenderObject.byType(object3D.children, Barrier);
@@ -111,7 +110,7 @@ const Sphere = (props) => {
                 barrier.position.y += animateState.barrierY;
 
                 anim.barrier = inertiaRotation(anim.barrier, 
-                    0, layer === 2 ? dy : 0, 0, delta, damp, damp + 3);
+                    0, layer === 3 ? spin : 0, 0, delta, damp, damp + 3);
                 barrier.quaternion.copy(anim.barrier.rotation);
             });
 
@@ -124,18 +123,20 @@ const Sphere = (props) => {
                 substrate.position.y += animateState.substrateY;
 
                 anim.substrate = inertiaRotation(anim.substrate, 
-                    0, layer === 3 ? dy : 0, 0, delta, damp, damp + 3);
+                    0, layer === 4 ? spin : 0, 0, delta, damp, damp + 3);
                 substrate.quaternion.copy(anim.substrate.rotation);
             });            
         }}
     />;
-};
+});
+
+Sphere.TOTAL_LAYERS = 4;
 
 Sphere.defaultProps = {
     view: {
+        spin: 0,
         layer: 2,
-        totalLayers: 4,
-        spin: { x: 0, y: 0 }
+        holding: 0
     },
     radius: 512,
     barrierGap: 200,

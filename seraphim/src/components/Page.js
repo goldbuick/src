@@ -3,75 +3,71 @@ import Scene from './Scene';
 import MouseWheel from '../util/MouseWheel';
 
 import TestSphere from './TestSphere';
-const defaultView = TestSphere.defaultProps.view;
 
 export default class Page extends React.Component {
 
-    constructor(...args) {
-        super(...args);
-        this.pointers = {};
-        this.view = {
-            layer: defaultView.layer,
+    state = {
+        view: {
+            spin: 0,
             holding: 0,
-            spin: { dx: 0, dy: 0 }
-        };
-        this.mousewheel = new MouseWheel({
-            onSwipeUp: () => this.changeShowLayer(-1),
-            onSwipeDown: () => this.changeShowLayer(1)
-        });
-    }
+            pointers: {},
+            layer: TestSphere.defaultProps.view.layer,
+        }
+    };
 
-    handleResize = (renderer, composer, scene, camera, width, height) => {
-        this.view.width = width;
-        this.view.height = height;
-    }
+    mousewheel = new MouseWheel({
+        onSwipeUp: () => this.changeShowLayer(-1),
+        onSwipeDown: () => this.changeShowLayer(1)
+    });
 
     changeShowLayer(delta) {
-        this.view.layer = Math.max(0, Math.min(defaultView.totalLayers, this.view.layer + delta));
+        const { view } = this.state;
+        view.layer = Math.max(0, Math.min(TestSphere.TOTAL_LAYERS, view.layer + delta));
     }
 
     pointerDelta(id, pressed, x, y) {
-        let pointer = this.pointers[id];
+        const { view } = this.state;
+
+        let pointer = view.pointers[id];
         if (pointer === undefined) {
             pointer = { x, y };
-            this.pointers[id] = pointer;
+            view.pointers[id] = pointer;
         }
+        
         const dx = pointer.x - x;
         const dy = pointer.y - y;
         pointer.x = x;
         pointer.y = y;
         if (pressed === false) {
-            delete this.pointers[id];
-        }        
+            delete view.pointers[id];
+        }
+
         return { dx, dy };
     }
 
     handlePointer = (e, id, pressed, x, y) => {
         e.preventDefault();
+
+        const { view } = this.state;
         const { dx, dy } = this.pointerDelta(id, pressed, x, y);
 
-        if (pressed && !this.view.pressed) {
-            this.view.holding = 1;
-        }
-        if (!pressed || dx > 3 || dy > 3) {
-            this.view.holding = 0;
-        }
+        if (pressed && !view.pressed) view.holding = 1;
+        if (!pressed || dx > 3 || dy > 3) view.holding = 0;
         
-        this.view.spin.dx = dy;
-        this.view.spin.dy = dx;
-        this.view.pressed = pressed;
+        view.spin = dx;
+        view.pressed = pressed;
     }
 
     render() {
+        const { view } = this.state;
         const sceneProps = {
-            onResize: this.handleResize,
             onPointer: this.handlePointer,
             onWheel: this.mousewheel.onWheel,
         };
 
         return (
             <Scene {...sceneProps}>
-                <TestSphere view={this.view} />
+                <TestSphere view={view} />
             </Scene>
         );
     }
