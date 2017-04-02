@@ -2,7 +2,6 @@ import React from 'react';
 import * as THREE from 'three';
 import Draft from '../viz/Draft';
 import intro from '../anim/intro';
-import GenFaces from '../viz/GenFaces';
 import GenPoints from '../viz/GenPoints';
 import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
@@ -10,13 +9,6 @@ import RenderObject from '../render/RenderObject';
 import MantleGem from './MantleGem';
 
 const Mantle = (props) => {
-
-    const createFaces = (detail, radius) => {
-        return GenFaces.createFromOctahedron({ radius, detail }).map(f => f.mid);
-    };
-    const faceIndex = (index, facesLength, mantleGemLength) => {
-        return Math.round((index / (mantleGemLength-1)) * (facesLength-1));
-    };            
 
     return <RenderObject {...props} 
         name="Mantle"
@@ -37,22 +29,31 @@ const Mantle = (props) => {
             intro.primary(animateState, 'scale', intro.CONST.smallScale, 1);
             intro.setScale(animateState, object3D.userData.mantle);
 
-            let faces;
             const mantleGems = RenderObject.byType(object3D.children, MantleGem);
             RenderObject.animate(mantleGems, animateState, (mantleGem, anim, index) => {
                 intro.primary(anim, 'scale', intro.CONST.smallScale, 1);
                 intro.setScale(anim, mantleGem);
 
                 if (intro.secondary(anim, 'toQuatRatio', 0, 1)) {
-                    if (!faces) faces = createFaces(0, props.radius);
-
-                    anim.index = faceIndex(index, faces.length, mantleGems.length);
-                    const face = faces[anim.index];
                     const forward = new THREE.Vector3(0, 0, 1);
 
-                    const normal = new THREE.Vector3(face.x, face.y, face.z).normalize();
+                    const eachRow = 5;
+                    const tiltAmount = 0.4;
+                    const offset = index % eachRow;
+                    const ratio = offset / eachRow;
+                    const row = Math.floor(index / eachRow);
+                    const singleRow = mantleGems.length <= eachRow;
+
+                    const tiltAngle = singleRow ? 0 : (row ? -tiltAmount : tiltAmount);
+                    const tilt = new THREE.Quaternion();
+                    tilt.setFromEuler(new THREE.Euler(tiltAngle, 0, 0, 'XYZ'));
+
+                    const spinAngle = ratio * Math.PI * 2 + (singleRow ? 0 : row ? 0 : Math.PI);
+                    const spin = new THREE.Quaternion();
+                    spin.setFromEuler(new THREE.Euler(0, spinAngle, 0, 'XYZ'));
+
                     anim.toQuat = new THREE.Quaternion();
-                    anim.toQuat.setFromUnitVectors(forward, normal);
+                    anim.toQuat.multiplyQuaternions(spin, tilt);
 
                     const from = new THREE.Vector3(0, 0, 0);
                     anim.fromQuat = new THREE.Quaternion(); 

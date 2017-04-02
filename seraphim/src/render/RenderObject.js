@@ -5,13 +5,13 @@ import { flatten } from '../util/array';
 import { shouldUpdate } from 'recompose';
 
 const Pure = shouldUpdate((props, nextProps) => {
-    const ignoreView = key => key !== 'view';
-    const compare = key => return propsKeys[key] === nextPropsKeys[key];
-    
+    const ignoreView = key => key !== 'view';    
     const propsKeys = Object.keys(props).filter(ignoreView);
     const nextPropsKeys = Object.keys(props).filter(ignoreView);
 
     if (propsKeys.length !== nextPropsKeys.length) return true;
+
+    const compare = key => propsKeys[key] === nextPropsKeys[key];
     if (propsKeys.filter(compare).length !== propsKeys.length) return true;
     if (nextPropsKeys.filter(compare).length !== nextPropsKeys.length) return true;
 
@@ -218,6 +218,7 @@ export default class RenderObject extends React.Component {
 
     render() {
         const name = this.name;
+        console.log('RenderObject', this.name);
         const children = this.render3D(this.children3D());
         return <div data-name={name}>{children}</div>;
     }

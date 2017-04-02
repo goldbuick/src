@@ -42,19 +42,25 @@ const Sphere = (props) => {
                     target.mantleScale = 1.2;
                     break;
                 case 1:
+                    target.mantleY = 0;
+                    target.barrierY = props.radius * -0.5;
+                    target.substrateY = props.radius * -0.25;
+                    target.mantleScale = 1.2;
+                    break;
+                case 2:
                 default:
                     target.mantleY = 0;
                     target.barrierY = 0;
                     target.substrateY = 0;
                     target.mantleScale = 1;
                     break;
-                case 2:
+                case 3:
                     target.mantleY = props.radius * 1.5;
                     target.barrierY = props.barrierDist * 0.5;
                     target.substrateY = 0;
                     target.mantleScale = 1;
                     break;
-                case 3:
+                case 4:
                     target.mantleY = props.radius * 2;
                     target.barrierY = props.barrierDist + 200;
                     target.substrateY = props.radius - props.barrierDist;
@@ -89,11 +95,11 @@ const Sphere = (props) => {
             if (props.view.holding) props.view.holding = Math.min(props.view.holding * 2, 512);
 
             const { layer, holding } = props.view;
-            const { dx, dy, dz } = props.view.spin;
+            const { dx, dy } = props.view.spin;
             const damp = holding * 0.01 + 1;
 
             animateState.mantle = inertiaRotation(animateState.mantle, 
-                layer <= 1 ? dx : 0, layer <= 1 ? dy : 0, layer <= 1 ? dz : 0, delta, damp, damp + 3);
+                0, layer <= 1 ? dy : 0, 0, delta, damp, damp + 3);
             mantle.quaternion.copy(animateState.mantle.rotation);
 
             const barriers = RenderObject.byType(object3D.children, Barrier);
@@ -127,7 +133,8 @@ const Sphere = (props) => {
 
 Sphere.defaultProps = {
     view: {
-        layer: 1,
+        layer: 2,
+        totalLayers: 4,
         spin: { x: 0, y: 0 }
     },
     radius: 512,

@@ -3,6 +3,7 @@ import Scene from './Scene';
 import MouseWheel from '../util/MouseWheel';
 
 import TestSphere from './TestSphere';
+const defaultView = TestSphere.defaultProps.view;
 
 export default class Page extends React.Component {
 
@@ -10,9 +11,9 @@ export default class Page extends React.Component {
         super(...args);
         this.pointers = {};
         this.view = {
-            layer: 1,
+            layer: defaultView.layer,
             holding: 0,
-            spin: { dx: 0, dy: 0, dz: 0 }
+            spin: { dx: 0, dy: 0 }
         };
         this.mousewheel = new MouseWheel({
             onSwipeUp: () => this.changeShowLayer(-1),
@@ -26,7 +27,7 @@ export default class Page extends React.Component {
     }
 
     changeShowLayer(delta) {
-        this.view.layer = Math.max(0, Math.min(3, this.view.layer + delta));
+        this.view.layer = Math.max(0, Math.min(defaultView.totalLayers, this.view.layer + delta));
     }
 
     pointerDelta(id, pressed, x, y) {
@@ -51,11 +52,9 @@ export default class Page extends React.Component {
 
         if (pressed && !this.view.pressed) {
             this.view.holding = 1;
-            this.view.spin.dz = (x < this.view.width * 0.5) ? -1 : 1;
         }
         if (!pressed || dx > 3 || dy > 3) {
             this.view.holding = 0;
-            this.view.spin.dz = 0;
         }
         
         this.view.spin.dx = dy;
