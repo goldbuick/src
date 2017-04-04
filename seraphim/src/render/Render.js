@@ -26,7 +26,7 @@ export default class Render extends React.Component {
             preserveDrawingBuffer: true
         });
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(window.devicePixelRatio);
+        // this.renderer.setPixelRatio(window.devicePixelRatio);
         this.container.appendChild(this.renderer.domElement);
 
         window.maxAni = this.renderer.getMaxAnisotropy();

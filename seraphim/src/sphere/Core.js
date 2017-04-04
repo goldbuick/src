@@ -90,7 +90,7 @@ const Sphere = RenderObject.Pure((props) => {
                         substrateY: target.substrateY,
                         mantleScale: target.mantleScale,
                         mantleTilt: target.mantleTilt,
-                    }, 400)
+                    }, 500)
                     .easing(TWEEN.Easing.Exponential.InOut)
                     .start();
             }
