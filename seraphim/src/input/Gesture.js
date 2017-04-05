@@ -1,5 +1,8 @@
 import MouseWheel from './MouseWheel';
 
+const userAgent = window.navigator.userAgent;
+const iOSdevice = userAgent.match(/iPad/i) || userAgent.match(/iPhone/i);
+
 export default class Gesture {
 
     constructor(events = {}) {
@@ -17,29 +20,12 @@ export default class Gesture {
         this.events[event] && this.events[event]();
     }
 
-    onSwipeLeft = () => {
-        console.log('left');
-        this.events.onSwipeLeft && this.events.onSwipeLeft();
-    }
-    
-    onSwipeRight = () => {
-        console.log('right');
-        this.events.onSwipeRight && this.events.onSwipeRight();
-    }
-    
-    onSwipeUp = () => {
-        console.log('up');        
-        this.events.onSwipeUp && this.events.onSwipeUp();
-    }
-    
-    onSwipeDown = () => {
-        console.log('down');        
-        this.events.onSwipeDown && this.events.onSwipeDown();
-    }
+    onSwipeLeft = () => this.triggerSwipe('onSwipeLeft')
+    onSwipeRight = () => this.triggerSwipe('onSwipeRight')
+    onSwipeUp = () => this.triggerSwipe('onSwipeUp')
+    onSwipeDown = () => this.triggerSwipe('onSwipeDown')
 
-    onWheel = (dx, dy) => {
-        this.mousewheel.onWheel(dx, dy);
-    }
+    onWheel = (dx, dy) => this.mousewheel.onWheel(dx, dy)
 
     pointerDelta(id, pressed, x, y) {
         const timestamp = performance.now();
@@ -65,17 +51,45 @@ export default class Gesture {
         const vx = delta ? dx / delta : 0;
         const vy = delta ? dy / delta : 0;
 
+        if (pressed && !pointer.holding) pointer.holding = 1;
+        if (!pressed || dx > 3 || dy > 3) pointer.holding = 0;
+        const holding = pointer.holding || 0;
+
         if (pressed === false) {
             delete this.pointers[id];
         }
 
-        return { sx, sy, dx, dy, vx, vy };
+        return { sx, sy, dx, dy, vx, vy, holding };
     }
 
     onPointer = (e, id, pressed, x, y) => {
-        const { dx, dy, vx, vy } = this.pointerDelta(id, pressed, x, y);
-        if (pressed && Math.abs(vx) > 0.3) {
-            console.log(vx);
+        if (iOSdevice) e.preventDefault();
+
+        const threshold = 2;
+        const { dx, dy, vx, vy, holding } = this.pointerDelta(id, pressed, x, y);
+
+        if (!this.xSwipe && vx < -threshold) {
+            this.xSwipe = true;
+            this.onSwipeLeft();
+        }
+        if (!this.xSwipe && vx > threshold) {
+            this.xSwipe = true;
+            this.onSwipeRight();
+        }
+        if (vx === 0) this.xSwipe = false;
+
+        if (!this.ySwipe && vy < -threshold) {
+            this.ySwipe = true;
+            this.onSwipeUp();
+        }
+        if (!this.ySwipe && vy > threshold) {
+            this.ySwipe = true;
+            this.onSwipeDown();
+        }
+        if (vy === 0) this.ySwipe = false;
+
+        if (this.events.onVelocity) {
+            this.events.onVelocity(dx, dy, holding && !this.xSwipe && !this.ySwipe);
         }
     }
 
