@@ -13,6 +13,10 @@ export default class Gesture {
         });
     }
 
+    triggerSwipe(event) {
+        this.events[event] && this.events[event]();
+    }
+
     onSwipeLeft = () => {
         console.log('left');
         this.events.onSwipeLeft && this.events.onSwipeLeft();
