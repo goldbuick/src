@@ -16,14 +16,14 @@ export default class Gesture {
         });
     }
 
-    triggerSwipe(event) {
-        this.events[event] && this.events[event]();
+    triggerSwipe(event, sx, sy) {
+        this.events[event] && this.events[event](sx, sy);
     }
 
-    onSwipeLeft = () => this.triggerSwipe('onSwipeLeft')
-    onSwipeRight = () => this.triggerSwipe('onSwipeRight')
-    onSwipeUp = () => this.triggerSwipe('onSwipeUp')
-    onSwipeDown = () => this.triggerSwipe('onSwipeDown')
+    onSwipeLeft = (sx, sy) => this.triggerSwipe('onSwipeLeft', sx, sy)
+    onSwipeRight = (sx, sy) => this.triggerSwipe('onSwipeRight', sx, sy)
+    onSwipeUp = (sx, sy) => this.triggerSwipe('onSwipeUp', sx, sy)
+    onSwipeDown = (sx, sy) => this.triggerSwipe('onSwipeDown', sx, sy)
 
     onWheel = (dx, dy) => this.mousewheel.onWheel(dx, dy)
 
@@ -66,30 +66,37 @@ export default class Gesture {
         if (iOSdevice) e.preventDefault();
 
         const threshold = 2;
-        const { dx, dy, vx, vy, holding } = this.pointerDelta(id, pressed, x, y);
+        const { sx, sy, dx, dy, vx, vy, holding } = this.pointerDelta(id, pressed, x, y);
 
-        if (!this.xSwipe && vx < -threshold) {
-            this.xSwipe = true;
-            this.onSwipeLeft();
-        }
-        if (!this.xSwipe && vx > threshold) {
-            this.xSwipe = true;
-            this.onSwipeRight();
-        }
-        if (vx === 0) this.xSwipe = false;
+        const xSwipeEnabled = (this.events.onSwipeLeft || this.events.onSwipeRight);
+        const ySwipeEnabled = (this.events.onSwipeUp || this.events.onSwipeDown);
 
-        if (!this.ySwipe && vy < -threshold) {
-            this.ySwipe = true;
-            this.onSwipeUp();
+        if (xSwipeEnabled) {
+            if (!this.xSwipe && vx < -threshold) {
+                this.xSwipe = true;
+                this.onSwipeLeft(sx, sy);
+            }
+            if (!this.xSwipe && vx > threshold) {
+                this.xSwipe = true;
+                this.onSwipeRight(sx, sy);
+            }
+            if (vx === 0) this.xSwipe = false;
         }
-        if (!this.ySwipe && vy > threshold) {
-            this.ySwipe = true;
-            this.onSwipeDown();
-        }
-        if (vy === 0) this.ySwipe = false;
 
-        if (this.events.onVelocity) {
-            this.events.onVelocity(dx, dy, holding && !this.xSwipe && !this.ySwipe);
+        if (ySwipeEnabled) {
+            if (!this.ySwipe && vy < -threshold) {
+                this.ySwipe = true;
+                this.onSwipeUp(sx, sy);
+            }
+            if (!this.ySwipe && vy > threshold) {
+                this.ySwipe = true;
+                this.onSwipeDown(sx, sy);
+            }
+            if (vy === 0) this.ySwipe = false;
+        }
+
+        if (this.events.onVelocity && !this.xSwipe && !this.ySwipe) {
+            this.events.onVelocity(dx, dy, holding);
         }
     }
 

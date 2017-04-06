@@ -20,8 +20,6 @@ export default class Page extends React.Component {
 
         this.gesture = new Gesture({
             onVelocity: this.spinView,
-            onSwipeLeft: this.logSwipeLeft,
-            onSwipeRight: this.logSwipeRight,
             onSwipeUp: () => this.changeShowLayer(-1),
             onSwipeDown: () => this.changeShowLayer(1),
         });
@@ -32,17 +30,9 @@ export default class Page extends React.Component {
         view.layer = Math.max(0, Math.min(TestSphere.TOTAL_LAYERS, view.layer + delta));
     }
 
-    logSwipeLeft = () => {
-        console.log('logSwipeLeft');
-    }
-
-    logSwipeRight = () => {
-        console.log('logSwipeLeft');
-    }
-
     spinView = (dx, dy, holding) => {
         const { view } = this.state;
-        view.spin = dx;
+        view.spin = dx * 1.5;
         view.holding = holding;
     }
 
