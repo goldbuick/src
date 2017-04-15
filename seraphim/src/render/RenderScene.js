@@ -12,12 +12,7 @@ export default class RenderScene extends React.Component {
         onUpdate: () => {},
         onResize: () => {},
         onWheel: () => {},
-        onTap: () => {},
-        onPan: () => {},
-        onPanEnd: () => {},
-        onPress: () => {},
-        onSwipe: () => {},
-        onDoubleTap: () => {},
+        onInputEvent: () => {},
     };
 
     static childContextTypes = {
@@ -121,7 +116,7 @@ export default class RenderScene extends React.Component {
         return intersects[0];
     }
 
-    handleInputEvent(input, e) {
+    handleInputEvent(e) {
         // hack in our direction enums
         switch (e.direction) {
             default: break;
@@ -132,7 +127,7 @@ export default class RenderScene extends React.Component {
         }
 
         // see if delegate handles input
-        if (this.props[input](e) === true) return;
+        if (this.props.onInputEvent(e) === true) return;
 
         // send to target object
         const { type, center, isFinal } = e;
@@ -151,6 +146,12 @@ export default class RenderScene extends React.Component {
             target.object.userData.onInputEvent(e, target.point);
         }
 
+        // blur input element
+        if ((document.activeElement) &&
+            (!target || !target.object.userData.hasInputElement)) {
+            document.activeElement.blur();
+        }
+
         // if final make sure to clear tracking
         if (type === 'pan' && isFinal) {
             this.input3D.tracking = false;
@@ -158,11 +159,11 @@ export default class RenderScene extends React.Component {
         }
     }
 
-    handleTap = (e) => this.handleInputEvent('onTap', e)
-    handlePan = (e) => this.handleInputEvent('onPan', e)
-    handlePress = (e) => this.handleInputEvent('onPress', e)
-    handleSwipe = (e) => this.handleInputEvent('onSwipe', e)
-    handleDoubleTap = (e) => this.handleInputEvent('onDoubleTap', e)
+    handleTap = (e) => this.handleInputEvent(e)
+    handlePan = (e) => this.handleInputEvent(e)
+    handlePress = (e) => this.handleInputEvent(e)
+    handleSwipe = (e) => this.handleInputEvent(e)
+    handleDoubleTap = (e) => this.handleInputEvent(e)
     handleRender3D = () => this.scene
 
     render() {

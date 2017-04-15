@@ -29,7 +29,7 @@ const Sphere = RenderObject.Pure((props) => {
                 default: break;
                 case 'pan':
                     animateState.holding = event.isFinal ? 0 : 1;
-                    animateState.view.spin = event.isFinal ? 0 : event.velocityX * -10;
+                    animateState.view.spin = event.isFinal ? 0 : event.velocityX * -32;
                     break;
 
                 case 'swipe':

@@ -21,10 +21,11 @@ import '../threejs/postprocessing/TAARenderPass';
 export default class Scene extends React.Component {
 
     static defaultProps = { 
-        onWheel: () => { },
-        onCreate: () => { },
-        onUpdate: () => { },
-        onResize: () => { },
+        onCreate: () => {},
+        onUpdate: () => {},
+        onResize: () => {},
+        onWheel: () => {},
+        onInputEvent: () => {},
     }
 
     handleCreate = (renderer, composer, scene, camera, width, height) => {
@@ -65,10 +66,12 @@ export default class Scene extends React.Component {
     render() {
         return <RenderScene 
             {...this.props}
-            onWheel={this.props.onWheel}
             onCreate={this.handleCreate}
             onUpdate={this.handleUpdate}
-            onResize={this.handleResize}>{this.props.children}</RenderScene>;
+            onResize={this.handleResize}
+            onWheel={this.props.onWheel}
+            onInputEvent={this.props.onInputEvent}>
+            {this.props.children}</RenderScene>;
     }
 
 }
