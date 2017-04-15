@@ -39,8 +39,7 @@ export default class RenderScene extends React.Component {
         this.camera = new THREE.PerspectiveCamera(70, width / height, 1, 16000);
 
         this.input3D = {
-            pressed: false,
-            tracking: undefined,
+            tracking: false,
             ray: new THREE.Raycaster(),
             rayCoords: new THREE.Vector2(),
         };
@@ -125,6 +124,7 @@ export default class RenderScene extends React.Component {
     handleInputEvent(input, e) {
         // hack in our direction enums
         switch (e.direction) {
+            default: break;
             case Hammer.DIRECTION_UP: e.direction = RenderObject.DIRECTION.UP; break;
             case Hammer.DIRECTION_DOWN: e.direction = RenderObject.DIRECTION.DOWN; break;
             case Hammer.DIRECTION_LEFT: e.direction = RenderObject.DIRECTION.LEFT; break;
@@ -136,24 +136,26 @@ export default class RenderScene extends React.Component {
 
         // send to target object
         const { type, center, isFinal } = e;
-        let target = this.input3D.tracking;
+        let { target, tracking } = this.input3D;
 
-        // don't have a current target, raycast check!
-        if (!target) {
-            target = this.performRayCheck3D(e.center);
-            if (type === 'pan') this.input3D.tracking = target;
+        if (!target && !tracking) {
+            target = this.performRayCheck3D(center);
+            if (type === 'pan') {
+                this.input3D.target = target;
+                this.input3D.tracking = true;
+            }
         }
 
         // have a target
-        if (target) target.object.userData.onInputEvent(e, target.point);
+        if (target) {
+            target.object.userData.onInputEvent(e, target.point);
+        }
 
-        // raycast for targets
-        // const pointerId = e.changedPointers[0].pointerId;
-        // const { type, isFinal, center } = e;
-        // // if (e.type === 'pan') console.log(e);
-        // // console.log(e.type, e.changedPointers, e);
-        // const intersect = this.performRayCheck3D(e.center);
-        // if (intersect) console.log(e.type, intersect);
+        // if final make sure to clear tracking
+        if (type === 'pan' && isFinal) {
+            this.input3D.tracking = false;
+            this.input3D.target = undefined;
+        }
     }
 
     handleTap = (e) => this.handleInputEvent('onTap', e)

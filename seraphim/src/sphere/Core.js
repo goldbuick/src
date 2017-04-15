@@ -20,12 +20,13 @@ const Sphere = RenderObject.Pure((props) => {
     return <RenderObject {...props}
         name="Sphere"
 
-        onShell3D={(shell) => shell.sphere(props.radius + 64)}
+        onShell3D={(shell) => shell.sphere(props.radius)}
 
         onInputEvent={({ type, event, animateState }) => {
             // console.log(type, animateState.view);
             animateState.holding = 0;
             switch (type) {
+                default: break;
                 case 'pan':
                     animateState.holding = event.isFinal ? 0 : 1;
                     animateState.view.spin = event.isFinal ? 0 : event.velocityX * -10;
@@ -33,11 +34,12 @@ const Sphere = RenderObject.Pure((props) => {
 
                 case 'swipe':
                     switch (event.direction) {
+                        default: break;
                         case RenderObject.DIRECTION.UP: 
-                            animateState.view.layer = changeLayer(animateState.view.layer, -1); 
+                            animateState.view.layer = changeLayer(animateState.view.layer, 1); 
                             break;
                         case RenderObject.DIRECTION.DOWN:
-                            animateState.view.layer = changeLayer(animateState.view.layer, 1); 
+                            animateState.view.layer = changeLayer(animateState.view.layer, -1); 
                             break;
                     }
                     break;
