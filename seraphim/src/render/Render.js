@@ -1,20 +1,20 @@
 import React from 'react';
 import * as THREE from 'three';
 import { debounce } from '../util/timing';
+import HammerComponent from 'react-hammerjs';
 
 export default class Render extends React.Component {
 
     static defaultProps = {
-        onCreate: () => { },
-        onUpdate: () => { },
-        onResize: () => { },
-        onWheel: () => { },
-        onTouchStart: () => { },
-        onTouchMove: () => { },
-        onTouchEnd: () => { },
-        onMouseDown: () => { },
-        onMouseMove: () => { },
-        onMouseUp: () => { },
+        onCreate: () => {},
+        onUpdate: () => {},
+        onResize: () => {},
+        onWheel: () => {},
+        onTap: () => {},
+        onPan: () => {},
+        onPress: () => {},
+        onSwipe: () => {},
+        onDoubleTap: () => {},
     }
 
     componentDidMount() {
@@ -62,16 +62,19 @@ export default class Render extends React.Component {
     }
 
     render() {
-        return <div 
-            className="renderer"
-            ref={el => this.container = el}
-            onWheel={this.props.onWheel}
-            onTouchStart={this.props.onTouchStart}
-            onTouchMove={this.props.onTouchMove}
-            onTouchEnd={this.props.onTouchEnd}
-            onMouseDown={this.props.onMouseDown}
-            onMouseMove={this.props.onMouseMove}
-            onMouseUp={this.props.onMouseUp}>{this.props.children}</div>;
+        return (
+            <HammerComponent
+                direction="DIRECTION_ALL"
+                onTap={this.props.onTap}
+                onPan={this.props.onPan}
+                onPress={this.props.onPress}
+                onSwipe={this.props.onSwipe}
+                onDoubleTap={this.props.onDoubleTap}>
+                <div className="renderer" 
+                    onWheel={this.props.onWheel}
+                    ref={el => this.container = el}>{this.props.children}</div>
+            </HammerComponent>
+        );
     }
 
 }

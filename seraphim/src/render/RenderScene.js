@@ -1,5 +1,6 @@
 import React from 'react';
 import Screen from './Screen';
+import Hammer from 'hammerjs';
 import * as THREE from 'three';
 import RenderFX from './RenderFX';
 import RenderObject from './RenderObject';
@@ -7,11 +8,16 @@ import RenderObject from './RenderObject';
 export default class RenderScene extends React.Component {
     
     static defaultProps = {
-        onWheel: () => { },
-        onCreate: () => { },
-        onUpdate: () => { },
-        onResize: () => { },
-        onPointer: () => { },
+        onCreate: () => {},
+        onUpdate: () => {},
+        onResize: () => {},
+        onWheel: () => {},
+        onTap: () => {},
+        onPan: () => {},
+        onPanEnd: () => {},
+        onPress: () => {},
+        onSwipe: () => {},
+        onDoubleTap: () => {},
     };
 
     static childContextTypes = {
@@ -23,6 +29,7 @@ export default class RenderScene extends React.Component {
     }
 
     animate3D = [];
+    rayCheck3D = [];
 
     get scene() {
         return (this._scene = this._scene || new THREE.Scene());
@@ -31,9 +38,9 @@ export default class RenderScene extends React.Component {
     handleCreate = (renderer, composer, width, height) => { 
         this.camera = new THREE.PerspectiveCamera(70, width / height, 1, 16000);
 
-        this.input = {
+        this.input3D = {
             pressed: false,
-            objectByPointer: {},
+            tracking: undefined,
             ray: new THREE.Raycaster(),
             rayCoords: new THREE.Vector2(),
         };
@@ -87,94 +94,74 @@ export default class RenderScene extends React.Component {
         this.animate3D = this.animate3D.filter(item => item !== obj);
     }
 
+    startRayCheck3D(obj) {
+        if (obj && obj.userData && obj.userData.onInputEvent) {
+            this.stopRayCheck3D(obj);
+            this.rayCheck3D.push(obj);
+        }
+    }
+
+    stopRayCheck3D(obj) {
+        this.rayCheck3D = this.rayCheck3D.filter(item => item !== obj);
+    }
+
     handleWheel = (e) => {
         e.preventDefault();
         this.props.onWheel(e.deltaX, e.deltaY);
+        console.log(e.deltaX, e.deltaY);
     }
 
-    handlePointer(e, id, pressed, x, y) {
-        if (!this.scene) return;
-        this.props.onPointer(e, id, pressed, x, y);
-        const { ray, rayCoords, objectByPointer } = this.input;
+    performRayCheck3D(point) {
+        const { ray, rayCoords } = this.input3D;
+        rayCoords.x = (point.x / Screen.width) * 2 - 1;
+        rayCoords.y = -(point.y / Screen.height) * 2 + 1;
+        ray.setFromCamera(rayCoords, this.camera);
+        this.rayCheck3D.forEach(obj => obj.visible = true);
+        const intersects = ray.intersectObjects(this.rayCheck3D, false);
+        this.rayCheck3D.forEach(obj => obj.visible = false);
+        return intersects[0];
+    }
 
-        let current;
-        if (pressed !== undefined) {
-            rayCoords.x = (x / Screen.width) * 2 - 1;
-            rayCoords.y = -(y / Screen.height) * 2 + 1;
-            ray.setFromCamera(rayCoords, this.camera);
-
-            let intersects = ray.intersectObjects(this.scene.children, true);
-            for (let i=0; i<intersects.length; ++i) {
-                let obj = intersects[i].object;
-                if (obj && obj.userData && obj.userData.onPointer) {
-                    current = intersects[i];
-                    break;
-                }
-            }
+    handleInputEvent(input, e) {
+        // hack in our direction enums
+        switch (e.direction) {
+            case Hammer.DIRECTION_UP: e.direction = RenderObject.DIRECTION.UP; break;
+            case Hammer.DIRECTION_DOWN: e.direction = RenderObject.DIRECTION.DOWN; break;
+            case Hammer.DIRECTION_LEFT: e.direction = RenderObject.DIRECTION.LEFT; break;
+            case Hammer.DIRECTION_RIGHT: e.direction = RenderObject.DIRECTION.RIGHT; break;
         }
 
-        const last = objectByPointer[id];
-        if (last && (!current || last !== current.object)) {
-            last.userData.onPointer(id);
-            delete objectByPointer[id];
+        // see if delegate handles input
+        if (this.props[input](e) === true) return;
+
+        // send to target object
+        const { type, center, isFinal } = e;
+        let target = this.input3D.tracking;
+
+        // don't have a current target, raycast check!
+        if (!target) {
+            target = this.performRayCheck3D(e.center);
+            if (type === 'pan') this.input3D.tracking = target;
         }
 
-        if (current) {
-            objectByPointer[id] = current.object;
-            current.object.userData.onPointer(e, id, pressed, current.point);
-        }
+        // have a target
+        if (target) target.object.userData.onInputEvent(e, target.point);
 
-        if (pressed && (
-            current === undefined || 
-            current.object.userData.hasInputElement === undefined)) {
-            document.activeElement.blur();
-        }
+        // raycast for targets
+        // const pointerId = e.changedPointers[0].pointerId;
+        // const { type, isFinal, center } = e;
+        // // if (e.type === 'pan') console.log(e);
+        // // console.log(e.type, e.changedPointers, e);
+        // const intersect = this.performRayCheck3D(e.center);
+        // if (intersect) console.log(e.type, intersect);
     }
 
-    handleTouchStart = (e) => {
-        // e.preventDefault();
-        for (let i=0; i<e.changedTouches.length; ++i) {
-            let touch = e.changedTouches[i];
-            this.handlePointer(e, touch.identifier, true, touch.clientX, touch.clientY);
-        }
-    }
-
-    handleTouchMove = (e) => {
-        // e.preventDefault();
-        for (let i=0; i<e.changedTouches.length; ++i) {
-            let touch = e.changedTouches[i];
-            this.handlePointer(e, touch.identifier, true, touch.clientX, touch.clientY);
-        }
-    }
-
-    handleTouchEnd = (e) => {
-        // e.preventDefault();
-        for (let i=0; i<e.changedTouches.length; ++i) {
-            let touch = e.changedTouches[i];
-            this.handlePointer(e, touch.identifier, false, touch.clientX, touch.clientY);
-        }
-    }
-
-    handleMouseDown = (e) => {
-        // e.preventDefault();
-        this.input.pressed = true;
-        this.handlePointer(e, -1, true, e.clientX, e.clientY);
-    }
-
-    handleMouseMove = (e) => {
-        // e.preventDefault();
-        if (this.input.pressed) this.handlePointer(e, -1, this.input.pressed, e.clientX, e.clientY);
-    }
-
-    handleMouseUp = (e) => {
-        // e.preventDefault();
-        this.input.pressed = false;
-        this.handlePointer(e, -1, false, e.clientX, e.clientY);
-    }
-
-    handleRender3D = () => {
-        return this.scene;
-    }
+    handleTap = (e) => this.handleInputEvent('onTap', e)
+    handlePan = (e) => this.handleInputEvent('onPan', e)
+    handlePress = (e) => this.handleInputEvent('onPress', e)
+    handleSwipe = (e) => this.handleInputEvent('onSwipe', e)
+    handleDoubleTap = (e) => this.handleInputEvent('onDoubleTap', e)
+    handleRender3D = () => this.scene
 
     render() {
         return <RenderFX 
@@ -184,18 +171,97 @@ export default class RenderScene extends React.Component {
             onResize={this.handleResize}
             onPreRender={this.handlePreRender}
             onWheel={this.handleWheel}
-            onTouchStart={this.handleTouchStart}
-            onTouchMove={this.handleTouchMove}
-            onTouchEnd={this.handleTouchEnd}
-            onMouseDown={this.handleMouseDown}
-            onMouseMove={this.handleMouseMove}
-            onMouseUp={this.handleMouseUp}>
+            onTap={this.handleTap}
+            onPan={this.handlePan}
+            onPress={this.handlePress}
+            onSwipe={this.handleSwipe}
+            onDoubleTap={this.handleDoubleTap}>
             <RenderObject
                 name="Root"
-                root={this}
                 onRender3D={this.handleRender3D}>
                 {this.props.children}</RenderObject>
         </RenderFX>;
     }
 
 }
+
+
+    // handlePointer(e, id, pressed, x, y) {
+    //     if (!this.scene) return;
+    //     this.props.onPointer(e, id, pressed, x, y);
+    //     const { ray, rayCoords, objectByPointer } = this.input;
+
+    //     let current;
+    //     if (pressed !== undefined) {
+    //         rayCoords.x = (x / Screen.width) * 2 - 1;
+    //         rayCoords.y = -(y / Screen.height) * 2 + 1;
+    //         ray.setFromCamera(rayCoords, this.camera);
+
+    //         let intersects = ray.intersectObjects(this.scene.children, true);
+    //         for (let i=0; i<intersects.length; ++i) {
+    //             let obj = intersects[i].object;
+    //             if (obj && obj.userData && obj.userData.onPointer) {
+    //                 current = intersects[i];
+    //                 break;
+    //             }
+    //         }
+    //     }
+
+    //     const last = objectByPointer[id];
+    //     if (last && (!current || last !== current.object)) {
+    //         last.userData.onPointer(id);
+    //         delete objectByPointer[id];
+    //     }
+
+    //     if (current) {
+    //         objectByPointer[id] = current.object;
+    //         current.object.userData.onPointer(e, id, pressed, current.point);
+    //     }
+
+    //     if (pressed && (
+    //         current === undefined || 
+    //         current.object.userData.hasInputElement === undefined)) {
+    //         document.activeElement.blur();
+    //     }
+    // }
+
+    // handleTouchStart = (e) => {
+    //     // e.preventDefault();
+    //     for (let i=0; i<e.changedTouches.length; ++i) {
+    //         let touch = e.changedTouches[i];
+    //         this.handlePointer(e, touch.identifier, true, touch.clientX, touch.clientY);
+    //     }
+    // }
+
+    // handleTouchMove = (e) => {
+    //     // e.preventDefault();
+    //     for (let i=0; i<e.changedTouches.length; ++i) {
+    //         let touch = e.changedTouches[i];
+    //         this.handlePointer(e, touch.identifier, true, touch.clientX, touch.clientY);
+    //     }
+    // }
+
+    // handleTouchEnd = (e) => {
+    //     // e.preventDefault();
+    //     for (let i=0; i<e.changedTouches.length; ++i) {
+    //         let touch = e.changedTouches[i];
+    //         this.handlePointer(e, touch.identifier, false, touch.clientX, touch.clientY);
+    //     }
+    // }
+
+    // handleMouseDown = (e) => {
+    //     // e.preventDefault();
+    //     this.input.pressed = true;
+    //     this.handlePointer(e, -1, true, e.clientX, e.clientY);
+    // }
+
+    // handleMouseMove = (e) => {
+    //     // e.preventDefault();
+    //     if (this.input.pressed) this.handlePointer(e, -1, this.input.pressed, e.clientX, e.clientY);
+    // }
+
+    // handleMouseUp = (e) => {
+    //     // e.preventDefault();
+    //     this.input.pressed = false;
+    //     this.handlePointer(e, -1, false, e.clientX, e.clientY);
+    // }

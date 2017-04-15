@@ -1,6 +1,7 @@
 import React from 'react';
 import genUuid from 'uuid';
 import * as THREE from 'three';
+import Shell from '../input/Shell';
 import { flatten } from '../util/array';
 import { shouldUpdate } from 'recompose';
 
@@ -21,6 +22,13 @@ const Pure = shouldUpdate((props, nextProps) => {
 export default class RenderObject extends React.Component {
 
     static Pure = Pure;
+
+    static DIRECTION = {
+        UP: 'up',
+        DOWN: 'down',
+        LEFT: 'left',
+        RIGHT: 'right',
+    };
 
     static byType(children, ctor, props = {}) {
         // react children ?
@@ -61,8 +69,9 @@ export default class RenderObject extends React.Component {
     }
 
     static defaultProps = {
-        onRender3D: () => { },
-        onAnimate3D: () => { },
+        onShell3D: () => {},
+        onRender3D: () => {},
+        onAnimate3D: () => {},
         hasInputElement: false,
         // onChildren3D, add this to customize props, children of this component 
     };
@@ -120,43 +129,84 @@ export default class RenderObject extends React.Component {
         });
     }
 
+    findGeometry(object3D) {
+        let geometryObject3D = undefined;
+        // first pass check for isShell
+        object3D.traverse(obj => {
+            if (!geometryObject3D && obj.isShell) {
+                geometryObject3D = obj;
+            }
+        });
+        // second pass use any geometry
+        if (!geometryObject3D) {
+            object3D.traverse(obj => {
+                if (!geometryObject3D && obj.geometry) {
+                    geometryObject3D = obj;
+                }
+            });
+        }
+        return geometryObject3D;
+    }
+
+    startAnimate3D() {
+        const root = this.root;
+        if (root.startAnimate3D) root.startAnimate3D(this);
+    }
+
+    stopAnimate3D() {
+        const root = this.root;
+        if (root.stopAnimate3D) root.stopAnimate3D(this);
+    }
+
+    handleInputEvent = (event, point) => {
+        const { type } = event;
+        this.animateState = this.animateState || { };
+        this.props.onInputEvent({ 
+            type,
+            event,
+            point,
+            object3D: this.object3D,
+            animateState: this.animateState 
+        });
+    }
+
+    startRayCheck3D(object3D) {
+        const geometry = this.findGeometry(object3D);
+        if (geometry && this.props.onInputEvent) {
+            geometry.userData.onInputEvent = this.handleInputEvent;
+            geometry.userData.hasInputElement = this.props.hasInputElement;            
+            const root = this.root;
+            if (root.startRayCheck3D) root.startRayCheck3D(geometry);
+        }
+    }
+
+    stopRayCheck3D(object3D) {
+        const geometry = this.findGeometry(object3D);
+        if (geometry) {
+            const root = this.root;
+            if (root.stopRayCheck3D) root.stopRayCheck3D(geometry);
+        }
+    }
+
     clear3D() {
         if (!this.object3D || !this.object3D.parent) return;
-        // RenderObject.removeNode(this.uuid);
+        this.stopRayCheck3D(this.object3D);
         this.object3D.parent.remove(this.object3D);
         this.object3D = undefined;
     }
 
     componentDidMount() {
-        const root = this.root;
-        if (root.startAnimate3D) root.startAnimate3D(this);
-    }
-
-    componentDidUpdate() {
-        const root = this.root;
-        if (root.startAnimate3D) root.startAnimate3D(this);
+        this.startAnimate3D();
     }
 
     componentWillUnmount() {
         this.clear3D();
-        const root = this.root;
-        if (root.stopAnimate3D) root.stopAnimate3D(this);
+        this.stopAnimate3D();
     }
 
     animate3D(delta) {
         this.animateState = this.animateState || { };
         this.props.onAnimate3D(this.object3D, this.animateState, delta);
-    }
-
-    handlePointer = (e, id, pressed, point) => {
-        this.animateState = this.animateState || { };
-        this.props.onPointer({ 
-            id,
-            point,
-            pressed,
-            object3D: this.object3D,
-            animateState: this.animateState 
-        });
     }
 
     render3D(children) {
@@ -184,17 +234,14 @@ export default class RenderObject extends React.Component {
                 'rotation-x', 'rotation-y', 'rotation-z',
                 'position-x', 'position-y', 'position-z'
             );
+
+            // create input raycheck shell
+            const shell = this.props.onShell3D(Shell);
+            if (shell) this.object3D.add(shell);
             
             // handle user input
-            if (this.props.onPointer && !(this.object3D instanceof THREE.Scene)) {
-                let placed = false;
-                this.object3D.traverse(obj => {
-                    if (placed === false && obj.geometry) {
-                        placed = true;
-                        obj.userData.onPointer = this.handlePointer;
-                        obj.userData.hasInputElement = this.props.hasInputElement;
-                    }
-                });
+            if (!(this.object3D instanceof THREE.Scene)) {
+                this.startRayCheck3D(this.object3D);
             }
         }
 
@@ -218,7 +265,7 @@ export default class RenderObject extends React.Component {
 
     render() {
         const name = this.name;
-        console.log('RenderObject', this.name);
+        // console.log('RenderObject', this.name);
         const children = this.render3D(this.children3D());
         return <div data-name={name}>{children}</div>;
     }

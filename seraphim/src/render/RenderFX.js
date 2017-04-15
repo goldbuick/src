@@ -6,17 +6,16 @@ import '../threejs/postprocessing/EffectComposer';
 export default class RenderFX extends React.Component {
     
     static defaultProps = {
-        onCreate: () => [ ],
-        onUpdate: () => { },
-        onResize: () => { },
-        onPreRender: () => { },
-        onWheel: () => { },
-        onTouchStart: () => { },
-        onTouchMove: () => { },
-        onTouchEnd: () => { },
-        onMouseDown: () => { },
-        onMouseMove: () => { },
-        onMouseUp: () => { },
+        onCreate: () => [],
+        onUpdate: () => {},
+        onResize: () => {},
+        onPreRender: () => {},
+        onWheel: () => {},
+        onTap: () => {},
+        onPan: () => {},
+        onPress: () => {},
+        onSwipe: () => {},
+        onDoubleTap: () => {},
     }
 
     handleCreate = (renderer, width, height) => {
@@ -53,12 +52,12 @@ export default class RenderFX extends React.Component {
             onUpdate={this.handleUpdate} 
             onResize={this.handleResize}
             onWheel={this.props.onWheel}
-            onTouchStart={this.props.onTouchStart}
-            onTouchMove={this.props.onTouchMove}
-            onTouchEnd={this.props.onTouchEnd}
-            onMouseDown={this.props.onMouseDown}
-            onMouseMove={this.props.onMouseMove}
-            onMouseUp={this.props.onMouseUp}>{this.props.children}</Render>;
+            onTap={this.props.onTap}
+            onPan={this.props.onPan}
+            onPress={this.props.onPress}
+            onSwipe={this.props.onSwipe}
+            onDoubleTap={this.props.onDoubleTap}>
+            {this.props.children}</Render>;
     }
 
 }

@@ -5,24 +5,24 @@ const lscale = 0.12;// * window.devicePixelRatio;
 const opacity = 0.33;
 const dim = 0x444444;
 
-let pointMaterial = new THREE.PointsMaterial({
+const pointMaterial = new THREE.PointsMaterial({
     size: 1 / window.devicePixelRatio,
     sizeAttenuation: false,
     vertexColors: THREE.VertexColors
 });
 
-let fillMaterialBack = new THREE.MeshBasicMaterial({
+const fillMaterialBack = new THREE.MeshBasicMaterial({
     color: dim,
     side: THREE.BackSide,
     vertexColors: THREE.VertexColors
 });
 
-let fillMaterialFront = new THREE.MeshBasicMaterial({
+const fillMaterialFront = new THREE.MeshBasicMaterial({
     side: THREE.FrontSide,
     vertexColors: THREE.VertexColors
 });
 
-let alphaFillMaterialBack = new THREE.MeshBasicMaterial({
+const alphaFillMaterialBack = new THREE.MeshBasicMaterial({
     color: dim,
     opacity: opacity,
     transparent: true,
@@ -30,7 +30,7 @@ let alphaFillMaterialBack = new THREE.MeshBasicMaterial({
     vertexColors: THREE.VertexColors
 });
 
-let alphaFillMaterialFront = new THREE.MeshBasicMaterial({
+const alphaFillMaterialFront = new THREE.MeshBasicMaterial({
     opacity: opacity,
     transparent: true,
     side: THREE.FrontSide,

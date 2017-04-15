@@ -25,7 +25,6 @@ const TestSphere = RenderObject.Pure((props) => {
     );
 });
 
-TestSphere.TOTAL_LAYERS = Sphere.TOTAL_LAYERS;
 TestSphere.defaultProps = Sphere.defaultProps;
 
 export default TestSphere;

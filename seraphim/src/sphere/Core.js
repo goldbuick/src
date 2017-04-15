@@ -13,8 +13,36 @@ import BarrierGem from './BarrierGem';
 
 const Sphere = RenderObject.Pure((props) => {
 
+    const changeLayer = (layer, delta) => {
+        return Math.max(0, Math.min(Sphere.TOTAL_LAYERS, layer + delta));
+    };
+
     return <RenderObject {...props}
         name="Sphere"
+
+        onShell3D={(shell) => shell.sphere(props.radius + 64)}
+
+        onInputEvent={({ type, event, animateState }) => {
+            // console.log(type, animateState.view);
+            animateState.holding = 0;
+            switch (type) {
+                case 'pan':
+                    animateState.holding = event.isFinal ? 0 : 1;
+                    animateState.view.spin = event.isFinal ? 0 : event.velocityX * -10;
+                    break;
+
+                case 'swipe':
+                    switch (event.direction) {
+                        case RenderObject.DIRECTION.UP: 
+                            animateState.view.layer = changeLayer(animateState.view.layer, -1); 
+                            break;
+                        case RenderObject.DIRECTION.DOWN:
+                            animateState.view.layer = changeLayer(animateState.view.layer, 1); 
+                            break;
+                    }
+                    break;
+            }
+        }}
         
         onChildren3D={(children) => {
             const childProps1 = { radius: props.radius };
@@ -34,8 +62,14 @@ const Sphere = RenderObject.Pure((props) => {
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
+            animateState.view = animateState.view || {
+                spin: 0,
+                layer: 2,
+                holding: 0
+            };
+
             let target = {};
-            switch (props.view.layer) {
+            switch (animateState.view.layer) {
                 case 0:
                     target.mantleY = 0;
                     target.barrierY = props.radius * -0.5;
@@ -74,9 +108,9 @@ const Sphere = RenderObject.Pure((props) => {
                     break;
             }
 
-            if (animateState.layer !== props.view.layer) {
+            if (animateState.layer !== animateState.view.layer) {
                 // only trigger tween when view.layer changes
-                animateState.layer = props.view.layer;
+                animateState.layer = animateState.view.layer;
                 // make sure we have starting values
                 ['mantleY', 'barrierY', 'substrateY', 'mantleScale', 'mantleTilt'].forEach(attr => {
                     if (animateState[attr] === undefined) animateState[attr] = target[attr];
@@ -99,9 +133,9 @@ const Sphere = RenderObject.Pure((props) => {
             mantle.position.y = animateState.mantleY;
             mantle.scale.setScalar(animateState.mantleScale);
 
-            if (props.view.holding) props.view.holding = Math.min(props.view.holding * 2, 512);
+            if (animateState.view.holding) animateState.view.holding = Math.min(animateState.view.holding * 2, 512);
 
-            const { spin, layer, holding } = props.view;
+            const { spin, layer, holding } = animateState.view;
             const damp = holding * 0.01 + 1;
 
             animateState.mantle = inertiaRotation(animateState.mantle, 
@@ -144,11 +178,11 @@ const Sphere = RenderObject.Pure((props) => {
 Sphere.TOTAL_LAYERS = 4;
 
 Sphere.defaultProps = {
-    view: {
-        spin: 0,
-        layer: 2,
-        holding: 0
-    },
+    // view: {
+    //     spin: 0,
+    //     layer: 2,
+    //     holding: 0
+    // },
     radius: 512,
     barrierGap: 200,
     barrierStep: 64,
