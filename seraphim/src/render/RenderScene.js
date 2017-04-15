@@ -126,11 +126,19 @@ export default class RenderScene extends React.Component {
             case Hammer.DIRECTION_RIGHT: e.direction = RenderObject.DIRECTION.RIGHT; break;
         }
 
+        // common props event
+        const { type, center, isFinal } = e;
+
         // see if delegate handles input
-        if (this.props.onInputEvent(e) === true) return;
+        if (!this.input3D.tracking && this.props.onInputEvent(e) === true) {
+            if (type === 'pan') {
+                this.input3D.target = undefined;
+                this.input3D.tracking = !isFinal;
+            }
+            return;
+        }
 
         // send to target object
-        const { type, center, isFinal } = e;
         let { target, tracking } = this.input3D;
 
         if (!target && !tracking) {
