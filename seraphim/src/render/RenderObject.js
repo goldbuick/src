@@ -260,7 +260,7 @@ export default class RenderObject extends React.Component {
             children = RenderObject.uniqueKey(flatten(children));
         }
 
-        return this.mapChildren(children);
+        return children;//this.mapChildren(children);
     }
 
     render() {

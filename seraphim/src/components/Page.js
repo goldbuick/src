@@ -1,21 +1,15 @@
 import React from 'react';
-import Scene from './Scene';
-import Screen from '../render/Screen';
-
+import Surface from '../sim/Surface';
 import TestSphere from './TestSphere';
 
-export default class Page extends React.Component {
+const Page = () => {
 
-    handleInputEvent = (e) => {
-        if (e.center.y > Screen.halfHeight) return true;
-    }
+    return (
+        <Surface>
+            <TestSphere />
+        </Surface>
+    );
+};
 
-    render() {
-        return (
-            <Scene onInputEvent={this.handleInputEvent}>
-                <TestSphere />
-            </Scene>
-        );
-    }
 
-}
+export default Page;
