@@ -1,20 +1,15 @@
 import React from 'react';
+import TWEEN from 'tween.js';
 import * as THREE from 'three';
 import { debounce } from '../util/timing';
-import HammerComponent from 'react-hammerjs';
 
-export default class Render extends React.Component {
+export default class Render extends React.PureComponent {
 
     static defaultProps = {
         onCreate: () => {},
         onUpdate: () => {},
         onResize: () => {},
         onWheel: () => {},
-        onTap: () => {},
-        onPan: () => {},
-        onPress: () => {},
-        onSwipe: () => {},
-        onDoubleTap: () => {},
     }
 
     componentDidMount() {
@@ -49,6 +44,7 @@ export default class Render extends React.Component {
             delta = diff / 1000;
         // 1000 µs = 1 ms
         // 1000 ms = 1 second
+        TWEEN.update();
         this.last = now;
         this.props.onUpdate(this.renderer, delta);
         this.updateID = requestAnimationFrame(this.handleUpdate);
@@ -63,17 +59,11 @@ export default class Render extends React.Component {
 
     render() {
         return (
-            <HammerComponent
-                direction="DIRECTION_ALL"
-                onTap={this.props.onTap}
-                onPan={this.props.onPan}
-                onPress={this.props.onPress}
-                onSwipe={this.props.onSwipe}
-                onDoubleTap={this.props.onDoubleTap}>
-                <div className="renderer" 
-                    onWheel={this.props.onWheel}
-                    ref={el => this.container = el}>{this.props.children}</div>
-            </HammerComponent>
+            <div className="renderer" 
+                onWheel={this.props.onWheel}
+                ref={el => this.container = el}>
+                {this.props.children}
+            </div>
         );
     }
 

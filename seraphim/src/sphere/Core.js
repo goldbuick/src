@@ -1,8 +1,8 @@
 import React from 'react';
 import TWEEN from 'tween.js';
 import * as THREE from 'three';
-import intro from '../anim/intro';
-import { inertiaRotation } from '../anim/quat';
+import intro from '../util/intro';
+import { inertiaRotation } from '../util/quat';
 import RenderObject from '../render/RenderObject';
 
 import Mantle from './Mantle';
@@ -180,11 +180,6 @@ const Sphere = RenderObject.Pure((props) => {
 Sphere.TOTAL_LAYERS = 4;
 
 Sphere.defaultProps = {
-    // view: {
-    //     spin: 0,
-    //     layer: 2,
-    //     holding: 0
-    // },
     radius: 512,
     barrierGap: 200,
     barrierStep: 64,

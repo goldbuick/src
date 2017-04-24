@@ -3,7 +3,7 @@ import Render from './Render';
 import * as THREE from 'three';
 import '../threejs/postprocessing/EffectComposer';
 
-export default class RenderFX extends React.Component {
+export default class RenderFX extends React.PureComponent {
     
     static defaultProps = {
         onCreate: () => [],
@@ -11,11 +11,6 @@ export default class RenderFX extends React.Component {
         onResize: () => {},
         onPreRender: () => {},
         onWheel: () => {},
-        onTap: () => {},
-        onPan: () => {},
-        onPress: () => {},
-        onSwipe: () => {},
-        onDoubleTap: () => {},
     }
 
     handleCreate = (renderer, width, height) => {
@@ -51,12 +46,7 @@ export default class RenderFX extends React.Component {
             onCreate={this.handleCreate} 
             onUpdate={this.handleUpdate} 
             onResize={this.handleResize}
-            onWheel={this.props.onWheel}
-            onTap={this.props.onTap}
-            onPan={this.props.onPan}
-            onPress={this.props.onPress}
-            onSwipe={this.props.onSwipe}
-            onDoubleTap={this.props.onDoubleTap}>
+            onWheel={this.props.onWheel}>
             {this.props.children}</Render>;
     }
 

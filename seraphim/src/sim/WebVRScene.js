@@ -1,5 +1,4 @@
 import React from 'react';
-import TWEEN from 'tween.js';
 import * as THREE from 'three';
 import RenderScene from '../render/RenderScene';
 import '../threejs/postprocessing/EffectComposer';
@@ -18,7 +17,7 @@ import '../threejs/postprocessing/BloomBlendPass';
 import '../threejs/postprocessing/SSAARenderPass';
 import '../threejs/postprocessing/TAARenderPass';
 
-export default class Scene extends React.Component {
+export default class Scene extends React.PureComponent {
 
     static defaultProps = { 
         onCreate: () => {},
@@ -54,7 +53,6 @@ export default class Scene extends React.Component {
     }
 
     handleUpdate = (renderer, composer, scene, camera, delta) => {
-        TWEEN.update();
         this.props.onUpdate(renderer, composer, scene, camera, delta);
     }
 

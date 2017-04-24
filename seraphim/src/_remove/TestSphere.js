@@ -13,14 +13,14 @@ import MRadialGraph from '../graphs/MRadialGraph';
 const TestSphere = RenderObject.Pure((props) => {
     const radius = 512;
     const sphereMantleGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereMantleGem key={v} onMantleGem={MRadialGraph}/>);
-    const sphereSubStrate = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereSubStrate key={v} verta={v*v*0.3}/>);
     const sphereBarrierGem = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereBarrierGem key={v} onBarrierGem={BJunkGraph}/>);
+    const sphereSubStrate = (count) => GenAlgo.range({ from: 1, to: count }).map(v => <SphereSubStrate key={v} verta={v*v*0.3}/>);
 
     return (
         <Sphere {...props} radius={radius}>
             {sphereMantleGem(8)}
-            {sphereSubStrate(4)}
             {sphereBarrierGem(5)}
+            {sphereSubStrate(4)}
         </Sphere>
     );
 });

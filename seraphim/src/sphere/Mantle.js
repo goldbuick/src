@@ -1,7 +1,7 @@
 import React from 'react';
 import * as THREE from 'three';
 import Draft from '../viz/Draft';
-import intro from '../anim/intro';
+import intro from '../util/intro';
 import GenPoints from '../viz/GenPoints';
 import Projection from '../viz/Projection';
 import RenderObject from '../render/RenderObject';
@@ -13,7 +13,7 @@ const Mantle = RenderObject.Pure((props) => {
     return <RenderObject {...props} 
         name="Mantle"
 
-        onRender3D={(uuid) => {
+        onRender3D={() => {
             const base = new THREE.Object3D();
             
             const draft = new Draft();

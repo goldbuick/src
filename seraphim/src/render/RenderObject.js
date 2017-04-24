@@ -19,7 +19,7 @@ const Pure = shouldUpdate((props, nextProps) => {
     return false;
 });
 
-export default class RenderObject extends React.Component {
+export default class RenderObject extends React.PureComponent {
 
     static Pure = Pure;
 
@@ -265,7 +265,7 @@ export default class RenderObject extends React.Component {
 
     render() {
         const name = this.name;
-        // console.log('RenderObject', this.name);
+        console.log('RenderObject', this.name);
         const children = this.render3D(this.children3D());
         return <div data-name={name}>{children}</div>;
     }
