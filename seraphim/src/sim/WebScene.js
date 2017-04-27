@@ -1,8 +1,10 @@
 import React from 'react';
+import Hammer from 'hammerjs';
 import * as THREE from 'three';
 import WebScreen from './WebScreen';
 import HammerComponent from 'react-hammerjs';
 import RenderScene from '../render/RenderScene';
+import RenderObject from '../render/RenderObject';
 import '../threejs/postprocessing/EffectComposer';
 
 import '../threejs/shaders/FilmShader';
@@ -26,15 +28,20 @@ export default class Scene extends React.PureComponent {
         onUpdate: () => {},
         onResize: () => {},
         onWheel: () => {},
-        onTap: () => {},
-        onPan: () => {},
-        onPress: () => {},
-        onSwipe: () => {},
-        onDoubleTap: () => {},
+        onInputEvent: () => {},
+    }
+
+    input3D = {
+        rayCoords: new THREE.Vector2(),
+        rayCaster: new THREE.Raycaster(),
+    };
+
+    handleComponent = (component) => {
+        this.renderScene = component;
     }
 
     handleCreate = (renderer, composer, scene, camera, width, height) => {
-        this.scene = scene;
+        this.camera = camera;
         this.props.onCreate(renderer, composer, scene, camera, width, height);
 
         camera.position.z = 1024;
@@ -87,7 +94,61 @@ export default class Scene extends React.PureComponent {
     }
 
     handleInputEvent(e) {
-        console.log(e);
+        // hack in our direction enums
+        switch (e.direction) {
+            default: break;
+            case Hammer.DIRECTION_UP: e.direction = RenderObject.DIRECTION.UP; break;
+            case Hammer.DIRECTION_DOWN: e.direction = RenderObject.DIRECTION.DOWN; break;
+            case Hammer.DIRECTION_LEFT: e.direction = RenderObject.DIRECTION.LEFT; break;
+            case Hammer.DIRECTION_RIGHT: e.direction = RenderObject.DIRECTION.RIGHT; break;
+        }
+
+        // common props event
+        const { type, center, isFinal } = e;
+
+        // see if delegate handles input
+        if (!this.input3D.tracking && this.props.onInputEvent(e) === true) {
+            if (type === 'pan') {
+                this.input3D.target = undefined;
+                this.input3D.tracking = !isFinal;
+            }
+            return;
+        }
+
+        // send to target object
+        let { target, tracking, rayCoords, rayCaster } = this.input3D;
+
+        if (!target && !tracking && this.renderScene) {
+            // translate 2d screen point into ray
+            rayCoords.x = (center.x / WebScreen.width) * 2 - 1;
+            rayCoords.y = -(center.y / WebScreen.height) * 2 + 1;
+            rayCaster.setFromCamera(rayCoords, this.camera);
+            // find targets
+            target = this.renderScene.performRayCheck3D(rayCaster);
+            // only pan gesture tracks
+            if (type === 'pan') {
+                this.input3D.target = target;
+                this.input3D.tracking = true;
+            }
+        }
+
+        // have a target
+        if (target) {
+            target.object.userData.onInputEvent(e, target.point);
+        }
+
+        // blur input element
+        if ((document.activeElement) &&
+            (!target || !target.object.userData.hasInputElement)) {
+            document.activeElement.blur();
+        }
+
+        // if final make sure to clear tracking
+        if (type === 'pan' && isFinal) {
+            this.input3D.tracking = false;
+            this.input3D.target = undefined;
+        }
+
     }
 
     handleTap = (e) => this.handleInputEvent(e)
@@ -106,6 +167,7 @@ export default class Scene extends React.PureComponent {
                 onSwipe={this.handleSwipe}
                 onDoubleTap={this.handleDoubleTap}>
                 <RenderScene 
+                    onComponent={this.handleComponent}
                     onCreate={this.handleCreate}
                     onUpdate={this.handleUpdate}
                     onResize={this.handleResize}

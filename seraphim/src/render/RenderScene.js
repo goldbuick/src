@@ -1,5 +1,4 @@
 import React from 'react';
-import Hammer from 'hammerjs';
 import * as THREE from 'three';
 import RenderFX from './RenderFX';
 import RenderObject from './RenderObject';
@@ -7,11 +6,11 @@ import RenderObject from './RenderObject';
 export default class RenderScene extends React.PureComponent {
     
     static defaultProps = {
+        onComponent: () => {},
         onCreate: () => {},
         onUpdate: () => {},
         onResize: () => {},
         onWheel: () => {},
-        // onInputEvent: () => {},
     };
 
     static childContextTypes = {
@@ -30,26 +29,18 @@ export default class RenderScene extends React.PureComponent {
     }
 
     handleCreate = (renderer, composer, width, height) => { 
+        this.props.onComponent(this);
         this.camera = new THREE.PerspectiveCamera(70, width / height, 1, 16000);
-
-        this.input3D = {
-            tracking: false,
-            ray: new THREE.Raycaster(),
-            rayCoords: new THREE.Vector2(),
-        };
-
         return this.props.onCreate(renderer, composer, this.scene, this.camera, width, height);
     }
 
     handleUpdate = (renderer, composer, delta) => {
-        // this.animate3D.forEach(item => item.animate3D(delta));
         this.props.onUpdate(renderer, composer, this.scene, this.camera, delta);
     }
 
     handleResize = (renderer, composer, width, height) => {
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
-
         this.props.onResize(renderer, composer, this.scene, this.camera, width, height);
     }
 
@@ -79,13 +70,20 @@ export default class RenderScene extends React.PureComponent {
         this.rayCheck3D = this.rayCheck3D.filter(item => item !== obj);
     }
 
+    // rayCoords.x = (point.x / Screen.width) * 2 - 1;
+    // rayCoords.y = -(point.y / Screen.height) * 2 + 1;
+    // rayCaster.setFromCamera(rayCoords, this.camera);
+    performRayCheck3D(rayCaster) {
+        this.rayCheck3D.forEach(obj => obj.visible = true);
+        const intersects = rayCaster.intersectObjects(this.rayCheck3D, false);
+        this.rayCheck3D.forEach(obj => obj.visible = false);
+        return intersects[0];
+    }
+
     handleWheel = (e) => {
         e.preventDefault();
         console.log(e.deltaX, e.deltaY);
         this.props.onWheel(e.deltaX, e.deltaY);
-    }
-
-    performRayCheck3D(point) {
     }
 
     // handleInputEvent(e) {
@@ -139,11 +137,6 @@ export default class RenderScene extends React.PureComponent {
     //     }
     // }
 
-    // handleTap = (e) => this.handleInputEvent(e)
-    // handlePan = (e) => this.handleInputEvent(e)
-    // handlePress = (e) => this.handleInputEvent(e)
-    // handleSwipe = (e) => this.handleInputEvent(e)
-    // handleDoubleTap = (e) => this.handleInputEvent(e)
     handleRender3D = () => this.scene
 
     render() {
@@ -163,12 +156,3 @@ export default class RenderScene extends React.PureComponent {
 
 }
 
-
-    // const { ray, rayCoords } = this.input3D;
-    // rayCoords.x = (point.x / Screen.width) * 2 - 1;
-    // rayCoords.y = -(point.y / Screen.height) * 2 + 1;
-    // ray.setFromCamera(rayCoords, this.camera);
-    // this.rayCheck3D.forEach(obj => obj.visible = true);
-    // const intersects = ray.intersectObjects(this.rayCheck3D, false);
-    // this.rayCheck3D.forEach(obj => obj.visible = false);
-    // return intersects[0];

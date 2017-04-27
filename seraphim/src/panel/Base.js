@@ -9,6 +9,10 @@ const Panel = RenderObject.Pure((props) => {
         name="Panel"
 
         onShell3D={(shell) => shell.plane(400, 300)}
+        
+        onInputEvent={({ type, event, animateState }) => {
+            console.log(type);
+        }}
 
         onChildren3D={(children) => {
             return children;
