@@ -1,6 +1,6 @@
 import React from 'react';
 import WebScene from './WebScene';
-import WebScreen from './WebScreen';
+// import WebScreen from './WebScreen';
 import RenderObject from '../render/RenderObject';
 
 export default class Web extends React.PureComponent {
@@ -12,8 +12,26 @@ export default class Web extends React.PureComponent {
     handleAnimate3D = (object3D, animateState, delta) => {
         const ids = object3D.children.map((child) => child.uuid);
         const layoutHash = ids.join('-');
-        // console.log(layoutHash);
-        // console.log(object3D.children.map(child => child.uuid));
+
+        if (animateState.layoutHash !== layoutHash) {
+            animateState.positions = {};
+            animateState.layoutHash = layoutHash;
+
+            ids.forEach((id, index) => {
+                animateState.positions[id] = {
+                    x: 0,
+                    y: index * -350
+                };
+            });
+        }
+
+        object3D.children.forEach(child => {
+            const position = animateState.positions[child.uuid];
+            if (position) {
+                child.position.x = position.x;
+                child.position.y = position.y;
+            }
+        })
     }
 
     render() {

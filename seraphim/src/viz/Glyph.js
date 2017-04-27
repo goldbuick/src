@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import polylineNormals from 'polyline-normals';
 
-const lscale = 0.12;// * window.devicePixelRatio;
+const lscale = 0.2 * window.devicePixelRatio;
 const opacity = 0.33;
 const dim = 0x444444;
 

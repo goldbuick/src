@@ -70,9 +70,6 @@ export default class RenderScene extends React.PureComponent {
         this.rayCheck3D = this.rayCheck3D.filter(item => item !== obj);
     }
 
-    // rayCoords.x = (point.x / Screen.width) * 2 - 1;
-    // rayCoords.y = -(point.y / Screen.height) * 2 + 1;
-    // rayCaster.setFromCamera(rayCoords, this.camera);
     performRayCheck3D(rayCaster) {
         this.rayCheck3D.forEach(obj => obj.visible = true);
         const intersects = rayCaster.intersectObjects(this.rayCheck3D, false);
@@ -85,57 +82,6 @@ export default class RenderScene extends React.PureComponent {
         console.log(e.deltaX, e.deltaY);
         this.props.onWheel(e.deltaX, e.deltaY);
     }
-
-    // handleInputEvent(e) {
-    //     // hack in our direction enums
-    //     switch (e.direction) {
-    //         default: break;
-    //         case Hammer.DIRECTION_UP: e.direction = RenderObject.DIRECTION.UP; break;
-    //         case Hammer.DIRECTION_DOWN: e.direction = RenderObject.DIRECTION.DOWN; break;
-    //         case Hammer.DIRECTION_LEFT: e.direction = RenderObject.DIRECTION.LEFT; break;
-    //         case Hammer.DIRECTION_RIGHT: e.direction = RenderObject.DIRECTION.RIGHT; break;
-    //     }
-
-    //     // common props event
-    //     const { type, center, isFinal } = e;
-
-    //     // see if delegate handles input
-    //     if (!this.input3D.tracking && this.props.onInputEvent(e) === true) {
-    //         if (type === 'pan') {
-    //             this.input3D.target = undefined;
-    //             this.input3D.tracking = !isFinal;
-    //         }
-    //         return;
-    //     }
-
-    //     // send to target object
-    //     let { target, tracking } = this.input3D;
-
-    //     if (!target && !tracking) {
-    //         target = this.performRayCheck3D(center);
-    //         if (type === 'pan') {
-    //             this.input3D.target = target;
-    //             this.input3D.tracking = true;
-    //         }
-    //     }
-
-    //     // have a target
-    //     if (target) {
-    //         target.object.userData.onInputEvent(e, target.point);
-    //     }
-
-    //     // blur input element
-    //     if ((document.activeElement) &&
-    //         (!target || !target.object.userData.hasInputElement)) {
-    //         document.activeElement.blur();
-    //     }
-
-    //     // if final make sure to clear tracking
-    //     if (type === 'pan' && isFinal) {
-    //         this.input3D.tracking = false;
-    //         this.input3D.target = undefined;
-    //     }
-    // }
 
     handleRender3D = () => this.scene
 
