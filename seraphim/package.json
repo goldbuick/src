@@ -5,10 +5,13 @@
   "dependencies": {
     "alea": "0.0.9",
     "load-bmfont": "1.2.5",
+    "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
     "midimessage": "1.0.5",
     "moment": "2.17.1",
     "pathfinding": "0.4.18",
     "polyline-normals": "2.0.2",
+    "ramda": "^0.23.0",
     "react": "15.4.2",
     "react-dom": "15.4.2",
     "react-hammerjs": "^0.5.0",
@@ -23,17 +26,13 @@
     "three-bmfont-text": "2.2.1",
     "tone": "0.9.0",
     "tween.js": "16.3.5",
-    "uuid": "^3.0.1",
-    "viz.js": "^1.7.1",
-    "voronoi": "1.0.0"
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "@gborg/react-scripts": "^0.9.7"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "build": "react-scripts build"
   }
 }
