@@ -1,7 +1,7 @@
 import React from 'react';
-import Draft from '../../viz/Draft';
-import Projection from '../../viz/Projection';
-import RenderObject from '../../render/RenderObject';
+import Draft from 'viz/Draft';
+import Projection from 'viz/Projection';
+import RenderObject from 'render/RenderObject';
 
 const Panel = RenderObject.Pure((props) => {
     return <RenderObject {...props}

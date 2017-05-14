@@ -1,10 +1,10 @@
 import React from 'react';
 import * as THREE from 'three';
-import Draft from '../viz/Draft';
-import intro from '../util/intro';
-import GenAlgo from '../viz/GenAlgo';
-import Projection from '../viz/Projection';
-import RenderObject from '../render/RenderObject';
+import Draft from 'viz/Draft';
+import intro from 'util/intro';
+import GenAlgo from 'viz/GenAlgo';
+import Projection from 'viz/Projection';
+import RenderObject from 'render/RenderObject';
 
 const SubStrate = (props) => {    
     return <RenderObject {...props}

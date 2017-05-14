@@ -1,4 +1,4 @@
-import GenAlgo from '../viz/GenAlgo';
+import GenAlgo from 'viz/GenAlgo';
 
 export default function MRadialGraph(props, draft) {
     const PI2 = Math.PI * 2;

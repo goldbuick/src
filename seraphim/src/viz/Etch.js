@@ -1,6 +1,6 @@
 import Glyph from './Glyph';
 import GenPoints from './GenPoints';
-import RenderColor from '../render/RenderColor';
+import RenderColor from 'render/RenderColor';
 
 class Etch {
     

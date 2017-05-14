@@ -1,14 +1,14 @@
 import * as THREE from 'three';
 import loadFont from 'load-bmfont';
 
-import LOGO_fnt from '../media/LOGO.fnt';
-import LOGO_png from '../media/LOGO.png';
-import TECH_fnt from '../media/TECH.fnt';
-import TECH_png from '../media/TECH.png';
-import TECHMONO_fnt from '../media/TECHMONO.fnt';
-import TECHMONO_png from '../media/TECHMONO.png';
-import NEONOIRE_fnt from '../media/NEONOIRE.fnt';
-import NEONOIRE_png from '../media/NEONOIRE.png';
+import LOGO_fnt from 'media/LOGO.fnt';
+import LOGO_png from 'media/LOGO.png';
+import TECH_fnt from 'media/TECH.fnt';
+import TECH_png from 'media/TECH.png';
+import TECHMONO_fnt from 'media/TECHMONO.fnt';
+import TECHMONO_png from 'media/TECHMONO.png';
+import NEONOIRE_fnt from 'media/NEONOIRE.fnt';
+import NEONOIRE_png from 'media/NEONOIRE.png';
 
 const LOGO = [ LOGO_fnt, LOGO_png ];
 const TECH = [ TECH_fnt, TECH_png ];

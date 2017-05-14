@@ -1,9 +1,9 @@
 import React from 'react';
 import * as THREE from 'three';
-import Text from '../viz/Text';
-import Draft from '../viz/Draft';
-import Projection from '../viz/Projection';
-import RenderObject from '../render/RenderObject';
+import Text from 'viz/Text';
+import Draft from 'viz/Draft';
+import Projection from 'viz/Projection';
+import RenderObject from 'render/RenderObject';
 
 const BarrierGem = (props) => {
     return <RenderObject {...props}

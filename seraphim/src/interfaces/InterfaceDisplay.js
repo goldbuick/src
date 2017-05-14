@@ -1,8 +1,8 @@
 import React from 'react';
 import Hammer from 'hammerjs';
 import * as THREE from 'three';
-import RenderScene from '../render/RenderScene';
-import RenderObject from '../render/RenderObject';
+import RenderScene from 'render/RenderScene';
+import RenderObject from 'render/RenderObject';
 
 import '../render/postprocessing/EffectComposer';
 

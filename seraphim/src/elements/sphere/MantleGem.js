@@ -1,8 +1,8 @@
 import React from 'react';
-import Text from '../viz/Text';
-import Draft from '../viz/Draft';
-import Projection from '../viz/Projection';
-import RenderObject from '../render/RenderObject';
+import Text from 'viz/Text';
+import Draft from 'viz/Draft';
+import Projection from 'viz/Projection';
+import RenderObject from 'render/RenderObject';
 
 const MantleGem = (props) => {
     return <RenderObject {...props} 

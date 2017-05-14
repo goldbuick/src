@@ -1,9 +1,9 @@
 import React from 'react';
 import TWEEN from 'tween.js';
 import * as THREE from 'three';
-import intro from '../../anim/intro';
-import { inertiaRotation } from '../../anim/quat';
-import RenderObject from '../../render/RenderObject';
+import intro from 'anim/intro';
+import { inertiaRotation } from 'anim/quat';
+import RenderObject from 'render/RenderObject';
 
 import Mantle from './Mantle';
 import Barrier from './Barrier';

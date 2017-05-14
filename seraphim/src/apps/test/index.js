@@ -1,11 +1,10 @@
 import React from 'react';
-import InterfaceDisplay from '../../interfaces/InterfaceDisplay';
-// import Driver from '../../sim/Driver';
-import Simple from './Simple'; 
+import Simple from 'apps/test/Simple'; 
+import InterfaceDisplay from 'interfaces/InterfaceDisplay';
 
 export default () => (
     <InterfaceDisplay>
-        <Simple position-z={-1024}/>
+        <Simple position-z={-1024} />
     </InterfaceDisplay>
 );
 

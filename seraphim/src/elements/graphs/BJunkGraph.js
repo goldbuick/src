@@ -1,5 +1,5 @@
-import GenAlgo from '../viz/GenAlgo';
-import GenPoints from '../viz/GenPoints';
+import GenAlgo from 'viz/GenAlgo';
+import GenPoints from 'viz/GenPoints';
 
 export default function BJunkGraph(props, draft) {
       const rng = GenAlgo.rng({ seed: props.uuid });

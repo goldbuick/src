@@ -1,7 +1,7 @@
 import Font from './Font';
 import * as THREE from 'three';
 import createGeometry from 'three-bmfont-text';
-import RenderColor from '../render/RenderColor';
+import RenderColor from 'render/RenderColor';
 import SDFShader from 'three-bmfont-text/shaders/sdf';
 
 class Text {

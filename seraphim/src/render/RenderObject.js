@@ -2,8 +2,8 @@ import R from 'ramda';
 import React from 'react';
 import genUuid from 'uuid';
 import * as THREE from 'three';
+import Shell from './input/Shell';
 import { shouldUpdate } from 'recompose';
-import Shell from '../drivers/input/Shell';
 
 const Pure = shouldUpdate((props, nextProps) => {
     const ignoreView = key => key !== 'view';    
