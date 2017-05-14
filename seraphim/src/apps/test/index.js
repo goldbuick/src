@@ -1,10 +1,12 @@
 import React from 'react';
-import Simple from 'apps/test/Simple'; 
+import Panel from 'elements/panel/Core';
+import Sphere from 'elements/sphere/Core';
 import InterfaceDisplay from 'interfaces/InterfaceDisplay';
 
 export default () => (
     <InterfaceDisplay>
-        <Simple position-z={-1024} />
+        <Panel position-z={-1024} position-x={-300} />
+        <Sphere position-z={-1024} position-x={300} />
     </InterfaceDisplay>
 );
 

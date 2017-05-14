@@ -1,7 +1,7 @@
 import React from 'react';
 import * as THREE from 'three';
 import Draft from 'viz/Draft';
-import intro from 'util/intro';
+import intro from 'anim/intro';
 import GenPoints from 'viz/GenPoints';
 import Projection from 'viz/Projection';
 import RenderObject from 'render/RenderObject';

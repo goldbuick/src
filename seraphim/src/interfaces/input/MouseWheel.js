@@ -14,7 +14,7 @@ export default class MouseWheel {
     }
 
     triggerSwipe(event) {
-        this.events[event] && this.events[event]();
+        this.events[event] && this.events[event](this.clientX, this.clientY);
     }
 
     resetPeaks = debounce(() => {
@@ -30,12 +30,20 @@ export default class MouseWheel {
         this.triggerSwipe(peak < 0 ? 'onSwipeUp' : 'onSwipeDown'); 
     }
 
-    onWheel = (dx, dy) => {
-        if (Math.abs(dx) > Math.abs(dy)) {
-            this.dxSignal.push(dx);
+    handleWheel = (e) => {
+        e.preventDefault();
+
+        const deltaX = e.deltaX;
+        const deltaY = e.deltaY;
+        this.clientX = e.clientX;
+        this.clientY = e.clientY;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            this.dxSignal.push(deltaX);
         } else {
-            this.dySignal.push(dy);
+            this.dySignal.push(deltaY);
         }
+
         this.resetPeaks();
     }
 

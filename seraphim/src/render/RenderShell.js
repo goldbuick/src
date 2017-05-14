@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 const shellMaterial = new THREE.MeshBasicMaterial();
 
-class Shell {
+class RenderShell {
 
     mesh(geometry) {
         const mesh = new THREE.Mesh(geometry, shellMaterial);
@@ -25,4 +25,4 @@ class Shell {
 
 }
 
-export default new Shell();
+export default new RenderShell();

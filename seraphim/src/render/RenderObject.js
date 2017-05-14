@@ -2,7 +2,7 @@ import R from 'ramda';
 import React from 'react';
 import genUuid from 'uuid';
 import * as THREE from 'three';
-import Shell from './input/Shell';
+import RenderShell from './RenderShell';
 import { shouldUpdate } from 'recompose';
 
 const Pure = shouldUpdate((props, nextProps) => {
@@ -236,7 +236,7 @@ export default class RenderObject extends React.PureComponent {
             );
 
             // create input raycheck shell
-            const shell = this.props.onShell3D(Shell);
+            const shell = this.props.onShell3D(RenderShell);
             if (shell) this.object3D.add(shell);
             
             // handle user input

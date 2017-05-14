@@ -1,6 +1,7 @@
 import React from 'react';
 import Hammer from 'hammerjs';
 import * as THREE from 'three';
+import MouseWheel from './input/MouseWheel';
 import RenderScene from 'render/RenderScene';
 import RenderObject from 'render/RenderObject';
 
@@ -26,6 +27,18 @@ export default class InterfaceDisplay extends React.PureComponent {
         rayCoords: new THREE.Vector2(),
         rayCaster: new THREE.Raycaster(),
     };
+
+    constructor(...args) {
+        super(...args);
+
+        this.mousewheel = new MouseWheel({
+            onSwipeUp: this.handleWheelUp,
+            onSwipeDown: this.handleWheelDown,
+            onSwipeLeft: this.handleWheelLeft,
+            onSwipeRight: this.handleWheelRight,
+        });
+    }
+
 
     handleCreate = (renderer, renderScene, width, height) => {
         renderer.autoClear = false;
@@ -66,13 +79,16 @@ export default class InterfaceDisplay extends React.PureComponent {
 
     handleInputEvent(e) {
         // common props event
-        const { type, direction, center, isFinal } = e;
+        const { type, direction, center, velocityX, velocityY, isFinal } = e;
 
         // common event structure
         const event = {
             type,
             center,
+            isFinal,
             direction,
+            velocityX,
+            velocityY,
         };
 
         // hack in our direction enums
@@ -128,6 +144,33 @@ export default class InterfaceDisplay extends React.PureComponent {
     handleSwipe = (e) => this.handleInputEvent(e)
     handleDoubleTap = (e) => this.handleInputEvent(e)
 
+    handleWheelSwipe(direction, clientX, clientY) {
+        this.handleInputEvent({
+            direction,
+            type: 'swipe',
+            isFinal: true,
+            velocityX: 0,
+            velocityY: 0,
+            center: { x: clientX, y: clientY },
+        });
+    }
+
+    handleWheelUp = (clientX, clientY) => {
+        this.handleWheelSwipe(Hammer.DIRECTION_UP, clientX, clientY);
+    }
+
+    handleWheelDown = (clientX, clientY) => {
+        this.handleWheelSwipe(Hammer.DIRECTION_DOWN, clientX, clientY);
+    }
+
+    handleWheelLeft = (clientX, clientY) => {
+        this.handleWheelSwipe(Hammer.DIRECTION_LEFT, clientX, clientY);
+    }
+
+    handleWheelRight = (clientX, clientY) => {
+        this.handleWheelSwipe(Hammer.DIRECTION_RIGHT, clientX, clientY);
+    }
+
     render() {
         return (
             <RenderScene
@@ -138,7 +181,8 @@ export default class InterfaceDisplay extends React.PureComponent {
                 onPan={this.handlePan}
                 onPress={this.handlePress}
                 onSwipe={this.handleSwipe}
-                onDoubleTap={this.handleDoubleTap}>
+                onDoubleTap={this.handleDoubleTap}
+                onWheel={this.mousewheel.handleWheel}>
                 {this.props.children}
             </RenderScene>
         );
