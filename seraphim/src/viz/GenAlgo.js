@@ -1,13 +1,13 @@
+import R from 'ramda';
 import Alea from 'alea';
 import PF from 'pathfinding';
 import * as THREE from 'three';
-import { range } from '../util/array';
 import SimplexNoise from 'simplex-noise';
 
 class GenAlgo {
 
     range({ from = 0, to = 0 } = {}) {
-        return range(from, to);
+        return R.range(from, to);
     }
 
     rng({ seed = '23904jasoifjo' } = {}) {

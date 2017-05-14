@@ -1,7 +1,8 @@
 import React from 'react';
 import TWEEN from 'tween.js';
 import * as THREE from 'three';
-import { debounce } from '../util/timing';
+import debounce from 'lodash.debounce';
+import HammerComponent from 'react-hammerjs';
 
 export default class Render extends React.PureComponent {
 
@@ -10,6 +11,11 @@ export default class Render extends React.PureComponent {
         onUpdate: () => {},
         onResize: () => {},
         onWheel: () => {},
+        onTap: () => {},
+        onPan: () => {},
+        onPress: () => {},
+        onSwipe: () => {},
+        onDoubleTap: () => {},
     }
 
     componentDidMount() {
@@ -59,11 +65,19 @@ export default class Render extends React.PureComponent {
 
     render() {
         return (
-            <div className="renderer" 
-                onWheel={this.props.onWheel}
-                ref={el => this.container = el}>
-                {this.props.children}
-            </div>
+            <HammerComponent
+                direction="DIRECTION_ALL"
+                onTap={this.props.onTap}
+                onPan={this.props.onPan}
+                onPress={this.props.onPress}
+                onSwipe={this.props.onSwipe}
+                onDoubleTap={this.props.onDoubleTap}>
+                <div className="renderer" 
+                    onWheel={this.props.onWheel}
+                    ref={el => this.container = el}>
+                    {this.props.children}
+                </div>
+            </HammerComponent>
         );
     }
 

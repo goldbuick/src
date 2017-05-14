@@ -1,9 +1,9 @@
+import R from 'ramda';
 import React from 'react';
 import genUuid from 'uuid';
 import * as THREE from 'three';
-import Shell from '../input/Shell';
-import { flatten } from '../util/array';
 import { shouldUpdate } from 'recompose';
+import Shell from '../drivers/input/Shell';
 
 const Pure = shouldUpdate((props, nextProps) => {
     const ignoreView = key => key !== 'view';    
@@ -257,7 +257,7 @@ export default class RenderObject extends React.PureComponent {
 
         if (this.props.onChildren3D) {
             children = this.props.onChildren3D(children);
-            children = RenderObject.uniqueKey(flatten(children));
+            children = RenderObject.uniqueKey(R.flatten(children));
         }
 
         return children;//this.mapChildren(children);

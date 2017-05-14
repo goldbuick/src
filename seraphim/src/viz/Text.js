@@ -1,7 +1,7 @@
 import Font from './Font';
 import * as THREE from 'three';
-import Theme from '../render/Theme';
 import createGeometry from 'three-bmfont-text';
+import RenderColor from '../render/RenderColor';
 import SDFShader from 'three-bmfont-text/shaders/sdf';
 
 class Text {
@@ -52,7 +52,7 @@ class Text {
         ax = 0.5,
         ay = 0.5,
         nudge, 
-        color = Theme.color,
+        color = RenderColor.color,
         mode, 
         width, 
         callback, 

@@ -1,5 +1,6 @@
 import Peaks from './Peaks';
-import { throttle, debounce } from '../util/timing';
+import throttle from 'lodash.throttle';
+import debounce from 'lodash.debounce';
 
 export default class MouseWheel {
 

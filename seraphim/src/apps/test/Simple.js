@@ -1,6 +1,6 @@
 import React from 'react';
-import Panel from '../../panel/Base';
+import Panel from '../../elements/panel/Base';
 
-export default () => (
-    <Panel />
+export default (props) => (
+    <Panel {...props} />
 );

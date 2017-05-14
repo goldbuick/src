@@ -1,6 +1,6 @@
 import Glyph from './Glyph';
-import Theme from '../render/Theme';
 import GenPoints from './GenPoints';
+import RenderColor from '../render/RenderColor';
 
 class Etch {
     
@@ -15,7 +15,7 @@ class Etch {
         return this.glyph.build(transform);
     }
 
-    drawPoints(points, color = Theme.color) {
+    drawPoints(points, color = RenderColor.color) {
         const offset = this.glyph.count;
         points.forEach(vert => this.glyph.addVert(vert.x, vert.y, vert.z, color));
         for (let i=0; i < points.length; ++i) {
@@ -24,7 +24,7 @@ class Etch {
         return this;
     }
 
-    drawLine(points, color = Theme.color, closed = false) {
+    drawLine(points, color = RenderColor.color, closed = false) {
         const offset = this.glyph.count;
         points.forEach(vert => this.glyph.addVert(vert.x, vert.y, vert.z, color));
         
@@ -37,7 +37,7 @@ class Etch {
         return this;
     }
 
-    drawFill(points, color = Theme.color, alpha = false) {
+    drawFill(points, color = RenderColor.color, alpha = false) {
         const offset = this.glyph.count;
         points.forEach(vert => this.glyph.addVert(vert.x, vert.y, vert.z, color));
         
@@ -88,7 +88,7 @@ class Etch {
         return this;
     }
 
-    drawTriangle({ x=0, y=0, z=0, radius, angle, color = Theme.color, alpha, filled = true }) {
+    drawTriangle({ x=0, y=0, z=0, radius, angle, color = RenderColor.color, alpha, filled = true }) {
         const offset = this.glyph.count;
         const points = GenPoints.triangle({ x, y, z, radius, angle });
         points.forEach(vert => this.glyph.addVert(vert.x, vert.y, vert.z, color));
@@ -106,7 +106,7 @@ class Etch {
         return this;        
     }
 
-    drawRect({ x=0, y=0, z=0, w, h, color = Theme.color, alpha, filled = true } = {}) {
+    drawRect({ x=0, y=0, z=0, w, h, color = RenderColor.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
             hw = w * 0.5,
             hh = h * 0.5;
@@ -127,7 +127,7 @@ class Etch {
         return this;
     }
 
-    drawDiamond({ x=0, y=0, z=0, w, h, color = Theme.color, alpha, filled = true } = {}) {
+    drawDiamond({ x=0, y=0, z=0, w, h, color = RenderColor.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
             hw = w * 0.5,
             hh = h * 0.5;
@@ -148,7 +148,7 @@ class Etch {
         return this;
     }
 
-    drawCircle({ x=0, y=0, z=0, steps, radius, front, back, drift, bump, color = Theme.color, alpha, filled = true } = {}) {
+    drawCircle({ x=0, y=0, z=0, steps, radius, front, back, drift, bump, color = RenderColor.color, alpha, filled = true } = {}) {
         const offset = this.glyph.count,
             points = GenPoints.arc({ x, y, z, steps, radius, front, back, drift, bump }),
             center = offset,
@@ -171,7 +171,7 @@ class Etch {
         return this;
     }
 
-    drawSwipeWith({ ipoints, opoints, color = Theme.color, alpha } = {}) {
+    drawSwipeWith({ ipoints, opoints, color = RenderColor.color, alpha } = {}) {
         const offset = this.glyph.count;
         ipoints.forEach(vert => this.glyph.addVert(vert.x , vert.y, vert.z, color));
         opoints.forEach(vert => this.glyph.addVert(vert.x , vert.y, vert.z, color));
