@@ -21,7 +21,7 @@ import '../render/postprocessing/BloomBlendPass';
 import '../render/postprocessing/SSAARenderPass';
 import '../render/postprocessing/TAARenderPass';
 
-export default class InterfaceDisplay extends React.PureComponent {
+export default class InterfaceDisplay extends React.Component {
 
     input3D = {
         rayCoords: new THREE.Vector2(),
@@ -38,7 +38,6 @@ export default class InterfaceDisplay extends React.PureComponent {
             onSwipeRight: this.handleWheelRight,
         });
     }
-
 
     handleCreate = (renderer, renderScene, width, height) => {
         renderer.autoClear = false;

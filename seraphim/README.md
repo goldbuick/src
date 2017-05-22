@@ -17,3 +17,10 @@
 * so what would they be called
 * interfaces
 * yes interfaces
+
+# redux data model
+* actions
+* actionHandlers - aka stores
+* root state
+* mapping root state to a component 
+* use reselect ?

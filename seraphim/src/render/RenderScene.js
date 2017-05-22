@@ -3,7 +3,7 @@ import Render from './Render';
 import * as THREE from 'three';
 import RenderObject from './RenderObject';
 
-export default class RenderScene extends React.PureComponent {
+export default class RenderScene extends React.Component {
 
     static SCREEN = {
         ratioX: 1,

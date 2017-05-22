@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import debounce from 'lodash.debounce';
 import HammerComponent from 'react-hammerjs';
 
-export default class Render extends React.PureComponent {
+export default class Render extends React.Component {
 
     static defaultProps = {
         onCreate: () => {},
