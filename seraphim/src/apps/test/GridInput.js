@@ -6,10 +6,10 @@ import RenderObject from 'render/RenderObject';
 const cellSize = 128;
 
 const GridInput = RenderObject.Pure(props => {
-    const cells = [];
+    const cellAttrs = [];
     for (let y=0; y<props.rows; ++y) {
         for (let x=0; x<props.cols; ++x) {
-            cells.push({ key: `cell-${x}-${y}`, x, y });
+            cellAttrs.push({ key: `cell-${x}-${y}`, x, y });
         }
     }
     return (
@@ -24,23 +24,23 @@ const GridInput = RenderObject.Pure(props => {
                 const left = (props.cols * stepSize * 0.5) - (stepSize * 0.5);
                 const cells = RenderObject.byType(object3D.children, Panel);
                 RenderObject.animate(cells, animateState, (cell, anim, index) => {
-                    const col = index % props.cols;
-                    const row = Math.floor(index / props.cols);
-                    intro.secondary(anim, 'px', 0, col * -stepSize + left);
-                    intro.secondary(anim, 'py', 0, row * -stepSize + top);
+                    const attr = cellAttrs[index];
+                    // console.log(attr);
+                    intro.secondary(anim, 'px', 0, attr.x * -stepSize + left);
+                    intro.secondary(anim, 'py', 0, attr.y * -stepSize + top);
                     cell.position.x = anim.px;
                     cell.position.y = anim.py;
                 });
             }}
         >
-            {cells.map(cell => (
+            {cellAttrs.map(attr => (
                 <Panel
                     name="GridInputCell"
-                    key={cell.key}
+                    key={attr.key}
                     width={cellSize}
                     height={cellSize}
                     onInputEvent={({ type, event, animateState }) => {
-                        console.log(cell, type);
+                        console.log(type, attr);
                     }}    
                 />
             ))}

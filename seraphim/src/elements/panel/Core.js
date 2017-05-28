@@ -17,7 +17,7 @@ const Panel = RenderObject.Pure(props => (
 
         onRender3D={() => {
             const draft = new Draft();
-            draft.drawRect({ w: props.width, h: props.height, filled: false });
+            draft.drawRect({ w: props.width, h: props.height, filled: props.filled });
             return draft.build(Projection.plane(1));
         }}
     />
@@ -26,6 +26,7 @@ const Panel = RenderObject.Pure(props => (
 Panel.defaultProps = {
     width: 400,
     height: 300,
+    filled: false,
     onInputEvent: () => {},
 };
 
