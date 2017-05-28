@@ -6,31 +6,33 @@ import RenderObject from './RenderObject';
 class RenderScreen {
     ratioX = 1;
     ratioY = 1;
-    halfWidth = 1;
-    halfHeight = 1;
+    pixWidth = 1;
+    pixHeight = 1;
+    pixHalfWidth = 1;
+    pixHalfHeight = 1;
     
     get width() {
-        return (this.halfWidth * 2) * this.ratioX;
+        return (this.pixHalfWidth * 2) * this.ratioX;
     }
     
     get height() {
-        return (this.halfHeight * 2) * this.ratioY;
+        return (this.pixHalfHeight * 2) * this.ratioY;
     }
     
     left(coord) {
-        return (-this.halfWidth + coord) * this.ratioX;
+        return (-this.pixHalfWidth + coord) * this.ratioX;
     }
 
     right(coord) { 
-        return (this.halfWidth - coord) * this.ratioX;
+        return (this.pixHalfWidth - coord) * this.ratioX;
     }
 
     top(coord) { 
-        return (-this.halfHeight + coord) * this.ratioY;
+        return (-this.pixHalfHeight + coord) * this.ratioY;
     }
 
     bottom(coord) { 
-        return (this.halfHeight - coord) * this.ratioY;
+        return (this.pixHalfHeight - coord) * this.ratioY;
     }
 }
 
@@ -87,20 +89,22 @@ export default class RenderScene extends React.Component {
 
     updateSCREEN(camera, width, height) {
         // global constants to help place objects in view
-        RenderScene.SCREEN.halfWidth = width * 0.5;
-        RenderScene.SCREEN.halfHeight = height * 0.5;
+        RenderScene.SCREEN.pixWidth = width;
+        RenderScene.SCREEN.pixHeight = height;
+        RenderScene.SCREEN.pixHalfWidth = width * 0.5;
+        RenderScene.SCREEN.pixHalfHeight = height * 0.5;
 
         const length = 100;
         const center = new THREE.Vector3(0, 0, 1).project(camera);
         const top = new THREE.Vector3(0, length, 1).project(camera);
         const left = new THREE.Vector3(length, 0, 1).project(camera);
 
-        const leftX = left.x * RenderScene.SCREEN.halfWidth + RenderScene.SCREEN.halfWidth;
-        const centerX = center.x * RenderScene.SCREEN.halfWidth + RenderScene.SCREEN.halfWidth;
+        const leftX = left.x * RenderScene.SCREEN.pixHalfWidth + RenderScene.SCREEN.pixHalfWidth;
+        const centerX = center.x * RenderScene.SCREEN.pixHalfWidth + RenderScene.SCREEN.pixHalfWidth;
         RenderScene.SCREEN.ratioX = length / (leftX - centerX);
 
-        const topY = top.y * RenderScene.SCREEN.halfHeight + RenderScene.SCREEN.halfHeight;
-        const centerY = center.y * RenderScene.SCREEN.halfHeight + RenderScene.SCREEN.halfHeight;
+        const topY = top.y * RenderScene.SCREEN.pixHalfHeight + RenderScene.SCREEN.pixHalfHeight;
+        const centerY = center.y * RenderScene.SCREEN.pixHalfHeight + RenderScene.SCREEN.pixHalfHeight;
         RenderScene.SCREEN.ratioY = length / (topY - centerY);
     }
 

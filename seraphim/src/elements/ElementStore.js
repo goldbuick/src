@@ -1,6 +1,6 @@
 import genUuid from 'uuid';
 import { setter } from 'mobx-decorators';
-import { useStrict, action, computed, observable } from 'mobx';
+import { useStrict, action, observable } from 'mobx';
 
 useStrict(true);
 

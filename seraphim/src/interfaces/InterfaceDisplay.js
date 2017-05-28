@@ -105,8 +105,8 @@ export default class InterfaceDisplay extends React.Component {
         // no active target
         if (!target && !tracking && this.renderScene) {
             // translate 2d screen point into ray
-            rayCoords.x = (center.x / RenderScene.SCREEN.width) * 2 - 1;
-            rayCoords.y = -(center.y / RenderScene.SCREEN.height) * 2 + 1;
+            rayCoords.x = (center.x / RenderScene.SCREEN.pixWidth) * 2 - 1;
+            rayCoords.y = -(center.y / RenderScene.SCREEN.pixHeight) * 2 + 1;
             rayCaster.setFromCamera(rayCoords, this.renderScene.camera);
 
             // find targets
