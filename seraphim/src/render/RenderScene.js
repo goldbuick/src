@@ -3,20 +3,40 @@ import Render from './Render';
 import * as THREE from 'three';
 import RenderObject from './RenderObject';
 
+class RenderScreen {
+    ratioX = 1;
+    ratioY = 1;
+    halfWidth = 1;
+    halfHeight = 1;
+    
+    get width() {
+        return (this.halfWidth * 2) * this.ratioX;
+    }
+    
+    get height() {
+        return (this.halfHeight * 2) * this.ratioY;
+    }
+    
+    left(coord) {
+        return (-this.halfWidth + coord) * this.ratioX;
+    }
+
+    right(coord) { 
+        return (this.halfWidth - coord) * this.ratioX;
+    }
+
+    top(coord) { 
+        return (-this.halfHeight + coord) * this.ratioY;
+    }
+
+    bottom(coord) { 
+        return (this.halfHeight - coord) * this.ratioY;
+    }
+}
+
 export default class RenderScene extends React.Component {
 
-    static SCREEN = {
-        ratioX: 1,
-        ratioY: 1,
-        width: 1,
-        height: 1,
-        halfWidth: 1,
-        halfHeight: 1,
-        left: coord => (-RenderScene.SCREEN.halfWidth + coord) * RenderScene.SCREEN.ratioX,
-        right: coord => (RenderScene.SCREEN.halfWidth - coord) * RenderScene.SCREEN.ratioX,
-        top: coord => (-RenderScene.SCREEN.halfHeight + coord) * RenderScene.SCREEN.ratioY,
-        bottom: coord => (RenderScene.SCREEN.halfHeight - coord) * RenderScene.SCREEN.ratioY,        
-    };
+    static SCREEN = new RenderScreen();
     
     static defaultProps = {
         onCreate: () => {},
@@ -47,7 +67,9 @@ export default class RenderScene extends React.Component {
 
     handleCreate = (renderer, width, height) => { 
         this.camera = new THREE.PerspectiveCamera(70, width / height, 1, 16000);
-        return this.props.onCreate(renderer, this, width, height);
+        this.props.onCreate(renderer, this, width, height);
+        // next render cycle
+        setTimeout(() => { this.updateSCREEN(this.camera, width, height); }, 0);
     }
 
     handleUpdate = (renderer, delta) => {
@@ -59,17 +81,19 @@ export default class RenderScene extends React.Component {
         // update camera
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
+        this.props.onResize(renderer, this, width, height);
+        this.updateSCREEN(this.camera, width, height);
+    }
 
+    updateSCREEN(camera, width, height) {
         // global constants to help place objects in view
-        RenderScene.SCREEN.width = width;
-        RenderScene.SCREEN.height = height;
         RenderScene.SCREEN.halfWidth = width * 0.5;
         RenderScene.SCREEN.halfHeight = height * 0.5;
 
         const length = 100;
-        const center = new THREE.Vector3(0, 0, 1).project(this.camera);
-        const top = new THREE.Vector3(0, length, 1).project(this.camera);
-        const left = new THREE.Vector3(length, 0, 1).project(this.camera);
+        const center = new THREE.Vector3(0, 0, 1).project(camera);
+        const top = new THREE.Vector3(0, length, 1).project(camera);
+        const left = new THREE.Vector3(length, 0, 1).project(camera);
 
         const leftX = left.x * RenderScene.SCREEN.halfWidth + RenderScene.SCREEN.halfWidth;
         const centerX = center.x * RenderScene.SCREEN.halfWidth + RenderScene.SCREEN.halfWidth;
@@ -78,8 +102,6 @@ export default class RenderScene extends React.Component {
         const topY = top.y * RenderScene.SCREEN.halfHeight + RenderScene.SCREEN.halfHeight;
         const centerY = center.y * RenderScene.SCREEN.halfHeight + RenderScene.SCREEN.halfHeight;
         RenderScene.SCREEN.ratioY = length / (topY - centerY);
-
-        this.props.onResize(renderer, this, width, height);
     }
 
     startAnimate3D(obj) {

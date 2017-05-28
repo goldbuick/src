@@ -1,21 +1,38 @@
 import React from 'react';
-import DriverRender from 'drivers/DriverRender';
-import ElementRender from 'elements/ElementRender';
-import InterfaceRender from 'interfaces/InterfaceRender';
+import { observer } from 'mobx-react';
+import DriverList from 'drivers/DriverList';
+import DriverStore from 'drivers/DriverStore';
+import ElementStore from 'elements/ElementStore';
+import InterfaceStore from 'interfaces/InterfaceStore';
+import InterfaceDisplay from 'interfaces/InterfaceDisplay';
 
+@observer
 export default class AppRender extends React.Component {
 
     static defaultProps = {
+        onCreate: () => {},
     };
 
+    componentDidMount() {
+        this.props.onCreate(ElementStore);
+    }
+
     render() {
-        return (
-            <InterfaceRender>
-                <DriverRender>
-                    <ElementRender />
-                </DriverRender>
-            </InterfaceRender>
-        );
+        const { interface: Component = InterfaceDisplay } = InterfaceStore;
+        return Component ? <Component>{this.renderDriver()}</Component> : null;        
+    }
+
+    renderDriver() {
+        const { interface: Component = DriverList } = DriverStore;
+        return Component ? <Component>{this.renderElements()}</Component> : null;        
+    }
+
+    renderElements() {
+        const { list } = ElementStore;
+        return list.map(element => {
+            const { component: Component } = element;
+            return Component ? <Component key={element.id} values={element} /> : null;
+        });
     }
 }
 

@@ -1,9 +1,23 @@
 import React from 'react';
 import AppRender from 'apps/AppRender';
+import Panel from 'elements/panel/Core';
 
-// we have to describe element type to render for said type
-// pairings 
+let element;
 
 export default () => (
-    <AppRender />
+    <AppRender 
+        onCreate={(ElementStore) => {
+
+            for (let i=0; i<5; ++i) {
+                element = ElementStore.createElement(
+                    ElementStore.render(Panel)
+                );
+            }
+
+            setTimeout(() => {
+                console.log('updated...');
+                ElementStore.setValue(element, 'test', true);
+            }, 5000);
+        }}
+    />
 );

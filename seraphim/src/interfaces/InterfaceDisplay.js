@@ -1,25 +1,25 @@
 import React from 'react';
 import Hammer from 'hammerjs';
 import * as THREE from 'three';
-import MouseWheel from './input/MouseWheel';
 import RenderScene from 'render/RenderScene';
 import RenderObject from 'render/RenderObject';
+import MouseWheel from 'interfaces/input/MouseWheel';
 
-import '../render/postprocessing/EffectComposer';
+import 'render/postprocessing/EffectComposer';
 
-import '../render/shaders/FilmShader';
-import '../render/shaders/CopyShader';
-import '../render/shaders/DigitalGlitch';
-import '../render/shaders/ConvolutionShader';
-import '../render/shaders/LuminosityHighPassShader';
+import 'render/shaders/FilmShader';
+import 'render/shaders/CopyShader';
+import 'render/shaders/DigitalGlitch';
+import 'render/shaders/ConvolutionShader';
+import 'render/shaders/LuminosityHighPassShader';
 
-import '../render/postprocessing/FilmPass';
-import '../render/postprocessing/ShaderPass';
-import '../render/postprocessing/GlitchPass';
-import '../render/postprocessing/RenderPass';
-import '../render/postprocessing/BloomBlendPass';
-import '../render/postprocessing/SSAARenderPass';
-import '../render/postprocessing/TAARenderPass';
+import 'render/postprocessing/FilmPass';
+import 'render/postprocessing/ShaderPass';
+import 'render/postprocessing/GlitchPass';
+import 'render/postprocessing/RenderPass';
+import 'render/postprocessing/BloomBlendPass';
+import 'render/postprocessing/SSAARenderPass';
+import 'render/postprocessing/TAARenderPass';
 
 export default class InterfaceDisplay extends React.Component {
 
@@ -44,7 +44,7 @@ export default class InterfaceDisplay extends React.Component {
         this.renderScene = renderScene;
         const { scene, camera } = renderScene;
         
-        // camera.position.z = 1024;
+        camera.position.z = 1024;
 
         // let tilt = 32;
         // [ -tilt, tilt ].map(tilt => {
@@ -187,4 +187,4 @@ export default class InterfaceDisplay extends React.Component {
         );
     }
 
-}
+};

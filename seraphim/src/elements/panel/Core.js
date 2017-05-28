@@ -7,7 +7,7 @@ const Panel = RenderObject.Pure((props) => {
     return <RenderObject {...props}
         name="Panel"
 
-        onShell3D={(shell) => shell.plane(400, 300)}
+        onShell3D={(shell) => shell.plane(props.width, props.height)}
         
         onInputEvent={({ type, event, animateState }) => {
             console.log(type);
@@ -19,10 +19,15 @@ const Panel = RenderObject.Pure((props) => {
 
         onRender3D={() => {
             const draft = new Draft();
-            draft.drawRect({ w: 400, h: 300, filled: false });
+            draft.drawRect({ w: props.width, h: props.height, filled: false });
             return draft.build(Projection.plane(1));
         }}
     />;
 });
+
+Panel.defaultProps = {
+    width: 400,
+    height: 300,
+};
 
 export default Panel;
