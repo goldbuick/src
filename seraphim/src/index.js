@@ -1,7 +1,6 @@
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Synth from './apps/synth';
 
-import Test from './apps/test';
-
-ReactDOM.render(<Test />, document.getElementById('root'));
+ReactDOM.render(<Synth />, document.getElementById('root'));

@@ -1,11 +1,9 @@
 import React from 'react';
-import intro from 'anim/intro';
+import tween from 'anim/tween';
 import Panel from 'elements/panel/Core';
 import RenderObject from 'render/RenderObject';
 
-const cellSize = 128;
-
-const GridInput = RenderObject.Pure(props => {
+const GridInput = props => {
     const cellAttrs = [];
     for (let y=0; y<props.rows; ++y) {
         for (let x=0; x<props.cols; ++x) {
@@ -19,17 +17,24 @@ const GridInput = RenderObject.Pure(props => {
             onChildren3D={(children) => RenderObject.byType(children, Panel)}
 
             onAnimate3D={(object3D, animateState, delta) => {
-                const stepSize = cellSize + 16;
+                animateState.elementId = props.elementId;
+                const stepSize = props.cellSize + 16;
                 const top = (props.rows * stepSize * 0.5) - (stepSize * 0.5);
                 const left = (props.cols * stepSize * 0.5) - (stepSize * 0.5);
                 const cells = RenderObject.byType(object3D.children, Panel);
-                RenderObject.animate(cells, animateState, (cell, anim, index) => {
+                RenderObject.animate(cells, (cell, anim, index) => {
                     const attr = cellAttrs[index];
-                    // console.log(attr);
-                    intro.secondary(anim, 'px', 0, attr.x * -stepSize + left);
-                    intro.secondary(anim, 'py', 0, attr.y * -stepSize + top);
+                    tween.secondary(anim, 'px', 0, attr.x * -stepSize + left);
+                    const hhh = tween.secondary(anim, 'py', 0, attr.y * -stepSize + top);
                     cell.position.x = anim.px;
                     cell.position.y = anim.py;
+                    cell.position.z = anim.pz || 0;
+                    if (hhh) {
+                        setTimeout(() => {
+                            anim.worldPosition = cell.getWorldPosition();
+                            console.log('GridInput', props.elementId, anim.worldPosition);
+                        }, 1000);
+                    }
                 });
             }}
         >
@@ -37,22 +42,27 @@ const GridInput = RenderObject.Pure(props => {
                 <Panel
                     name="GridInputCell"
                     key={attr.key}
-                    width={cellSize}
-                    height={cellSize}
+                    width={props.cellSize}
+                    height={props.cellSize}
+                    filled={props.filled[attr.key]}
                     onInputEvent={({ type, event, animateState }) => {
-                        console.log(type, attr);
+                        if (type === 'tap') {
+                            tween.bounce(animateState, 'pz', 0, -100);
+                            props.onCellTap(attr.key, animateState.worldPosition, props.elementId);
+                        }
                     }}    
                 />
             ))}
         </RenderObject>
     );
-});
+};
 
 GridInput.defaultProps = {
     cols: 3,
     rows: 3,
+    filled: {},
+    cellSize: 128,
     onCellTap: () => {},
 };
 
-export default GridInput;
-
+export default RenderObject.Pure(GridInput);

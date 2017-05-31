@@ -1,7 +1,7 @@
 import React from 'react';
 import * as THREE from 'three';
 import Draft from 'viz/Draft';
-import intro from 'anim/intro';
+import tween from 'anim/tween';
 import GenAlgo from 'viz/GenAlgo';
 import GenPoints from 'viz/GenPoints';
 import Projection from 'viz/Projection';
@@ -60,14 +60,14 @@ const Barrier = (props) => {
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
-            intro.primary(animateState, 'scale', intro.CONST.smallScale, 1);
-            intro.setScale(animateState, object3D.userData.barrier);
-            intro.setScale(animateState, object3D.userData.barrierLine);
+            tween.primary(animateState, 'scale', tween.CONST.smallScale, 1);
+            tween.setScale(animateState, object3D.userData.barrier);
+            tween.setScale(animateState, object3D.userData.barrierLine);
             
             const barrierGems = RenderObject.byType(object3D.children, BarrierGem);
-            RenderObject.animate(barrierGems, animateState, (barrierGem, anim, index) => {
-                intro.secondary(anim, 'scale', intro.CONST.smallScale, 1);
-                intro.setScale(anim, barrierGem);
+            RenderObject.animate(barrierGems, (barrierGem, anim, index) => {
+                tween.secondary(anim, 'scale', tween.CONST.smallScale, 1);
+                tween.setScale(anim, barrierGem);
                 barrierGem.rotation.y = (index / barrierGems.length) * Math.PI * 2;
             });
         }}

@@ -1,7 +1,7 @@
 import React from 'react';
 import TWEEN from 'tween.js';
 import * as THREE from 'three';
-import intro from 'anim/intro';
+import tween from 'anim/tween';
 import { inertiaRotation } from 'anim/quat';
 import RenderObject from 'render/RenderObject';
 
@@ -149,8 +149,8 @@ const Sphere = RenderObject.Pure((props) => {
             mantle.quaternion.copy(animRotation);
 
             const barriers = RenderObject.byType(object3D.children, Barrier);
-            RenderObject.animate(barriers, animateState, (barrier, anim, index) => {
-                intro.secondary(anim, 'position', 400, () => {
+            RenderObject.animate(barriers, (barrier, anim, index) => {
+                tween.secondary(anim, 'position', 400, () => {
                     return props.barrierDist + (index * props.barrierStep);
                 });
                 barrier.position.y = -anim.position;
@@ -162,8 +162,8 @@ const Sphere = RenderObject.Pure((props) => {
             });
 
             const substrates = RenderObject.byType(object3D.children, SubStrate);
-            RenderObject.animate(substrates, animateState, (substrate, anim, index) => {
-                intro.secondary(anim, 'position', 400, () => {
+            RenderObject.animate(substrates, (substrate, anim, index) => {
+                tween.secondary(anim, 'position', 400, () => {
                     return props.radius + props.substrateDist - (index * props.substrateStep);
                 });
                 substrate.position.y = -anim.position;

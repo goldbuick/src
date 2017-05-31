@@ -3,17 +3,13 @@ import Draft from 'viz/Draft';
 import Projection from 'viz/Projection';
 import RenderObject from 'render/RenderObject';
 
-const Panel = RenderObject.Pure(props => (
+const Panel = props => (
     <RenderObject {...props}
         name="Panel"
 
         onShell3D={(shell) => shell.plane(props.width, props.height)}
         
-        onInputEvent={props.onInputEvent}    
-
-        onChildren3D={(children) => {
-            return children;
-        }}
+        onInputEvent={props.onInputEvent}
 
         onRender3D={() => {
             const draft = new Draft();
@@ -21,7 +17,7 @@ const Panel = RenderObject.Pure(props => (
             return draft.build(Projection.plane(1));
         }}
     />
-));
+);
 
 Panel.defaultProps = {
     width: 400,
@@ -30,4 +26,4 @@ Panel.defaultProps = {
     onInputEvent: () => {},
 };
 
-export default Panel;
+export default RenderObject.Pure(Panel);

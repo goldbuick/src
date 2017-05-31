@@ -1,7 +1,7 @@
 import React from 'react';
 import * as THREE from 'three';
 import Draft from 'viz/Draft';
-import intro from 'anim/intro';
+import tween from 'anim/tween';
 import GenAlgo from 'viz/GenAlgo';
 import Projection from 'viz/Projection';
 import RenderObject from 'render/RenderObject';
@@ -35,8 +35,8 @@ const SubStrate = (props) => {
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
-            intro.primary(animateState, 'scale', intro.CONST.smallScale, 1);
-            intro.setScale(animateState, object3D);
+            tween.primary(animateState, 'scale', tween.CONST.smallScale, 1);
+            tween.setScale(animateState, object3D);
         }}
     />;
 };

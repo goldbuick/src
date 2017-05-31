@@ -1,7 +1,7 @@
 import React from 'react';
 import * as THREE from 'three';
 import Draft from 'viz/Draft';
-import intro from 'anim/intro';
+import tween from 'anim/tween';
 import GenPoints from 'viz/GenPoints';
 import Projection from 'viz/Projection';
 import RenderObject from 'render/RenderObject';
@@ -26,15 +26,15 @@ const Mantle = RenderObject.Pure((props) => {
         }}
 
         onAnimate3D={(object3D, animateState, delta) => {
-            intro.primary(animateState, 'scale', intro.CONST.smallScale, 1);
-            intro.setScale(animateState, object3D.userData.mantle);
+            tween.primary(animateState, 'scale', tween.CONST.smallScale, 1);
+            tween.setScale(animateState, object3D.userData.mantle);
 
             const mantleGems = RenderObject.byType(object3D.children, MantleGem);
-            RenderObject.animate(mantleGems, animateState, (mantleGem, anim, index) => {
-                intro.primary(anim, 'scale', intro.CONST.smallScale, 1);
-                intro.setScale(anim, mantleGem);
+            RenderObject.animate(mantleGems, (mantleGem, anim, index) => {
+                tween.primary(anim, 'scale', tween.CONST.smallScale, 1);
+                tween.setScale(anim, mantleGem);
 
-                if (intro.secondary(anim, 'toQuatRatio', 0, 1)) {
+                if (tween.secondary(anim, 'toQuatRatio', 0, 1)) {
                     const eachRow = Mantle.EACH_ROW;
                     const tiltAmount = Mantle.TILT_AMOUNT;
 

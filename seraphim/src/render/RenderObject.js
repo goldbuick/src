@@ -3,16 +3,15 @@ import React from 'react';
 import genUuid from 'uuid';
 import * as THREE from 'three';
 import RenderShell from './RenderShell';
-import { shouldUpdate } from 'recompose';
+import { pure, shouldUpdate } from 'recompose';
 
 const Pure = shouldUpdate((props, nextProps) => {
     const ignoreView = key => key !== 'view';    
     const propsKeys = Object.keys(props).filter(ignoreView);
-    const nextPropsKeys = Object.keys(props).filter(ignoreView);
-
+    const nextPropsKeys = Object.keys(nextProps).filter(ignoreView);
     if (propsKeys.length !== nextPropsKeys.length) return true;
 
-    const compare = key => propsKeys[key] === nextPropsKeys[key];
+    const compare = key => props[key] === nextProps[key];
     if (propsKeys.filter(compare).length !== propsKeys.length) return true;
     if (nextPropsKeys.filter(compare).length !== nextPropsKeys.length) return true;
 
@@ -60,12 +59,8 @@ export default class RenderObject extends React.PureComponent {
         });
     }
 
-    static animate(children, animateState, fn) {
-        children.forEach((child, index) => {
-            const uuid = child.userData.uuid || child.uuid;
-            if (animateState[uuid] === undefined) animateState[uuid] = { };
-            fn(child, animateState[uuid], index);
-        });
+    static animate(children, fn) {
+        children.forEach((child, index) => fn(child, child.userData.animateState, index));
     }
 
     static defaultProps = {
@@ -73,7 +68,6 @@ export default class RenderObject extends React.PureComponent {
         onRender3D: () => {},
         onAnimate3D: () => {},
         hasInputElement: false,
-        // onChildren3D, add this to customize props, children of this component 
     };
 
     static contextTypes = {
@@ -103,6 +97,12 @@ export default class RenderObject extends React.PureComponent {
 
     get uuid() { 
         return (this._uuid = this._uuid || genUuid()); 
+    }
+
+    get animateState() {
+        this._animateState = this._animateState || { };
+        this.object3D.userData.animateState = this._animateState;
+        return this._animateState;
     }
 
     applyProps3D() {
@@ -160,13 +160,12 @@ export default class RenderObject extends React.PureComponent {
 
     handleInputEvent = (event, point) => {
         const { type } = event;
-        this.animateState = this.animateState || { };
         this.props.onInputEvent({ 
             type,
             event,
             point,
             object3D: this.object3D,
-            animateState: this.animateState 
+            animateState: this.animateState,
         });
     }
 
@@ -205,7 +204,6 @@ export default class RenderObject extends React.PureComponent {
     }
 
     animate3D(delta) {
-        this.animateState = this.animateState || { };
         this.props.onAnimate3D(this.object3D, this.animateState, delta);
     }
 
@@ -260,7 +258,7 @@ export default class RenderObject extends React.PureComponent {
             children = RenderObject.uniqueKey(R.flatten(children));
         }
 
-        return children;//this.mapChildren(children);
+        return children;
     }
 
     render() {
