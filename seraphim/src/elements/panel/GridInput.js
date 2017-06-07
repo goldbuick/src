@@ -1,7 +1,18 @@
+import R from 'ramda';
 import React from 'react';
 import tween from 'anim/tween';
 import Panel from 'elements/panel/Core';
 import RenderObject from 'render/RenderObject';
+
+const onInputEvent = R.memoize((key, elementId, x, y, onCellTap) => {
+    console.log('onInputEvent', key, elementId, 0, 0, onCellTap);
+    return ({ type, event, animateState }) => {
+        if (type === 'tap') {
+            tween.bounce(animateState, 'pz', 0, -100);
+            onCellTap(key, elementId, x, y);
+        }
+    };
+});
 
 const GridInput = props => {
     const cellAttrs = [];
@@ -24,17 +35,11 @@ const GridInput = props => {
                 const cells = RenderObject.byType(object3D.children, Panel);
                 RenderObject.animate(cells, (cell, anim, index) => {
                     const attr = cellAttrs[index];
-                    tween.secondary(anim, 'px', 0, attr.x * -stepSize + left);
-                    const hhh = tween.secondary(anim, 'py', 0, attr.y * -stepSize + top);
+                    tween.secondary(anim, 'px', 0, attr.x * stepSize - left);
+                    tween.secondary(anim, 'py', 0, attr.y * -stepSize + top);
                     cell.position.x = anim.px;
                     cell.position.y = anim.py;
                     cell.position.z = anim.pz || 0;
-                    if (hhh) {
-                        setTimeout(() => {
-                            anim.worldPosition = cell.getWorldPosition();
-                            console.log('GridInput', props.elementId, anim.worldPosition);
-                        }, 1000);
-                    }
                 });
             }}
         >
@@ -45,12 +50,7 @@ const GridInput = props => {
                     width={props.cellSize}
                     height={props.cellSize}
                     filled={props.filled[attr.key]}
-                    onInputEvent={({ type, event, animateState }) => {
-                        if (type === 'tap') {
-                            tween.bounce(animateState, 'pz', 0, -100);
-                            props.onCellTap(attr.key, animateState.worldPosition, props.elementId);
-                        }
-                    }}    
+                    onInputEvent={onInputEvent(attr.key, props.elementId, attr.x, attr.y, props.onCellTap)}
                 />
             ))}
         </RenderObject>

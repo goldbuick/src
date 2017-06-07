@@ -3,7 +3,7 @@ import React from 'react';
 import genUuid from 'uuid';
 import * as THREE from 'three';
 import RenderShell from './RenderShell';
-import { pure, shouldUpdate } from 'recompose';
+import { shouldUpdate } from 'recompose';
 
 const Pure = shouldUpdate((props, nextProps) => {
     const ignoreView = key => key !== 'view';    
@@ -131,20 +131,24 @@ export default class RenderObject extends React.PureComponent {
 
     findGeometry(object3D) {
         let geometryObject3D = undefined;
+        // only search against content
+        const children = object3D.children.filter(child => child.isContent);
         // first pass check for isShell
-        object3D.traverse(obj => {
-            if (!geometryObject3D && obj.isShell) {
-                geometryObject3D = obj;
+        children.forEach(child => {
+            if (!geometryObject3D && child.isShell) {
+                geometryObject3D = child;
             }
         });
         // second pass use any geometry
-        if (!geometryObject3D) {
-            object3D.traverse(obj => {
-                if (!geometryObject3D && obj.geometry) {
-                    geometryObject3D = obj;
-                }
-            });
-        }
+        children.forEach(child => {
+            if (!geometryObject3D) {
+                child.traverse(obj => {
+                    if (!geometryObject3D && obj.geometry) {
+                        geometryObject3D = obj;
+                    }
+                });
+            }
+        });
         return geometryObject3D;
     }
 
@@ -187,20 +191,19 @@ export default class RenderObject extends React.PureComponent {
         }
     }
 
-    clear3D() {
-        if (!this.object3D || !this.object3D.parent) return;
-        this.stopRayCheck3D(this.object3D);
-        this.object3D.parent.remove(this.object3D);
-        this.object3D = undefined;
-    }
-
     componentDidMount() {
         this.startAnimate3D();
     }
 
-    componentWillUnmount() {
-        this.clear3D();
+    componentWillUnmount() {        
         this.stopAnimate3D();
+        if (this.object3D) {
+            this.stopRayCheck3D(this.object3D);
+            if (this.object3D.parent) {
+                this.object3D.parent.remove(this.object3D);
+            }
+            this.object3D = undefined;
+        }
     }
 
     animate3D(delta) {
@@ -210,16 +213,23 @@ export default class RenderObject extends React.PureComponent {
     render3D(children) {
         const name = this.name;
 
-        this.clear3D();
-        this.object3D = this.props.onRender3D(this.uuid, children) || new THREE.Object3D();
+        // render content
+        const content = this.props.onRender3D(this.uuid, children);
+        
+        // special handling for scene
+        if (content instanceof THREE.Scene) {
+            this.object3D = content;
+            return children;
+        }
+
+        // base object for content
+        if (!this.object3D) this.object3D = new THREE.Object3D();
 
         // how we build our scenegraph
         const parent = this.parent && this.parent.object3D;
-
-        // we have a parent & object3D
-        if (parent && this.object3D) {
+        if (parent) {
             // make sure to build a proper 3D tree
-            parent.add(this.object3D);
+            if (!this.object3D.parent) parent.add(this.object3D);
 
             // standard values for object3D
             this.object3D.name = name;
@@ -233,14 +243,27 @@ export default class RenderObject extends React.PureComponent {
                 'position-x', 'position-y', 'position-z'
             );
 
+            // reset content
+            this.stopRayCheck3D(this.object3D);
+            this.object3D.children.slice().forEach(child => {
+                if (child.isContent) this.object3D.remove(child);
+            });
+
+            // rendered content
+            if (content) {
+                content.isContent = true;
+                this.object3D.add(content);
+            }
+
             // create input raycheck shell
             const shell = this.props.onShell3D(RenderShell);
-            if (shell) this.object3D.add(shell);
+            if (shell) {
+                shell.isContent = true;
+                this.object3D.add(shell);
+            }
             
             // handle user input
-            if (!(this.object3D instanceof THREE.Scene)) {
-                this.startRayCheck3D(this.object3D);
-            }
+            this.startRayCheck3D(this.object3D);
         }
 
         return children;
@@ -263,7 +286,7 @@ export default class RenderObject extends React.PureComponent {
 
     render() {
         const name = this.name;
-        console.log('RenderObject', this.name);
+        // console.log('RenderObject', this.name);
         const children = this.render3D(this.children3D());
         return <div data-name={name}>{children}</div>;
     }
