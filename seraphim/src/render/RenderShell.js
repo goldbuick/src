@@ -6,7 +6,6 @@ class RenderShell {
 
     mesh(geometry) {
         const mesh = new THREE.Mesh(geometry, shellMaterial);
-        mesh.isShell = true;
         mesh.visible = false;
         return mesh;
     }

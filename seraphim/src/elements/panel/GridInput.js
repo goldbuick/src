@@ -5,10 +5,11 @@ import Panel from 'elements/panel/Core';
 import RenderObject from 'render/RenderObject';
 
 const onInputEvent = R.memoize((key, elementId, x, y, onCellTap) => {
-    console.log('onInputEvent', key, elementId, 0, 0, onCellTap);
     return ({ type, event, animateState }) => {
         if (type === 'tap') {
             tween.bounce(animateState, 'pz', 0, -100);
+            tween.bounce(animateState, 'pscale', 1, 0.9);
+            tween.bounce(animateState, 'pspin', 0, -0.5);
             onCellTap(key, elementId, x, y);
         }
     };
@@ -28,7 +29,8 @@ const GridInput = props => {
             onChildren3D={(children) => RenderObject.byType(children, Panel)}
 
             onAnimate3D={(object3D, animateState, delta) => {
-                animateState.elementId = props.elementId;
+                // animateState.elementId = props.elementId;
+                animateState.offset = (animateState.offset || 0) + delta;
                 const stepSize = props.cellSize + 16;
                 const top = (props.rows * stepSize * 0.5) - (stepSize * 0.5);
                 const left = (props.cols * stepSize * 0.5) - (stepSize * 0.5);
@@ -40,6 +42,10 @@ const GridInput = props => {
                     cell.position.x = anim.px;
                     cell.position.y = anim.py;
                     cell.position.z = anim.pz || 0;
+                    const scale = anim.pscale || 1;
+                    cell.scale.set(scale, scale, scale);
+                    cell.rotation.x = anim.pspin || 0;
+                    cell.position.z += Math.cos(animateState.offset + attr.x + attr.y) * 8;
                 });
             }}
         >

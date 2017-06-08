@@ -5,8 +5,8 @@ import GridInput from 'elements/panel/GridInput';
 class StepSequence extends React.Component {
 
     static defaultProps = {
-        cols: 6,
-        rows: 3,
+        cols: 8,
+        rows: 5,
     };
 
     state = {
