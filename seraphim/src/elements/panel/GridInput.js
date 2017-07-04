@@ -63,12 +63,18 @@ const GridInput = props => {
     );
 };
 
+const cellSize = 64;
+
 GridInput.defaultProps = {
+    cellSize,
     cols: 3,
     rows: 3,
     filled: {},
-    cellSize: 128,
     onCellTap: () => {},
 };
 
 export default RenderObject.Pure(GridInput);
+
+export {
+    cellSize,
+};
