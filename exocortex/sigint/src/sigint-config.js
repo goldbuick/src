@@ -1,0 +1,5 @@
+/*
+config manager that services can register with
+allowing a single config UI in didact to drive
+the config state
+*/

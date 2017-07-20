@@ -1,0 +1,8 @@
+version: "3.0"
+
+services:
+  nats-main:
+    image: nats:0.9.6
+    container_name: nats-main
+    ports:
+      - "4222:4222"
