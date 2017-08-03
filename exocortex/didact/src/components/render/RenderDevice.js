@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import PropTypes from 'prop-types';
 import debounce from 'lodash.debounce';
 import HammerComponent from 'react-hammerjs';
-import { WEBVR, ViveController } from './RenderImports';
+import * as RI from './RenderImports';
 
 class RenderDevice extends React.Component {
 
@@ -62,32 +62,59 @@ class RenderDevice extends React.Component {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.container.appendChild(this.renderer.domElement);
 
-        this.renderer.sortObjects = false;
+        // this.renderer.sortObjects = false;
         this.renderer.vr.enabled = true;
 
         this.clock = new THREE.Clock();
         this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 10000);
 
-        let tilt = 32;
-        [ -tilt, tilt ].map(tilt => {
-            let light = new THREE.DirectionalLight(0xffffff, 0.2);
-            light.position.set(tilt, 0, 8);
-            return light;
-        }).forEach(light => this.scene.add(light));
+        this.composer = new RI.EffectComposer(this.renderer);
+
+        const rez = 1024;
+        let passes = [
+            new RI.RenderPass(this.scene, this.camera),
+            new RI.SMAAPass(width, height),
+            new RI.BloomBlendPass(2, 1.2, new THREE.Vector2(rez, rez)),
+            new RI.FilmPass(0.25, 0.5, height * 2, false),
+        ];
+
+        passes.forEach(pass => this.composer.addPass(pass));
+        passes.pop().renderToScreen = true;
 
         window.maxAni = this.renderer.getMaxAnisotropy();
         window.addEventListener('resize', this.handleResize, true);
 
         this.renderer.animate(this.handleUpdate);
 
-        // WEBVR.checkAvailability().catch(( message ) => {
+        // RI.WEBVR.checkAvailability().catch(( message ) => {
         // this is commented out because we want normal behavior on non-vr platforms
-        //     document.body.appendChild(WEBVR.getMessageContainer(message));
+        //     document.body.appendChild(RI.WEBVR.getMessageContainer(message));
         // });
-        WEBVR.getVRDisplay((display) => {
+        RI.WEBVR.getVRDisplay((display) => {
             this.renderer.vr.setDevice(display);
-            document.body.appendChild(WEBVR.getButton(display, this.renderer.domElement));
+            document.body.appendChild(RI.WEBVR.getButton(display, this.renderer.domElement));
         });
+
+        // default scene junk
+        const tilt = 32;
+        [ -tilt, tilt ].map(tilt => {
+            const light = new THREE.DirectionalLight(0xffffff, 0.2);
+            light.position.set(tilt, 0, 8);
+            return light;
+        }).forEach(light => this.scene.add(light));
+
+        let geometry = new THREE.BoxGeometry(1, 1, 1);
+        let material = new THREE.MeshBasicMaterial({ color: 0x666666 });
+        let mesh = new THREE.Mesh(geometry, material);
+        mesh.position.z = -2;
+        this.scene.add(mesh);
+
+        geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+        material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.position.z = -1;
+        this.scene.add(mesh);
+
     }
 
     render() {
@@ -114,6 +141,7 @@ class RenderDevice extends React.Component {
         const delta = this.clock.getDelta();
         TWEEN.update();
         this.runAnimation(delta);
+        // this.composer.render(delta);
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -121,6 +149,7 @@ class RenderDevice extends React.Component {
         let width = this.container.offsetWidth,
             height = this.container.offsetHeight;
         this.renderer.setSize(width, height);
+        this.composer.setSize(width, height);
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
     }
