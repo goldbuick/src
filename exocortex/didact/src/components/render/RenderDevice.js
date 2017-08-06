@@ -5,6 +5,9 @@ import * as THREE from 'three';
 import PropTypes from 'prop-types';
 import debounce from 'lodash.debounce';
 import HammerComponent from 'react-hammerjs';
+import ViveControllerSpec from '../../media/vive-controller/onepointfive_spec.png';
+import ViveControllerTexture from '../../media/vive-controller/onepointfive_texture.png';
+import ViveControllerModel from '../../media/vive-controller/vr_controller_vive_1_5.obj';
 
 import * as RI from './RenderImports';
 import MouseWheel from '../../input/MouseWheel';
@@ -128,14 +131,8 @@ class RenderDevice extends React.Component {
 
         this.renderer.animate(this.handleUpdate);
 
-        // RI.WEBVR.checkAvailability().catch(( message ) => {
-        // this is commented out because we want normal behavior on non-vr platforms
-        //     document.body.appendChild(RI.WEBVR.getMessageContainer(message));
-        // });
-        RI.WEBVR.getVRDisplay((display) => {
-            this.renderer.vr.setDevice(display);
-            document.body.appendChild(RI.WEBVR.getButton(display, this.renderer.domElement));
-        });
+        // hook to kick over into webvr mode of didact
+        RI.WEBVR.getVRDisplay(this.handleGetVRDisplay);
 
         // default scene lighting
         const tilt = 32;
@@ -144,6 +141,11 @@ class RenderDevice extends React.Component {
             light.position.set(tilt, 0, 8);
             return light;
         }).forEach(light => this.scene.add(light));
+
+        // const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+        // const box = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
+        // box.position.z = -1;
+        // this.scene.add(box);
 
         // next render cycle
         setTimeout(() => this.updateSCREEN(width, height), 0);
@@ -168,6 +170,41 @@ class RenderDevice extends React.Component {
         );
     }
 
+    handleGetVRDisplay = (display) => {
+        this.renderer.vr.setDevice(display);
+
+        this.controllers = [0, 1].map(index => new RI.ViveController(index));
+        this.controllers.forEach((controller, index) => {
+            controller.standingMatrix = this.renderer.vr.getStandingMatrix();
+            controller.addEventListener('axischanged', event => this.handleVRControllerEvent(index, event));
+            controller.addEventListener('thumbpaddown', event => this.handleVRControllerEvent(index, event));
+            controller.addEventListener('thumbpadup', event => this.handleVRControllerEvent(index, event));
+            controller.addEventListener('triggerdown', event => this.handleVRControllerEvent(index, event));
+            controller.addEventListener('triggerup', event => this.handleVRControllerEvent(index, event));
+            controller.addEventListener('gripsdown', event => this.handleVRControllerEvent(index, event));
+            controller.addEventListener('gripsup', event => this.handleVRControllerEvent(index, event));
+            controller.addEventListener('menudown', event => this.handleVRControllerEvent(index, event));
+            controller.addEventListener('menuup', event => this.handleVRControllerEvent(index, event));
+            this.scene.add(controller);
+        });
+
+        const objLoader = new RI.OBJLoader();
+        const textureLoader = new THREE.TextureLoader();
+
+        objLoader.load(ViveControllerModel, (object) => {
+            const mesh = object.children[0];
+            mesh.material.map = textureLoader.load(ViveControllerTexture);
+            mesh.material.specularMap = textureLoader.load(ViveControllerSpec);
+            this.controllers.forEach(controller => controller.add(object.clone()));
+        });
+        
+        document.body.appendChild(RI.WEBVR.getButton(display, this.renderer.domElement));
+    }
+
+    handleVRControllerEvent = (index, event) => {
+        console.log(index, event);
+    }
+
     handleRef = (el) => {
         this.container = el;
     }
@@ -179,6 +216,7 @@ class RenderDevice extends React.Component {
         TWEEN.update();
         this.runAnimation(delta);
         this.renderer.render(this.scene, this.camera);
+        (this.controllers || []).forEach(controller => controller.update());
     }
 
     updateSize() {
@@ -214,6 +252,7 @@ class RenderDevice extends React.Component {
     handleInputEvent(e) {
         // common props event
         const { type, direction, center, velocityX, velocityY, isFinal } = e;
+        console.log('handleInputEvent', e);
 
         // common event structure
         const event = {
