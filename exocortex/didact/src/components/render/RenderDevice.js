@@ -1,5 +1,5 @@
 import React from 'react';
-import TWEEN from 'tween.js';
+import TWEEN from '@tweenjs/tween.js';
 import Hammer from 'hammerjs';
 import * as THREE from 'three';
 import PropTypes from 'prop-types';

@@ -112,7 +112,15 @@ class RenderObject extends React.Component {
         }
     }
 
-    componentDidMount() {
+    componentDidMount() {        
+        // how we build our scenegraph
+        const scene = this.device && this.device.scene;
+        const parent = this.parent && this.parent.object3D;
+        if (parent) {
+            parent.add(this.object3D);
+        } else if (scene) {
+            scene.add(this.object3D);
+        }
         if (this.device) this.device.startAnimation(this);
     }
 
@@ -136,10 +144,6 @@ class RenderObject extends React.Component {
         this.object3D.name = this.name;
         this.object3D.userData.uuid = this.uuid;
         this.object3D.userData.renderObject = this.props.ctor;
-        
-        // how we build our scenegraph
-        const parent = this.parent && this.parent.object3D;
-        if (parent && !this.object3D.parent) parent.add(this.object3D);
 
         // reset shell & content
         this.stopInputEvent();
