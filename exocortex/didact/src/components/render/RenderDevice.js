@@ -117,10 +117,12 @@ class RenderDevice extends React.Component {
         let width = this.container.offsetWidth,
             height = this.container.offsetHeight;
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer = new THREE.WebGLRenderer({ antialias: true});
         this.renderer.setSize(width, height);
+        // this.renderer.setClearColor(new THREE.Color('skyblue'));
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.container.appendChild(this.renderer.domElement);
+
         this.renderer.vr.enabled = true;
 
         this.clock = new THREE.Clock();
@@ -146,6 +148,14 @@ class RenderDevice extends React.Component {
         // const box = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
         // box.position.z = -1;
         // this.scene.add(box);
+
+        // const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        // const geometry = new THREE.Geometry();
+        // geometry.vertices.push(
+        //     new THREE.Vector3(-1000, 0, -100),
+        //     new THREE.Vector3(1000, 0, -100),
+        // );
+        // this.scene.add(new THREE.Line(geometry, material));
 
         // next render cycle
         setTimeout(() => this.updateSCREEN(width, height), 0);

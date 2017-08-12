@@ -5,16 +5,19 @@ import Logo_fnt from '../media/fonts/Logo.fnt';
 import Logo_png from '../media/fonts/Logo.png';
 import NeoNoire_fnt from '../media/fonts/NeoNoire.fnt';
 import NeoNoire_png from '../media/fonts/NeoNoire.png';
-import SCPLight_fnt from '../media/fonts/SCPLight.fnt';
-import SCPLight_png from '../media/fonts/SCPLight.png';
+import Exo2Thin_fnt from '../media/fonts/Exo2Thin.fnt';
+import Exo2Thin_png from '../media/fonts/Exo2Thin.png';
+import FMRegular_fnt from '../media/fonts/FMRegular.fnt';
+import FMRegular_png from '../media/fonts/FMRegular.png';
 import FSUltraLight_fnt from '../media/fonts/FSUltraLight.fnt';
 import FSUltraLight_png from '../media/fonts/FSUltraLight.png';
 
-const LOGO = [ Logo_fnt, Logo_png ];
-const NEONOIRE = [ NeoNoire_fnt, NeoNoire_png ];
-const SCPLIGHT = [ SCPLight_fnt, SCPLight_png ];
-const FSULTRALIGHT = [ FSUltraLight_fnt, FSUltraLight_png ];
-const FONTS = { LOGO, NEONOIRE, SCPLIGHT, FSULTRALIGHT };
+const LOGO = [ Logo_fnt, Logo_png, 1, 0 ];
+const NEONOIRE = [ NeoNoire_fnt, NeoNoire_png, 1.55, -3 ];
+const EXO2THIN = [ Exo2Thin_fnt, Exo2Thin_png, 1.4, 1 ];
+const FMREGULAR = [ FMRegular_fnt, FMRegular_png, 2.9, -6 ];
+const FSULTRALIGHT = [ FSUltraLight_fnt, FSUltraLight_png, 2, -6 ];
+const FONTS = { LOGO, NEONOIRE, EXO2THIN, FMREGULAR, FSULTRALIGHT };
 
 const fontData = {};
 const fontQueue = [];
@@ -30,7 +33,12 @@ const configLoader = (name) => {
             texture.magFilter = THREE.LinearFilter;
             texture.minFilter = THREE.LinearMipMapLinearFilter;
 
-            fontData[name] = { config, texture };
+            fontData[name] = {
+                config,
+                texture,
+                scale: FONTS[name][2],
+                descender: FONTS[name][3],
+            };
 
             if (fontQueue[name] !== undefined) {
                 fontQueue[name].forEach(fn => fn(fontData[name]));
