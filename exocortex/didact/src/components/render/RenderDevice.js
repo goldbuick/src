@@ -9,7 +9,7 @@ import ViveControllerSpec from '../../media/vive-controller/onepointfive_spec.pn
 import ViveControllerTexture from '../../media/vive-controller/onepointfive_texture.png';
 import ViveControllerModel from '../../media/vive-controller/vr_controller_vive_1_5.obj';
 
-import * as RI from './RenderImports';
+import * as TI from '../../ThreeImports';
 import MouseWheel from '../../input/MouseWheel';
 
 class RenderScreen {
@@ -134,7 +134,7 @@ class RenderDevice extends React.Component {
         this.renderer.animate(this.handleUpdate);
 
         // hook to kick over into webvr mode of didact
-        RI.WEBVR.getVRDisplay(this.handleGetVRDisplay);
+        TI.WEBVR.getVRDisplay(this.handleGetVRDisplay);
 
         // default scene lighting
         const tilt = 32;
@@ -183,7 +183,7 @@ class RenderDevice extends React.Component {
     handleGetVRDisplay = (display) => {
         this.renderer.vr.setDevice(display);
 
-        this.controllers = [0, 1].map(index => new RI.ViveController(index));
+        this.controllers = [0, 1].map(index => new TI.ViveController(index));
         this.controllers.forEach((controller, index) => {
             controller.standingMatrix = this.renderer.vr.getStandingMatrix();
             controller.addEventListener('axischanged', event => this.handleVRControllerEvent(index, event));
@@ -198,7 +198,7 @@ class RenderDevice extends React.Component {
             this.scene.add(controller);
         });
 
-        const objLoader = new RI.OBJLoader();
+        const objLoader = new TI.OBJLoader();
         const textureLoader = new THREE.TextureLoader();
 
         objLoader.load(ViveControllerModel, (object) => {
@@ -208,7 +208,7 @@ class RenderDevice extends React.Component {
             this.controllers.forEach(controller => controller.add(object.clone()));
         });
         
-        document.body.appendChild(RI.WEBVR.getButton(display, this.renderer.domElement));
+        document.body.appendChild(TI.WEBVR.getButton(display, this.renderer.domElement));
     }
 
     handleVRControllerEvent = (index, event) => {
