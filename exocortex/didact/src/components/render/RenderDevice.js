@@ -81,7 +81,7 @@ class RenderDevice extends React.Component {
     input3D = { rayCoords: new THREE.Vector2(), rayCaster: new THREE.Raycaster() };
 
     startAnimation(component) {
-        if (component.animate && component.props && component.props.onAnimate) {        
+        if (component.runAnimation && component.props && component.props.onAnimate3D) {        
             this.stopAnimation(component);
             this.animationObjects.push(component);
         }

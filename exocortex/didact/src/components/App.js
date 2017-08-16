@@ -33,7 +33,7 @@ const App = () => (
                         color,
                         scale,
                         ax: index % 2 === 0 ? 0 : 1,
-                        text: 'Brisk.Evening.Star' + index,
+                        text: 'What.Am.I.To.Anyone.Else',
                     });
                     obj.position.z = z;
                     obj.position.y = (index * -step) + ((testers.length-1) * step * 0.5);
@@ -59,10 +59,16 @@ const App = () => (
 
                 base.rotation.x = -0.1;
                 base.rotation.y = 0.3;
-                base.rotation.z = 0.1;
                 base.position.x = 200;
 
                 return base;
+            }}
+
+            onAnimate3D={(object3D, anim, delta) => {
+                anim.wiggle = (anim.wiggle || 0) + delta;
+                object3D.rotation.x = Math.cos(anim.wiggle) * -0.01;
+                object3D.rotation.y = Math.sin(anim.wiggle) * 0.01;
+                object3D.rotation.z = Math.cos(anim.wiggle) * 0.01;
             }}
         />
     </RenderDevice>
