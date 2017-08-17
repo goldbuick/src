@@ -2,6 +2,7 @@ import Font from './Font';
 import * as THREE from 'three';
 import createGeometry from 'three-bmfont-text';
 import SDFShader from 'three-bmfont-text/shaders/sdf';
+import { convertToGeometry, convertToBufferGeometry } from '../gen/Convert';
 
 export default function({ 
     text,
@@ -17,6 +18,7 @@ export default function({
     ay = 0.5,
 }) {
     const anchor = new THREE.Object3D();
+    anchor.userData.hasPendingMesh = true;
 
     Font(font).then(fontData => {
         const shader = SDFShader({
@@ -42,7 +44,9 @@ export default function({
         const layoutScale = fontData.scale * scale;
         const layoutWidth = layout.width * layoutScale;
         const layoutHeight = (layout.height - (layout.descender + fontData.descender)) * layoutScale;
-        mesh.scale.multiplyScalar(layoutScale);
+        mesh.geometry = convertToGeometry(mesh.geometry);
+        mesh.geometry.scale(layoutScale, layoutScale, 1);
+        mesh.geometry = convertToBufferGeometry(mesh.geometry);
         mesh.position.set(-(layoutWidth * ax), -(layoutHeight * ay), 0);
 
         // z-flip
@@ -51,7 +55,7 @@ export default function({
 
         // add to anchor
         anchor.add(mesh);
-        console.log('layout.descender', layout.descender);
+        anchor.userData.hasPendingMesh = false;
     });
 
     return anchor;
