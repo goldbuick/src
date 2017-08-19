@@ -4,6 +4,29 @@ import createGeometry from 'three-bmfont-text';
 import SDFShader from 'three-bmfont-text/shaders/sdf';
 import { convertToGeometry, convertToBufferGeometry } from '../gen/Convert';
 
+const fragmentShader = `
+precision highp float;
+uniform float opacity;
+uniform vec3 color;
+uniform sampler2D map;
+varying vec2 vUv;
+
+float aastep(float value) {
+    float afwidth = (1.0 / 3.0);
+    return smoothstep(0.5 - afwidth, 0.5 + afwidth, value);
+}
+
+void main() {
+    vec4 texColor = texture2D(map, vUv);
+    float alpha = aastep(texColor.a);
+    if (alpha > 0.5) {
+        alpha = 0.0;
+    }
+    gl_FragColor = vec4(color, opacity * alpha);
+    if (gl_FragColor.a < 0.00001) discard;
+}
+`;
+
 export default function({ 
     text,
     font,
@@ -16,16 +39,19 @@ export default function({
     scale = 1,
     ax = 0.5,
     ay = 0.5,
+    // glow fx
+    glow = false,
 }) {
     const anchor = new THREE.Object3D();
     anchor.userData.hasPendingMesh = true;
 
     Font(font).then(fontData => {
+
         const shader = SDFShader({
             color: color,
-            transparent: true,
+            transparent: false,
             map: fontData.texture,
-            side: THREE.DoubleSide,
+            side: glow ? THREE.FrontSide : THREE.DoubleSide,
         });
 
         const geometry = createGeometry({
@@ -53,8 +79,23 @@ export default function({
         mesh.scale.x *= -1;
         mesh.rotation.z = Math.PI;
 
+        // create outline
+        if (glow) {
+            const outline = SDFShader({
+                fragmentShader,
+                color: color,
+                transparent: true,
+                map: fontData.texture,
+            });
+            const mesh2 = mesh.clone();
+            mesh2.material = new THREE.RawShaderMaterial(outline);
+            anchor.add(mesh2);
+        }
+
         // add to anchor
         anchor.add(mesh);
+
+        // wait for projection
         anchor.userData.hasPendingMesh = false;
     });
 

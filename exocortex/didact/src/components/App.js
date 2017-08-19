@@ -38,7 +38,8 @@ const App = () => (
                         scale,
                         ax: 0,
                         ay: 0,
-                        text: 'What.Am.I.To.Anyone.Else',
+                        // glow: true,
+                        text: 'skyscraper courier sunglasses nodal point beef noodles',
                     });
                     obj.position.y = (index * -step) + ((testers.length-1) * step * 0.5);
                     projectToColumn(obj, { radius: 1024 + rStep * 256 });
