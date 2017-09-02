@@ -1,9 +1,6 @@
+import './lib/env';
 import nats from 'nats';
-import dotenv from 'dotenv';
 import Hemera from 'nats-hemera';
-
-const result = dotenv.config();
-if (result.error) throw result.error;
 
 const connection = nats.connect({
     url: process.env.NATS_URL,

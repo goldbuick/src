@@ -3,16 +3,14 @@ this provides the bridge between sigint and didact
 1. pub/sub event handling - socket.io
 2. api handlers for microservices - hapi
 */
+
+import './lib/env';
 import Hapi from 'hapi';
 import Boom from 'boom';
 import nats from 'nats';
-import dotenv from 'dotenv';
 import SocketIO from 'socket.io';
 import Hemera from 'nats-hemera';
 import HapiHemera from 'hapi-hemera';
-
-const result = dotenv.config();
-if (result.error) throw result.error;
 
 const server = new Hapi.Server();
 server.connection({

@@ -1,8 +1,9 @@
 /*
 provides an api for interacting with irc servers and channels
 */
+
 import IRC from 'irc-framework';
-import hemera from './lib/hemera';
+import hemera from './sigint-service';
 
 const log = (client, event) => {
     client.on(event, (info) => {

@@ -5,8 +5,7 @@
   "scripts": {
     "build": "babel src/ -d build/ -s",
     "watch": "babel src/ -d build/ -w",
-    "sig": "npm run watch | nodemon --watch build",
-    "irc": "npm run watch | nodemon --watch build ./build/irc.js"
+    "sig": "npm run watch | nodemon --watch build"
   },
   "devDependencies": {
     "babel": "^6.23.0",
